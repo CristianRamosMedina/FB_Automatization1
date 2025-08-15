@@ -3,7 +3,8 @@ import psutil
 import time
 import math
 import ctypes
-from .config import ADB_PATH, SCRCPY_PATH
+from .paths import ADB_PATH, SCRCPY_PATH
+
 
 def obtener_seriales():
     """Obtiene lista de dispositivos conectados vía ADB."""

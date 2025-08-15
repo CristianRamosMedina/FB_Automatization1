@@ -13,6 +13,9 @@ from core.config import hilos_activos
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.resize(1200, 500)  # Tamaño inicial
+        self.setMinimumSize(800, 400)  # Tamaño mínimo
+        self.setMaximumSize(1600, 900)  # Tamaño máximo opcional
         self.setWindowTitle("Control TikTok - Multi Dispositivo")
         self.setStyleSheet("background-color: #121212; color: white;")
         self.seriales = obtener_seriales()
@@ -22,7 +25,7 @@ class MainWindow(QWidget):
 
         # ---------------- Botones globales ----------------
         top_buttons = QHBoxLayout()
-        
+
         btn_init = QPushButton("📱 Inicializar")
         btn_init.setStyleSheet("background-color: #e91e63; color: white; font-weight: bold;")
         btn_init.clicked.connect(lambda: abrir_scrcpy(self.seriales))
@@ -38,12 +41,10 @@ class MainWindow(QWidget):
         btn_gestos_video = QPushButton("🎬 Gestos Video Random")
         btn_gestos_video.setStyleSheet("background-color: #ff9800; color: white; font-weight: bold;")
         btn_gestos_video.clicked.connect(self.gestos_videos_seleccionados)
-        top_buttons.addWidget(btn_gestos_video)
 
         btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas seleccionados")
         btn_cambiar_cuentas.setStyleSheet("background-color: #2196f3; color: white; font-weight: bold;")
         btn_cambiar_cuentas.clicked.connect(self.cambiar_cuentas_seleccionadas)
-        top_buttons.addWidget(btn_cambiar_cuentas)
 
         btn_detener_sel = QPushButton("⏹ Detener seleccionados")
         btn_detener_sel.setStyleSheet("background-color: #f44336; color: white; font-weight: bold;")
@@ -53,11 +54,14 @@ class MainWindow(QWidget):
         btn_silenciar_sel.setStyleSheet("background-color: #9c27b0; color: white; font-weight: bold;")
         btn_silenciar_sel.clicked.connect(self.silenciar_seleccionados)
 
-        top_buttons.addWidget(btn_init)
-        top_buttons.addWidget(btn_close)
-        top_buttons.addWidget(btn_entrenar_sel)
-        top_buttons.addWidget(btn_detener_sel)
-        top_buttons.addWidget(btn_silenciar_sel)
+        # Añadir todos los botones globales en orden
+        for btn in [
+            btn_gestos_video, btn_cambiar_cuentas, btn_init, btn_close,
+            btn_entrenar_sel, btn_detener_sel, btn_silenciar_sel
+        ]:
+            btn.setFixedHeight(30)  # Altura uniforme
+            top_buttons.addWidget(btn)
+
         main_layout.addLayout(top_buttons)
 
         # ---------------- Lista de dispositivos ----------------
@@ -73,12 +77,6 @@ class MainWindow(QWidget):
             btn_entrenar.setStyleSheet("background-color: #4caf50; color: white; font-weight: bold;")
             btn_entrenar.clicked.connect(lambda _, s=serial: self.run_thread(entrenar, s))
 
-            btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas seleccionados")
-            btn_cambiar_cuentas.setStyleSheet("background-color: #2196f3; color: white; font-weight: bold;")
-            btn_cambiar_cuentas.clicked.connect(self.cambiar_cuentas_seleccionadas)
-            top_buttons.addWidget(btn_cambiar_cuentas)
-
-
             btn_detener = QPushButton("⏹ Detener")
             btn_detener.setStyleSheet("background-color: #f44336; color: white; font-weight: bold;")
             btn_detener.clicked.connect(lambda _, s=serial: detener_funcion(s))
@@ -86,6 +84,11 @@ class MainWindow(QWidget):
             btn_silenciar = QPushButton("🔇 Silenciar")
             btn_silenciar.setStyleSheet("background-color: #9c27b0; color: white; font-weight: bold;")
             btn_silenciar.clicked.connect(lambda _, s=serial: self.run_thread(silenciar_dispositivo, s))
+
+            # Botones con mismo tamaño
+            for b in [btn_entrenar, btn_detener, btn_silenciar]:
+                b.setFixedHeight(25)
+                b.setMinimumWidth(120)
 
             grid.addWidget(chk, idx, 0)
             grid.addWidget(btn_entrenar, idx, 1)
@@ -128,13 +131,14 @@ class MainWindow(QWidget):
     def gestos_videos_seleccionados(self):
         for serial in self.seriales:
             if self.is_selected(serial):
-              t = threading.Thread(target=gestos_videos_random, args=(serial,), daemon=True)
-              t.start()
+                t = threading.Thread(target=gestos_videos_random, args=(serial,), daemon=True)
+                t.start()
+
     def cambiar_cuentas_seleccionadas(self):
         for serial in self.seriales:
             if self.is_selected(serial):
-              self.run_thread(cambiar_todas_las_cuentas, serial)
-        
+                self.run_thread(cambiar_todas_las_cuentas, serial)
+
 
 # ---------------- Ejecución directa ----------------
 if __name__ == "__main__":
