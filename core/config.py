@@ -12,15 +12,12 @@ from core.adb_utils import (
 )
 import pytesseract
 from PIL import UnidentifiedImageError, Image
-from .tiktok_funcs.utils import ejecteg 
-from core.tiktok_funcs.utils import crear_funciones_con_serial
 
 # ------------------- VARIABLES GLOBALES -------------------
 # Diccionario para saber si un hilo está activo o detenido
 hilos_activos = {}
 
 # ------------------- FUNCIONES DE CONFIGURACIÓN -------------------
-
 
 def cargar_dispositivos():
     """Lee el archivo dispositivos.json y devuelve el contenido como diccionario."""
@@ -30,6 +27,8 @@ def cargar_dispositivos():
     return {}
 
 def ultimacuenta(serial):
+    # ✅ Import local para evitar circular import
+    from core.tiktok_funcs.utils import ejecteg
     try:
         switchAccount(serial)
 
@@ -73,7 +72,6 @@ def detectar_usuarios_en_pantalla(serial):
     x2 = parse_coord("87.87%", Width)
     y2 = parse_coord("90.71%", Heigth)
 
-
     img = Image.open(io.BytesIO(imagen_bytes))
     img = img.crop((x1, y1, x2, y2))
 
@@ -106,10 +104,9 @@ def detectar_usuarios_en_pantalla(serial):
 
     return cuentas_ordenadas, hay_add_account
 
-def descargar_carpeta_completa( folder_id,serial ):
+def descargar_carpeta_completa(folder_id,serial):
     carpeta_destino = f"./imagenes_temp/{serial}"
     service = crear_service_drive()
-
 
     if os.path.exists(carpeta_destino):
         import shutil
@@ -152,14 +149,11 @@ def descargar_carpeta_completa( folder_id,serial ):
         else:
             return False
 
-
     except Exception as e:
         print(f"❌ Error general descargando carpeta: {e}")
         return False
 
 def descarga(serial,cuentaactual):
-    global SERVICE_DRIVE
-
     data = cargar_dispositivos()
     if serial not in data:
         print(f"❌ Serial {serial} no encontrado en el JSON.")
@@ -179,7 +173,6 @@ def descarga(serial,cuentaactual):
                 procesar_celular(serial, carpeta_descargada)
             else:
                 print(f"❌ No se pudo descargar la carpeta para el dispositivo {serial}")
-
                 print(f"❌ Cuenta {cuentaactual} no encontrada para el serial {serial}.")
                 return None
 
@@ -212,8 +205,10 @@ def actualizar_estado_cuenta(serial, cuenta_actual):
         return None
 
 def switchAccount(serial):
+    # ✅ Import local para evitar circular import
+    from core.tiktok_funcs.utils import crear_funciones_con_serial
+
     run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
-    # Salir a Home por si acaso
     run("shell input keyevent 224")  # Encender pantalla
     time.sleep(0.5)
     move("50%","68%","50%","20%")
@@ -227,15 +222,13 @@ def switchAccount(serial):
     run("shell monkey -p com.zhiliaoapp.musically -c android.intent.category.LAUNCHER 1")
     time.sleep(5)
     # Ir al perfil
-    long_tap("90.09%", "92.31%")  # (973, 2160)
+    long_tap("90.09%", "92.31%")
     time.sleep(1)
 
     # Menú superior
     tap("95.29%", "5.50%")
-
     time.sleep(1)
 
-    # Ir a Settings
     coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "Settings")
     if coords:
         tap(*coords)
@@ -243,122 +236,15 @@ def switchAccount(serial):
         time.sleep(0.6)
         tap("50.46%", "89.87%")  
     time.sleep(1.8)
-    # Scroll para mostrar "Switch account"
-    move("50.46%", "85.68%", "50.46%", "8.42%")  # (545, 2006 → 545, 197)
+
+    move("50.46%", "85.68%", "50.46%", "8.42%")
     time.sleep(0.6)
     move("50.46%", "85.68%", "50.46%", "8.42%")
     time.sleep(0.8)
 
-    # Tap en "Switch account"
     coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "switch")
     if coords:
         tap(*coords)
     else:
-        tap("50.46%", "76.92%")       # (545, 1800)
+        tap("50.46%", "76.92%") 
     time.sleep(0.7)
-
-def cambiar_a_siguiente_cuenta(serial):
-    Width,Height=get_screen_size(serial)
-    run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
-    print(f"🔁 Cambiando cuenta en dispositivo {serial}...")
-
-    # 1. Detectar la cuenta actual visible
-    cuentas_detectadas, _ = detectar_usuarios_en_pantalla(serial)
-    print("\n Cuentas Primera")
-    print(list(cuentas_detectadas)[0]  )
-
-    if not cuentas_detectadas:
-        print("⚠️ No se detectaron cuentas visibles.")
-        return  
-    cuenta_actual = list(cuentas_detectadas)[0]  # Primera cuenta visible
-    print(f"📌 Cuenta actual detectada: {cuenta_actual}")
-    siguiente = actualizar_estado_cuenta(serial, cuenta_actual)
-    if not siguiente:
-        print("✅ Ya no quedan cuentas por subir.")
-        return "Fin"
-    print(f"🎯 Buscando próxima cuenta a subir: {siguiente}")
-    x1=parse_coord("19.72%",Width)
-    y1=parse_coord("14.78%",Height)
-    x2=parse_coord("87.87%",Width)
-    y2=parse_coord("93.16%",Height)
-
-    region = (x1, y1, x2,y2)
-    coords = buscarTextoEnRegion(region, siguiente,umbral_similitud=0.8)
-
-    if coords:
-        x, y = coords
-        tap(x,y)
-        print(f"🧭 Cambiado a cuenta: {siguiente}")
-        time.sleep(4)
-    else:
-        print(f"❌ No se encontró '{siguiente}' en pantalla.")
-    return siguiente 
-
-def cambiarcuenta(serial):
-    try:
-        switchAccount(serial)
-        # Punto donde ya estamos listos para cambiar cuenta
-        cuenta = cambiar_a_siguiente_cuenta(serial)
-        
-        if cuenta == "FIN":
-            print(f"🏁 [{serial}] Proceso finalizado: no hay más cuentas.")
-            return 
-
-        if not cuenta:
-            print(f"⚠️ [{serial}] Error al cambiar de cuenta, reintentando...")
-            return cambiarcuenta(serial)
-        
-        time.sleep(5)
-    except Exception as e:
-        print(f"[{serial}] Error: {e}. Reintentando...")
-        return cambiarcuenta(serial)  # Reintenta si ocurre alguna excepción
-
-def MoverCarpetasUsadas(serial):
-    FINAL_FOLDER_ID = "1ADOHMAXp5Dmd_pkqHfOmR3ffECM08QYF"
-    service = crear_service_drive()
-    data = cargar_dispositivos().get(serial, {})
-
-    cuentas = data.get("cuentas", [])
-    subidas = set(data.get("cuentasSubidas", []))
-    movidas = 0
-
-    for cuenta in cuentas:
-        cuenta_nombre = cuenta.get("cuenta")
-        carpeta_id = cuenta.get("carpeta_id")
-        if cuenta_nombre in subidas and carpeta_id:
-            try:
-                # Obtener metadata: parent actual y nombre
-                metadata = service.files().get(
-                    fileId=carpeta_id,
-                    fields='parents,name'
-                ).execute()
-
-                parent_actual = metadata.get('parents', [])[0]
-                nombre_actual = metadata.get('name', cuenta_nombre)
-
-                # Mover carpeta
-                service.files().update(
-                    fileId=carpeta_id,
-                    addParents=FINAL_FOLDER_ID,
-                    removeParents=parent_actual,
-                    fields="id, parents"
-                ).execute()
-
-                # Generar nuevo nombre sin duplicar "usado"
-                base_nombre = re.sub(r' usado \d{2}-\d{2}_\d{2}h$', '', nombre_actual)
-                fecha_hora = datetime.now().strftime("%d-%m_%Hh")
-                nuevo_nombre = f"{base_nombre} usado {fecha_hora}"
-
-                # Renombrar carpeta
-                service.files().update(
-                    fileId=carpeta_id,
-                    body={"name": nuevo_nombre}
-                ).execute()
-
-                print(f"📦 Carpeta de {cuenta_nombre} movida y renombrada a '{nuevo_nombre}'.")
-                movidas += 1
-
-            except Exception as e:
-                print(f"❌ Error al mover o renombrar la carpeta de {cuenta_nombre}: {e}")
-
-    print(f"✅ {serial}: {movidas} carpeta(s) movida(s) y renombrada(s).")
