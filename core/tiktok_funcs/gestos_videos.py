@@ -4,9 +4,11 @@ from ..adb_utils import crear_funciones_con_serial
 from .utils import ejecteg
 from ..config import hilos_activos
 
-def gestos_videos_random(serial):
-    hilos_activos[serial] = True
+
+def Gestos_videos_Sticker(serial):
     run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
+    stickerMood = random.randint(1, 3)
+    print(f"\n🎵 Seleccionando música para el sticker: {stickerMood}")
     run("shell input keyevent 224")  # Encender pantalla
     time.sleep(1)
     move("50%","68%","50%","20%")
@@ -68,37 +70,18 @@ def gestos_videos_random(serial):
     time.sleep(0.9)
     tap("92.69%", "52.02%")
     time.sleep(1)
-
-    music = random.choice([
-        "Take Me Home, Country Roads - John Denver",
-        "God Bless the USA - Lee Greenwood",
-        "Cotton Fields - Creedence Clearwater Revival",
-        "American Honey - Lady A",
-        "Only in America - Brooks & Dunn",
-        "Courtesy of the Red, White and Blue - Toby Keith",
-        "Small Town Saturday Night - Hal Ketchum",
-        "Where the Stars and Stripes and the Eagle Fly - Aaron Tippin",
-        "Made in America - Toby Keith",
-        "This Land Is Your Land - Woody Guthrie",
-        "America the Beautiful - Ray Charles",
-        "Born in the U.S.A. - Bruce Springsteen",
-        "Ragged Old Flag - Johnny Cash",
-        "Some Gave All - Billy Ray Cyrus",
-        "American Soldier - Toby Keith",
-        "If You're Reading This - Tim McGraw",
-        "Sweet Home Alabama - Lynyrd Skynyrd",
-        "Only in America - Brooks & Dunn",
-        "God Bless America Again - Loretta Lynn & Conway Twitty",
-        "My Town - Montgomery Gentry",
-        "Workin’ Man Blues - Merle Haggard",
-        "Back Where I Come From - Kenny Chesney",
-        "Living in the USA - Steve Miller Band",
-        "Red Solo Cup - Toby Keith",
-        "The Fightin’ Side of Me - Merle Haggard"
-    ])
-
     
-    write(music)
+    switch_musica = {
+        1: "Make America Great Again - Brian Kelley",
+        2: "There She Goes - Cyril Riley & idkxlcfzmk4 & MOONLGHT",
+        3: "Boundless Worship - Josué Novais Piano Worship"
+    }
+
+    music = switch_musica.get(stickerMood)
+    print(f"\n🎵 Música seleccionada: {music}")
+    time.sleep(0.6)
+    write(str(music))
+
     run("shell input keyevent 66")  
     time.sleep(6)
     long_tap("87.68%", "50.68%")    
@@ -141,15 +124,14 @@ def gestos_videos_random(serial):
 
     time.sleep(1.6)    
     
-    sticker = random.choice([
-        ("28.70%", "32.56%"),
-        ("94.72%", "16.92%"),
-        ("61.48%", "16.92%")
-    ])
-
-    print("Sticker en: ", *sticker)
+    switch_tap_sticker = {
+        
+        3: ("61.48%", "16.92%"),
+        2:("94.72%", "16.92%"),
+        1:("28.70%", "32.56%")
+    }
     
-    tap(*sticker)
+    tap(*switch_tap_sticker.get(stickerMood))
     time.sleep(0.5)
     
     coords = buscarTextoEnRegion(("2.50%", "75.98%", "98.70%", "93.76%"), "Next")
@@ -194,3 +176,4 @@ def gestos_videos_random(serial):
                 tap(*coords)
     
     time.sleep(30)
+    

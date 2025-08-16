@@ -8,7 +8,8 @@ from PyQt5.QtCore import Qt
 
 from core.scrcpy_manager import obtener_seriales, abrir_scrcpy, cerrar_scrcpy
 from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo, gestos_videos_random, cambiar_todas_las_cuentas
-from core.config import hilos_activos
+from core.config import detectar_usuarios_en_pantalla, hilos_activos
+from core.tiktok_funcs.TiktokCuentaScan import Tiktok_Cuentas
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -139,6 +140,10 @@ class MainWindow(QWidget):
             if self.is_selected(serial):
                 self.run_thread(cambiar_todas_las_cuentas, serial)
 
+    def detectar_cuentas(self):
+        for serial in self.seriales:
+            if self.is_selected(serial):
+                self.run_thread(Tiktok_Cuentas, serial)
 
 # ---------------- Ejecución directa ----------------
 if __name__ == "__main__":

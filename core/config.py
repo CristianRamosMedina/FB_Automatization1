@@ -8,7 +8,7 @@ from datetime import datetime
 from .paths import ADB_PATH, SCRCPY_PATH
 from .adb_utils import crear_funciones_con_serial, parse_coord, get_screen_size, pytesseract, crear_service_drive, modificar_fechas_en_orden, procesar_celular, guardar_dispositivos
 from PIL import UnidentifiedImageError, Image
-
+from .tiktok_funcs.utils import ejecteg
 
 
 # ------------------- VARIABLES GLOBALES -------------------
@@ -16,51 +16,6 @@ from PIL import UnidentifiedImageError, Image
 hilos_activos = {}
 
 # ------------------- FUNCIONES DE CONFIGURACIÓN -------------------
-def switchAccount(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
-    # Salir a Home por si acaso
-    run("shell input keyevent 224")  # Encender pantalla
-    time.sleep(0.5)
-    move("50%","68%","50%","20%")
-    time.sleep(0.5)
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-
-    print(f"\n🚀 Abriendo TikTok en {serial}...")
-    run("shell monkey -p com.zhiliaoapp.musically -c android.intent.category.LAUNCHER 1")
-    time.sleep(5)
-    # Ir al perfil
-    long_tap("90.09%", "92.31%")  # (973, 2160)
-    time.sleep(1)
-
-    # Menú superior
-    tap("95.29%", "5.50%")
-
-    time.sleep(1)
-
-    # Ir a Settings
-    coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "Settings")
-    if coords:
-        tap(*coords)
-    else:
-        time.sleep(0.6)
-        tap("50.46%", "89.87%")  
-    time.sleep(1.8)
-    # Scroll para mostrar "Switch account"
-    move("50.46%", "85.68%", "50.46%", "8.42%")  # (545, 2006 → 545, 197)
-    time.sleep(0.6)
-    move("50.46%", "85.68%", "50.46%", "8.42%")
-    time.sleep(0.8)
-
-    # Tap en "Switch account"
-    coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "switch")
-    if coords:
-        tap(*coords)
-    else:
-        tap("50.46%", "76.92%")       # (545, 1800)
-    time.sleep(0.7)
 
 
 def cargar_dispositivos():
@@ -146,6 +101,7 @@ def detectar_usuarios_en_pantalla(serial):
     hay_add_account = any("add" in t for t in texto_completo) and any("account" in t for t in texto_completo)
 
     return cuentas_ordenadas, hay_add_account
+
 def descargar_carpeta_completa( folder_id,serial ):
     carpeta_destino = f"./imagenes_temp/{serial}"
     service = crear_service_drive()
@@ -197,7 +153,6 @@ def descargar_carpeta_completa( folder_id,serial ):
         print(f"❌ Error general descargando carpeta: {e}")
         return False
 
-
 def descarga(serial,cuentaactual):
     global SERVICE_DRIVE
 
@@ -224,14 +179,6 @@ def descarga(serial,cuentaactual):
                 print(f"❌ Cuenta {cuentaactual} no encontrada para el serial {serial}.")
                 return None
 
-
-def ejecteg(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-    run("shell input keyevent 4")
-    
 def actualizar_estado_cuenta(serial, cuenta_actual):
     dispositivos = cargar_dispositivos()
     if serial not in dispositivos:
@@ -260,6 +207,51 @@ def actualizar_estado_cuenta(serial, cuenta_actual):
         print("✅ No hay más cuentas por subir.")
         return None
 
+def switchAccount(serial):
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    # Salir a Home por si acaso
+    run("shell input keyevent 224")  # Encender pantalla
+    time.sleep(0.5)
+    move("50%","68%","50%","20%")
+    time.sleep(0.5)
+    run("shell input keyevent 4")
+    run("shell input keyevent 4")
+    run("shell input keyevent 4")
+    run("shell input keyevent 4")
+
+    print(f"\n🚀 Abriendo TikTok en {serial}...")
+    run("shell monkey -p com.zhiliaoapp.musically -c android.intent.category.LAUNCHER 1")
+    time.sleep(5)
+    # Ir al perfil
+    long_tap("90.09%", "92.31%")  # (973, 2160)
+    time.sleep(1)
+
+    # Menú superior
+    tap("95.29%", "5.50%")
+
+    time.sleep(1)
+
+    # Ir a Settings
+    coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "Settings")
+    if coords:
+        tap(*coords)
+    else:
+        time.sleep(0.6)
+        tap("50.46%", "89.87%")  
+    time.sleep(1.8)
+    # Scroll para mostrar "Switch account"
+    move("50.46%", "85.68%", "50.46%", "8.42%")  # (545, 2006 → 545, 197)
+    time.sleep(0.6)
+    move("50.46%", "85.68%", "50.46%", "8.42%")
+    time.sleep(0.8)
+
+    # Tap en "Switch account"
+    coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "switch")
+    if coords:
+        tap(*coords)
+    else:
+        tap("50.46%", "76.92%")       # (545, 1800)
+    time.sleep(0.7)
 
 def cambiar_a_siguiente_cuenta(serial):
     Width,Height=get_screen_size(serial)
@@ -297,7 +289,6 @@ def cambiar_a_siguiente_cuenta(serial):
     else:
         print(f"❌ No se encontró '{siguiente}' en pantalla.")
     return siguiente 
-
 
 def cambiarcuenta(serial):
     try:
