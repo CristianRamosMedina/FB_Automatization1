@@ -1,9 +1,5 @@
 import subprocess
 import re
-import io
-import difflib
-from PIL import Image
-import pytesseract
 from .paths import ADB_PATH
 from google.oauth2 import service_account
 from googleapiclient.discovery import build

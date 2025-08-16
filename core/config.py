@@ -6,10 +6,14 @@ import io
 import re
 from datetime import datetime
 from .paths import ADB_PATH, SCRCPY_PATH
-from .adb_utils import crear_funciones_con_serial, parse_coord, get_screen_size, pytesseract, crear_service_drive, modificar_fechas_en_orden, procesar_celular, guardar_dispositivos
+from core.adb_utils import (
+    parse_coord, get_screen_size,
+    crear_service_drive, modificar_fechas_en_orden, procesar_celular, guardar_dispositivos
+)
+import pytesseract
 from PIL import UnidentifiedImageError, Image
-from .tiktok_funcs.utils import ejecteg
-
+from .tiktok_funcs.utils import ejecteg 
+from core.tiktok_funcs.utils import crear_funciones_con_serial
 
 # ------------------- VARIABLES GLOBALES -------------------
 # Diccionario para saber si un hilo está activo o detenido

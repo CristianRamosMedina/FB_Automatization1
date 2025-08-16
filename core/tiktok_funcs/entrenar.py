@@ -1,8 +1,7 @@
 import time
 import random
-from ..config import hilos_activos
-from ..adb_utils import crear_funciones_con_serial
-from .utils import ejecteg
+from .utils import ejecteg, hilos_activos, crear_funciones_con_serial
+
 
 def entrenar(serial):
     """Simula ver videos en TikTok aleatoriamente."""

@@ -1,4 +1,4 @@
-from ..adb_utils import crear_funciones_con_serial
+from ..adb_utils import  get_screen_size
 from ..config import hilos_activos
 import time
 import re
