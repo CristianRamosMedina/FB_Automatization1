@@ -1,12 +1,13 @@
 import time
 import random
-from ..adb_utils import crear_funciones_con_serial
-from .utils import ejecteg
-from ..config import hilos_activos
+from core.adb_utils import crear_funciones_con_serial      
+from core.tiktok_funcs.utils import ejecteg                
+from core.config import hilos_activos                      
+
 
 
 def Gestos_videos_Sticker(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
     stickerMood = random.randint(1, 3)
     print(f"\n🎵 Seleccionando música para el sticker: {stickerMood}")
     run("shell input keyevent 224")  # Encender pantalla

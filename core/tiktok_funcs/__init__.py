@@ -1,6 +1,3 @@
 from .entrenar import entrenar
-from .utils import (
-    detener_funcion, silenciar_dispositivo,
-    gestos_videos_random, cambiar_todas_las_cuentas
-)
-
+from .utils import detener_funcion, silenciar_dispositivo
+from .gestos_videos import Gestos_videos_Sticker as gestos_videos_random

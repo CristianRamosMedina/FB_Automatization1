@@ -10,11 +10,12 @@ from PyQt5.QtGui import QPixmap
 from core.scrcpy_manager import obtener_seriales, abrir_scrcpy, cerrar_scrcpy
 from core.tiktok_funcs import (
     entrenar, detener_funcion, silenciar_dispositivo,
-    gestos_videos_random, cambiar_todas_las_cuentas
+    gestos_videos_random,
 )
+
 from core.config import hilos_activos
-
-
+from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
+from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -45,7 +46,7 @@ class MainWindow(QWidget):
 
         btn_init = QPushButton("📱 Inicializar")
         btn_init.setStyleSheet("background-color: #e91e63; color: white; font-weight: bold;")
-        btn_init.clicked.connect(lambda: abrir_scrcpy(self.seriales, {}))
+        btn_init.clicked.connect(lambda: abrir_scrcpy(self.seriales))
 
         btn_close = QPushButton("❌ Cerrar")
         btn_close.setStyleSheet("background-color: #ff5722; color: white; font-weight: bold;")
@@ -55,9 +56,9 @@ class MainWindow(QWidget):
         btn_entrenar_sel.setStyleSheet("background-color: #4caf50; color: white; font-weight: bold;")
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
-        btn_gestos_video = QPushButton("🎬 Gestos Video Random")
+        btn_gestos_video = QPushButton("🎬 Detectar TikTok Cuentas ")
         btn_gestos_video.setStyleSheet("background-color: #ff9800; color: white; font-weight: bold;")
-        btn_gestos_video.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", gestos_videos_random))
+        btn_gestos_video.clicked.connect(lambda: self.ejecutar_seleccionados("gestos",TitkokCuentas ))
 
         btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas ")
         btn_cambiar_cuentas.setStyleSheet("background-color: #2196f3; color: white; font-weight: bold;")

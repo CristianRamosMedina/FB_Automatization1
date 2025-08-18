@@ -1,5 +1,6 @@
-from adb_utils import crear_funciones_con_serial,cerrary_salir
+from core.adb_utils import crear_funciones_con_serial 
 import time
+from .utils import cerrary_salir
 
 
 def ejecutar_gestos(serial):

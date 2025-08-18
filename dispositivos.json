@@ -1,0 +1,28 @@
+{
+  "R8YY602WSYX": {
+    "cuentas": [
+      {
+        "cuenta": "daily.scoop4",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO143",
+        "carpeta_nombre": "GRUPO143"
+      },
+      {
+        "cuenta": "fresh.update85",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO144",
+        "carpeta_nombre": "GRUPO144"
+      },
+      {
+        "cuenta": "news.flash98",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
+        "carpeta_nombre": "GRUPO145"
+      }
+    ],
+    "cuentasDetectadas": [
+      "daily.scoop4",
+      "fresh.update85",
+      "news.flash98"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  }
+}
