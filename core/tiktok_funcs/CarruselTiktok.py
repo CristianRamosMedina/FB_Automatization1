@@ -28,7 +28,7 @@ def ejecutar_gestos(serial: str):
     Reintenta indefinidamente hasta detectar 'posted' o hasta que should_stop(serial) sea True.
     Sin recursión.
     """
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     intento = 0
     backoff = 1.0  # crecerá suavemente en errores consecutivos
 

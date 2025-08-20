@@ -41,13 +41,13 @@ def cargar_dispositivos():
 # ------------------- Helpers ADB/UI -------------------
 def silenciar_dispositivo(serial: str):
     """Baja el volumen del dispositivo a 0."""
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     run("shell media volume --stream 3 --set 0")
     print(f"🔇 Dispositivo {serial} silenciado.")
 
 def ejecteg(serial: str):
     """Sale hacia atrás varias veces para resetear pantalla (similar a ir a Home)."""
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     for _ in range(4):
         if should_stop(serial): 
             return
@@ -56,7 +56,7 @@ def ejecteg(serial: str):
 
 def cerrary_salir(serial: str):
     """Abre recientes y cierra todo (o intenta cerrar)."""
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     if should_stop(serial): 
         return
     run("shell input keyevent 224")  # Encender pantalla
@@ -98,7 +98,7 @@ def switchAccount(serial: str):
     Abre TikTok y navega a Settings → Switch account.
     Respeta should_stop() entre pasos para poder detener rápido.
     """
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     # Encender y desbloquear un poco
     if should_stop(serial): return

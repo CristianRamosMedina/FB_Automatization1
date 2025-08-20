@@ -195,7 +195,7 @@ def cambiar_a_siguiente_cuenta(serial: str):
         return None
 
     Width, Height = get_screen_size(serial)
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     print(f"🔁 [{serial}] Cambiando cuenta…")
 

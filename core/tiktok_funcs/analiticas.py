@@ -2,7 +2,7 @@ from ..adb_utils import crear_funciones_con_serial
 from .utils import cerrary_salir, ejecteg
 import time
 def analiticas(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     
     run("shell input keyevent 224")  # Encender pantalla
     time.sleep(1)

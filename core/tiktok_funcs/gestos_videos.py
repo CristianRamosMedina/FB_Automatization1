@@ -7,7 +7,7 @@ from core.config import hilos_activos
 
 
 def Gestos_videos_Sticker(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     stickerMood = random.randint(1, 3)
     print(f"\n🎵 Seleccionando música para el sticker: {stickerMood}")
     run("shell input keyevent 224")  # Encender pantalla

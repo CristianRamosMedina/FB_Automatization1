@@ -5,7 +5,7 @@ from ..config import hilos_activos
 def entrenar(serial):
     """Simula ver videos en TikTok aleatoriamente."""
     hilos_activos[serial] = True
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     ciclos = random.randint(90, 110)
     run("shell input keyevent 224")  # Encender pantalla

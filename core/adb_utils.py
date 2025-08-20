@@ -358,4 +358,16 @@ def crear_funciones_con_serial(serial):
             tap(tx, ty)
             return {"detectado": False, "encontrados": 0}
 
-    return run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap
+       
+    def leerTextoEnRegion(region):
+        resultado = subprocess.run([ADB_PATH, "-s", serial, 'exec-out', 'screencap', '-p'], capture_output=True)
+        imagen_bytes = resultado.stdout
+        if not imagen_bytes:
+            return ""
+        img_crop = Image.open(io.BytesIO(imagen_bytes)).crop(region)
+        texto = pytesseract.image_to_string(img_crop, lang='eng').strip().lower()
+        print(f"🧠 Texto detectado: '{texto}'")
+        return texto
+
+    
+    return run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap,leerTextoEnRegion

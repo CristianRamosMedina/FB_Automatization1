@@ -184,7 +184,7 @@ def subir_video_de_cuenta(serial, cuenta, dispositivos):
 # Gestos TikTok (placeholder)
 # =============================
 def Gestos_VIDEOS(serial, cuenta, video):
-    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     run("shell input keyevent 224")  # encender pantalla
     time.sleep(1)

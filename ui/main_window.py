@@ -1,8 +1,6 @@
 # ui/main_window.py
 import sys
 import threading
-import os
-import json
 
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea,
@@ -19,13 +17,14 @@ from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo
 from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres import Gestos_VIDEOS
-from core.config import hilos_activos  # ⬅️ MUY IMPORTANTE
+from core.config import hilos_activos
+from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import crear_cuenta_para_serial
 
 
 # =================== Workers en QThread ===================
 class ScanWorker(QObject):
     finished = pyqtSignal(str)           # serial
-    failed = pyqtSignal(str, str)        # serial, error
+    failed  = pyqtSignal(str, str)       # serial, error
 
     def __init__(self, serial):
         super().__init__()
@@ -34,19 +33,20 @@ class ScanWorker(QObject):
     def run(self):
         try:
             print(f"[ScanWorker] ▶ Iniciando escaneo en {self.serial}")
-            # TitkokCuentas ya maneja hilos_activos internamente,
-            # pero no hace daño asegurarlo aquí también:
             hilos_activos[self.serial] = True
             TitkokCuentas(self.serial)
             print(f"[ScanWorker] ✅ Escaneo finalizado en {self.serial}")
             self.finished.emit(self.serial)
         except Exception as e:
             self.failed.emit(self.serial, str(e))
+        finally:
+            # Nota: no forzamos False; quizás quieras seguir con otro paso
+            pass
 
 
 class ChangeWorker(QObject):
     finished = pyqtSignal(str)
-    failed = pyqtSignal(str, str)
+    failed  = pyqtSignal(str, str)
 
     def __init__(self, serial):
         super().__init__()
@@ -55,7 +55,6 @@ class ChangeWorker(QObject):
     def run(self):
         try:
             print(f"[ChangeWorker] ▶ Iniciando cambio en {self.serial}")
-            # 🔵 cinturón y tirantes: encender flag aquí también
             hilos_activos[self.serial] = True
             cambiar_todas_las_cuentas(self.serial)
             print(f"[ChangeWorker] ✅ Cambio finalizado en {self.serial}")
@@ -63,7 +62,29 @@ class ChangeWorker(QObject):
         except Exception as e:
             self.failed.emit(self.serial, str(e))
         finally:
-            # apagar al terminar este worker
+            hilos_activos[self.serial] = False
+
+
+class GenericWorker(QObject):
+    """Worker genérico para funciones que reciben solo (serial)."""
+    finished = pyqtSignal(str)
+    failed  = pyqtSignal(str, str)
+
+    def __init__(self, serial, func):
+        super().__init__()
+        self.serial = serial
+        self.func = func
+
+    def run(self):
+        try:
+            print(f"[GenericWorker] ▶ Ejecutando {self.func.__name__} en {self.serial}")
+            hilos_activos[self.serial] = True
+            self.func(self.serial)
+            print(f"[GenericWorker] ✅ {self.func.__name__} finalizado en {self.serial}")
+            self.finished.emit(self.serial)
+        except Exception as e:
+            self.failed.emit(self.serial, str(e))
+        finally:
             hilos_activos[self.serial] = False
 
 
@@ -93,6 +114,9 @@ class MainWindow(QWidget):
             QPushButton#warn:hover { background-color: #6a3152; }
             QPushButton#accent { background-color: #1f3458; border-color:#2b4a7f; }
             QPushButton#accent:hover { background-color: #244069; }
+            QPushButton#create { background-color: #3b2566; border-color:#53358f; }
+            QPushButton#create:hover { background-color: #452c78; }
+
             QFrame#Toolbar {
                 background-color: #121620; border: 1px solid #242a36; border-radius: 12px;
             }
@@ -109,20 +133,23 @@ class MainWindow(QWidget):
         self.status_buttons = {}       # serial -> QFrame (dot)
         self._animations = {}          # serial -> (effect, anim)
 
-        # QThread management (mantener refs)
-        self._scan_threads = {}
-        self._scan_workers = {}
+        # QThread references
+        self._scan_threads   = {}
+        self._scan_workers   = {}
         self._change_threads = {}
         self._change_workers = {}
-        self._pending_scans = set()
+        self._generic_threads = {}
+        self._generic_workers = {}
+        self._pending_scans  = set()
         self._pending_changes = set()
-        self._last_scanned = set()
+        self._last_scanned   = set()
 
         # Iconos opcionales
         self.iconos = {
             "entrenar": QPixmap("icons/entrenar.png").scaled(16, 16),
             "gestos": QPixmap("icons/gestos.png").scaled(16, 16),
             "cambiar_cuentas": QPixmap("icons/cuentas.png").scaled(16, 16),
+            "crear_cuenta": QPixmap("icons/cuentas.png").scaled(16, 16),
             None: QPixmap()
         }
 
@@ -131,6 +158,7 @@ class MainWindow(QWidget):
             "entrenar": "#4caf50",
             "gestos": "#ff9800",
             "cambiar_cuentas": "#2196f3",
+            "crear_cuenta": "#8b5cf6",
             None: "#606060"
         }
 
@@ -161,14 +189,18 @@ class MainWindow(QWidget):
 
         btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas (directo)"); btn_cambiar_cuentas.setObjectName("accent")
         btn_cambiar_cuentas.clicked.connect(
-            lambda: self.ejecutar_seleccionados("cambiar_cuentas", self._cambiar_directo_worker)
+            lambda: self.ejecutar_seleccionados("cambiar_cuentas", cambiar_todas_las_cuentas)
         )
 
+        # Fila 2
         btn_entrenar_sel = QPushButton("▶ Entrenar (seleccionados)"); btn_entrenar_sel.setObjectName("ok")
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
         btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
         btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", Gestos_VIDEOS))
+
+        btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)"); btn_crear_cuentas.setObjectName("create")
+        btn_crear_cuentas.clicked.connect(lambda: self.ejecutar_seleccionados("crear_cuenta", crear_cuenta_para_serial))
 
         btn_detener_sel = QPushButton("⏹ Detener (seleccionados)"); btn_detener_sel.setObjectName("danger")
         btn_detener_sel.clicked.connect(self.detener_seleccionados)
@@ -179,17 +211,19 @@ class MainWindow(QWidget):
         btn_clear = QPushButton("🧹 Limpiar selección")
         btn_clear.clicked.connect(self.limpiar_checkboxes)
 
+        # tamaños
         for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas,
-                  btn_entrenar_sel, btn_gestos_videos, btn_detener_sel,
-                  btn_silenciar_sel, btn_clear]:
+                  btn_entrenar_sel, btn_gestos_videos, btn_crear_cuentas,
+                  btn_detener_sel, btn_silenciar_sel, btn_clear]:
             b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             b.setMinimumHeight(34)
 
+        # Distribución filas
         for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas]:
             row1.addWidget(b)
         row1.addStretch(1)
 
-        for b in [btn_entrenar_sel, btn_gestos_videos, btn_detener_sel, btn_silenciar_sel, btn_clear]:
+        for b in [btn_entrenar_sel, btn_gestos_videos, btn_crear_cuentas, btn_detener_sel, btn_silenciar_sel, btn_clear]:
             row2.addWidget(b)
         row2.addStretch(1)
 
@@ -251,17 +285,17 @@ class MainWindow(QWidget):
             cel_widget.setLayout(cel_layout)
             cel_widget.setStyleSheet("QFrame { background: #0f1115; }")
 
-            # Botones por dispositivo
+            # Botones por dispositivo (acciones rápidas)
             btn_entrenar = QPushButton("▶ Entrenar")
             btn_entrenar.setObjectName("ok")
-            btn_entrenar.clicked.connect(lambda _, s=serial: self.ejecutar_con_icono(s, "entrenar", entrenar))
+            btn_entrenar.clicked.connect(lambda _, s=serial: self._start_generic_worker(s, "entrenar", entrenar))
 
             btn_detener = QPushButton("⏹ Detener")
             btn_detener.setObjectName("danger")
             btn_detener.clicked.connect(lambda _, s=serial: self.detener_con_icono(s))
 
             btn_silenciar = QPushButton("🔇 Silenciar")
-            btn_silenciar.clicked.connect(lambda _, s=serial: self.ejecutar_con_icono(s, None, silenciar_dispositivo))
+            btn_silenciar.clicked.connect(lambda _, s=serial: self._start_generic_worker(s, None, silenciar_dispositivo))
 
             grid.addWidget(cel_widget, idx, 0)
             grid.addWidget(btn_entrenar, idx, 1)
@@ -285,7 +319,6 @@ class MainWindow(QWidget):
         for s in seleccionados:
             self.estado_dispositivos[s] = "gestos"
             self._set_estado_visual(s, "gestos")
-            # Encender flag por si el escáner lo consulta
             hilos_activos[s] = True
 
         self._last_scanned = set(seleccionados)
@@ -300,7 +333,7 @@ class MainWindow(QWidget):
             worker.finished.connect(self._on_scan_finished)
             worker.failed.connect(self._on_scan_failed)
 
-            # Limpieza y MANTENER REFS
+            # Limpieza y mantener refs
             worker.finished.connect(th.quit)
             worker.failed.connect(th.quit)
             th.finished.connect(th.deleteLater)
@@ -340,6 +373,7 @@ class MainWindow(QWidget):
             print("⚠ Escaneo finalizado con errores.")
 
     def _iniciar_cambio_seleccionados(self):
+        # Cambiar SOLO los que se escanearon, o los que sigan seleccionados si no hay set previo
         seleccionados = list(self._last_scanned) if self._last_scanned else [
             s for s in self.seriales if self.is_selected(s)
         ]
@@ -347,11 +381,10 @@ class MainWindow(QWidget):
             print("⚠ No hay dispositivos para cambiar cuentas.")
             return
 
-        # Marcar estado + ENCENDER FLAG antes de crear el QThread
         for s in seleccionados:
             self.estado_dispositivos[s] = "cambiar_cuentas"
             self._set_estado_visual(s, "cambiar_cuentas")
-            hilos_activos[s] = True  # 🔵 clave para que no se auto-detenga
+            hilos_activos[s] = True
 
         self._pending_changes = set(seleccionados)
 
@@ -395,20 +428,46 @@ class MainWindow(QWidget):
         if not self._pending_changes:
             print("⚠ Cambio finalizado con errores en algunos dispositivos.")
 
-    # ====== Cambio directo (para botón 'Cambiar cuentas (directo)') ======
-    def _cambiar_directo_worker(self, serial):
-        # 🔵 enciende flag ANTES de arrancar el hilo simple
-        hilos_activos[serial] = True
-        def _work():
-            try:
-                cambiar_todas_las_cuentas(serial)
-            finally:
-                # al terminar, resetea
-                self.estado_dispositivos[serial] = None
-                self._set_estado_visual(serial, None)
-                hilos_activos[serial] = False
-        t = threading.Thread(target=_work, daemon=True)
-        t.start()
+    # ====== Generic workers (para botones) ======
+    def _start_generic_worker(self, serial, accion, func):
+        """Lanza func(serial) en QThread con dot/anim."""
+        if not self.is_selected(serial):
+            print(f"⚠ {serial} no está seleccionado.")
+            return
+        self.estado_dispositivos[serial] = accion
+        self._set_estado_visual(serial, accion)
+
+        th = QThread(self)
+        worker = GenericWorker(serial, func)
+        worker.moveToThread(th)
+
+        th.started.connect(worker.run)
+        worker.finished.connect(lambda s=serial: self._on_generic_finished(s))
+        worker.failed.connect(lambda s=serial, err="": self._on_generic_failed(s, err))
+
+        worker.finished.connect(th.quit)
+        worker.failed.connect(th.quit)
+        th.finished.connect(th.deleteLater)
+
+        self._generic_threads[serial] = th
+        self._generic_workers[serial] = worker
+        th.start()
+
+        self.checkboxes[serial].setChecked(False)
+
+    def _on_generic_finished(self, serial):
+        print(f"✅ Acción genérica terminada en {serial}")
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self._generic_workers.pop(serial, None)
+        self._generic_threads.pop(serial, None)
+
+    def _on_generic_failed(self, serial, err):
+        print(f"💥 Error en acción genérica {serial}: {err}")
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self._generic_workers.pop(serial, None)
+        self._generic_threads.pop(serial, None)
 
     # ====== Indicadores (dot) ======
     def _set_estado_visual(self, serial, accion):
@@ -468,38 +527,22 @@ class MainWindow(QWidget):
     def is_selected(self, serial):
         return self.checkboxes.get(serial) and self.checkboxes[serial].isChecked()
 
-    # ====== Threads “rápidos” (para acciones por botón) ======
-    def run_thread(self, func, serial):
-        t = threading.Thread(target=func, args=(serial,), daemon=True)
-        t.start()
-
-    def ejecutar_con_icono(self, serial, accion, func):
-        if not self.is_selected(serial):
-            print(f"⚠ {serial} no está seleccionado.")
-            return
-        self.estado_dispositivos[serial] = accion
-        self._set_estado_visual(serial, accion)
-        self.run_thread(func, serial)
-        self.checkboxes[serial].setChecked(False)
-
-    def detener_con_icono(self, serial):
-        detener_funcion(serial)
-        self.estado_dispositivos[serial] = None
-        self._set_estado_visual(serial, None)
-        self.checkboxes[serial].setChecked(False)
-
+    # ====== Acciones por lote usando GenericWorker ======
     def ejecutar_seleccionados(self, accion, func):
         alguno = False
         for serial in self.seriales:
             if self.is_selected(serial):
                 alguno = True
-                self.estado_dispositivos[serial] = accion
-                self._set_estado_visual(serial, accion)
-                self.run_thread(func, serial)
-                self.checkboxes[serial].setChecked(False)
+                self._start_generic_worker(serial, accion, func)
         if not alguno:
             print("⚠ No hay dispositivos seleccionados.")
         self.limpiar_checkboxes_checkbox_global()
+
+    def detener_con_icono(self, serial):
+        detener_funcion(serial)  # pone hilos_activos[serial] = False
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self.checkboxes[serial].setChecked(False)
 
     def detener_seleccionados(self):
         alguno = False
