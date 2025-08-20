@@ -6,7 +6,7 @@ from pathlib import Path
 import gspread
 
 from core.adb_utils import crear_funciones_con_serial
-from core.tiktok_funcs.utils import switchAccount
+from core.tiktok_funcs.utils import switchAccount,should_stop,cerrary_salir
 from .fechito import fechito
 from .puzzleSolver import puzzle
 from ..entrenar import entrenar
@@ -146,80 +146,182 @@ def crear_cuenta_para_serial(serial: str):
     CrearTiktokCuenta(serial, correo, apodo)
 
 # ---------------- Flujo de creación (tu lógica) ----------------
+def _sleep_coop(serial, secs):
+    fin = time.time() + max(0.0, secs)
+    while time.time() < fin:
+        if should_stop(serial):
+            return True  # indica que se solicitó stop
+        time.sleep(0.1)
+    return False
+
+def _esta_en_switcher_add(serial, buscarTextoEnRegion):
+    """
+    Devuelve True si vemos 'Add account' (o 'Add') en la zona típica del switcher.
+    Ajusta región/umbral según tu OCR.
+    """
+    # región amplia: casi toda la pantalla; puedes acotarla si te conviene
+    region = ("0%", "0%", "100%", "100%")
+    # prueba términos más robustos (OCR a veces devuelve minúsculas)
+    if buscarTextoEnRegion(region, "Add account", "add account", umbral_similitud=0.80):
+        return True
+    if buscarTextoEnRegion(region, "Add", "add", umbral_similitud=0.85):
+        return True
+    return False
+
+def _asegurar_switcher_con_add(serial, switch_fn, buscarTextoEnRegion):
+    """
+    Intenta dejar la UI en el switcher donde aparece 'Add account'.
+    Reintenta en bucle cooperativo: switch -> verificar -> (si no) cerrar y reintentar.
+    Sale si should_stop(serial) es True.
+    """
+    intento = 0
+    while not should_stop(serial):
+        intento += 1
+        print(f"🔁 [{serial}] Yendo a Switch Account (intento #{intento})...")
+        switch_fn(serial)
+
+        # espera breve a que cargue
+        if _sleep_coop(serial, 1.5):  # 1.5s cooperativo
+            return False
+
+        # ¿ya vemos 'Add account'?
+        if _esta_en_switcher_add(serial, buscarTextoEnRegion):
+            print(f"✅ [{serial}] Detectado 'Add account' en switcher.")
+            return True
+
+        print(f"⚠️ [{serial}] No se detectó 'Add account'. Cerrando y reintentando...")
+        cerrary_salir(serial)
+        if _sleep_coop(serial, 0.8):
+            return False
+
+    print(f"⏹ [{serial}] Stop solicitado antes de llegar a 'Add account'.")
+    return False
+
+def inputcorreo(serial,correo):
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap, leerTextoEnRegion = crear_funciones_con_serial(serial)
+    print("📧 Ingresando correo…")
+    tap("50.2%","47.6%")
+    if _sleep_coop(serial, 2): return
+    write(correo)
+    if _sleep_coop(serial, 2.5): return
+    coords = buscarTextoEnRegion(("0%","40%","100%","100%"), "continue", "next", umbral_similitud=0.60)
+    if coords:
+        tap(*coords)
+    else:
+        run("shell input keyevent 4")
+        if _sleep_coop(serial, 0.6): 
+            return
+        tap("70%", "89.81%")
+
+    
+def inputpassword(serial):
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap, leerTextoEnRegion = crear_funciones_con_serial(serial)
+    if buscarTextoEnRegion(("2.12%","8.43%","98.42%","41.37%"),"password"):
+        print("🔑 Ingresando contraseña…")
+        write("AFifhrauhg342f@")
+        if _sleep_coop(serial, 1): return
+        coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "continue", "next", umbral_similitud=0.75)
+        tap(*coords) if coords else tap("86.57%","97.47%")
+        if _sleep_coop(serial, 1): return
+    else:
+        print("no password")    
+
 def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     print(f"➡️ CrearTiktokCuenta: {serial} | {correo} / {apodo}")
     run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap, leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     run("shell input keyevent 224")
-    time.sleep(1)
+    if _sleep_coop(serial, 1): return
     move("50%","64.1%","50%","21.4%")
 
-    switchAccount(serial)
+    # 🔒 asegurar que estamos en el switcher (con 'Add account')
+    ok = _asegurar_switcher_con_add(serial, switchAccount, buscarTextoEnRegion)
+    if not ok or should_stop(serial):
+        return
 
+    # ya en switcher → flujo de “Sign” / email
     tap("50%","88.29%")
-    time.sleep(1.2)
-    coords = buscarTextoEnRegion(("0%","0%","100%","100%"), "Sign")
-    if coords: tap(*coords)
+    if _sleep_coop(serial, 1.2): return
 
-    time.sleep(1.2)
-    coords = buscarTextoEnRegion(("24.07%","14.53%","85%","77.44%"), "email")
+    coords = buscarTextoEnRegion(("0%","0%","100%","100%"), "Sign", "sign", umbral_similitud=0.80)
+    if coords:
+        tap(*coords)
+    else:
+        print("ℹ️ No se encontró 'Sign' (posible que ya esté en pantalla de login).")
+
+    if _sleep_coop(serial, 1.2): return
+    coords = buscarTextoEnRegion(("24.07%","14.53%","85%","77.44%"), "email", "Email", umbral_similitud=0.80)
     tap(*coords) if coords else tap("50%","33.93%")
-    time.sleep(3)
+    if _sleep_coop(serial, 3): return
 
-    if buscarTextoEnRegion(("3.43%","9.50%","98.57%","40.69%"), "birthday"):
+    # birthday gate
+    if buscarTextoEnRegion(("3.43%","9.50%","98.57%","40.69%"), "birthday", "Birthday", umbral_similitud=0.75):
         fechito(serial)
         tap("50%","82%")
-        time.sleep(1.2)
-        coords = buscarTextoEnRegion(("0%","0%","100%","100%"), "Email")
-        tap(*coords) if coords else tap("72.4%","11.25%")
+        if _sleep_coop(serial, 1.2): return
+        coords = buscarTextoEnRegion(("0%","0%","100%","100%"), "Email", "email", umbral_similitud=0.80)
+        if coords :
+            tap(*coords)
+            inputcorreo(serial,correo)
+        else:
+            tap("72.4%","11.25%")
+            inputcorreo(serial,correo)
     else:
-        coords = buscarTextoEnRegion(("3%","7%","100%","50%"), "Email")
-        if coords: tap(*coords)
+        coords = buscarTextoEnRegion(("3%","7%","100%","50%"), "Email", "email", umbral_similitud=0.80)
+        if coords:
+            tap(*coords)
+            inputcorreo(serial,correo)
+   
 
-    print("📧 Ingresando correo…")
-    tap("50.2%","47.6%"); time.sleep(2)
-    write(correo); time.sleep(2.5)
+    if _sleep_coop(serial,2):return
+    puzzle(serial)
+    
+    
+    if _sleep_coop(serial, 4): return
+    inputpassword(serial)
+    # pass
+    if _sleep_coop(serial, 2): return
+    esperar_nickname_o_verificar(serial, correo, apodo)
+    if _sleep_coop(serial, 1): return
+    inputpassword(serial)
+    if _sleep_coop(serial, 1): return
 
-    coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "continue")
-    if not coords:
-        coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "next")
-    tap(*coords) if coords else tap("86.57%","97.47%")
-    time.sleep(4)
 
-    print("🔑 Ingresando contraseña…")
-    write("AFifhrauhg342f@"); time.sleep(1)
-    coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "continue")
-    if not coords:
-        coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "next")
-    tap(*coords) if coords else tap("86.57%","97.47%")
-    time.sleep(1)
-
-    puzzle(serial); time.sleep(3)
-    esperar_nickname_o_verificar(serial, correo, apodo); time.sleep(1)
-
-    if buscarTextoEnRegion(("3.43%","9.50%","98.57%","40.69%"), "birthday"):
+    # captcha + nickname/email verify
+    puzzle(serial)
+    if _sleep_coop(serial, 3): return
+    esperar_nickname_o_verificar(serial, correo, apodo)
+    if _sleep_coop(serial, 1): return
+    
+    
+    if buscarTextoEnRegion(("3.43%","9.50%","98.57%","40.69%"), "birthday", "Birthday", umbral_similitud=0.75):
         fechito(serial)
 
-    tap("51.2%","83.5%"); time.sleep(5)
+    tap("51.2%","83.5%")
+    if _sleep_coop(serial, 5): return
+
     print("🤲 Verifica Email")
-    esperar_nickname_o_verificar(serial, correo, apodo); time.sleep(9)
+    esperar_nickname_o_verificar(serial, correo, apodo)
+    if _sleep_coop(serial, 9): return
 
     print("👀 Buscando puzzle")
-    puzzle(serial); time.sleep(3)
+    puzzle(serial)
+    if _sleep_coop(serial, 3): return
     esperar_nickname_o_verificar(serial, correo, apodo)
+    if should_stop(serial): return
 
     buscar_y_verificar_link(
         serial,
         user="previ4303@gmail.com",
-        app_password="tibf uoar hpvl kuog",   # ⚠️ llévalo a variables de entorno
+        app_password="tibf uoar hpvl kuog",   # ⚠️ pásalo a variables de entorno
         cuenta_hija=correo,
     )
-
-    time.sleep(2)
-    tap("49.4%","53.2%"); time.sleep(4)
+    if _sleep_coop(serial, 2): return
+    tap("49.4%","53.2%")
+    if _sleep_coop(serial, 4): return
 
     fila = [correo, apodo, "AFifhrauhg342f@", "April 15,2006", "Tiktok", "Samsung", serial]
     _sheet.append_row(fila)
     print("✅ Datos agregados a Google Sheets.")
-
+    if should_stop(serial): return
     entrenar(serial)
