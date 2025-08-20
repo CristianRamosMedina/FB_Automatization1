@@ -19,6 +19,7 @@ from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo
 from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres import Gestos_VIDEOS
+from core.config import hilos_activos  # ⬅️ MUY IMPORTANTE
 
 
 # =================== Workers en QThread ===================
@@ -33,6 +34,9 @@ class ScanWorker(QObject):
     def run(self):
         try:
             print(f"[ScanWorker] ▶ Iniciando escaneo en {self.serial}")
+            # TitkokCuentas ya maneja hilos_activos internamente,
+            # pero no hace daño asegurarlo aquí también:
+            hilos_activos[self.serial] = True
             TitkokCuentas(self.serial)
             print(f"[ScanWorker] ✅ Escaneo finalizado en {self.serial}")
             self.finished.emit(self.serial)
@@ -51,11 +55,16 @@ class ChangeWorker(QObject):
     def run(self):
         try:
             print(f"[ChangeWorker] ▶ Iniciando cambio en {self.serial}")
+            # 🔵 cinturón y tirantes: encender flag aquí también
+            hilos_activos[self.serial] = True
             cambiar_todas_las_cuentas(self.serial)
             print(f"[ChangeWorker] ✅ Cambio finalizado en {self.serial}")
             self.finished.emit(self.serial)
         except Exception as e:
             self.failed.emit(self.serial, str(e))
+        finally:
+            # apagar al terminar este worker
+            hilos_activos[self.serial] = False
 
 
 # =================== Ventana principal ===================
@@ -96,20 +105,20 @@ class MainWindow(QWidget):
         self.seriales = obtener_seriales()
         self.checkboxes = {}           # serial -> QCheckBox
         self.estado_dispositivos = {}  # serial -> accion actual (str|None)
-        self.iconos_dispositivos = {}  # serial -> QLabel (si usas icono por acción)
+        self.iconos_dispositivos = {}  # serial -> QLabel
         self.status_buttons = {}       # serial -> QFrame (dot)
         self._animations = {}          # serial -> (effect, anim)
 
-        # QThread management (¡refs vivas!)
-        self._scan_threads = {}        # serial -> QThread
-        self._scan_workers = {}        # serial -> ScanWorker
-        self._change_threads = {}      # serial -> QThread
-        self._change_workers = {}      # serial -> ChangeWorker
+        # QThread management (mantener refs)
+        self._scan_threads = {}
+        self._scan_workers = {}
+        self._change_threads = {}
+        self._change_workers = {}
         self._pending_scans = set()
         self._pending_changes = set()
         self._last_scanned = set()
 
-        # Iconos opcionales (si los usas)
+        # Iconos opcionales
         self.iconos = {
             "entrenar": QPixmap("icons/entrenar.png").scaled(16, 16),
             "gestos": QPixmap("icons/gestos.png").scaled(16, 16),
@@ -276,6 +285,8 @@ class MainWindow(QWidget):
         for s in seleccionados:
             self.estado_dispositivos[s] = "gestos"
             self._set_estado_visual(s, "gestos")
+            # Encender flag por si el escáner lo consulta
+            hilos_activos[s] = True
 
         self._last_scanned = set(seleccionados)
         self._pending_scans = set(seleccionados)
@@ -293,7 +304,7 @@ class MainWindow(QWidget):
             worker.finished.connect(th.quit)
             worker.failed.connect(th.quit)
             th.finished.connect(th.deleteLater)
-            # Guardar refs para que no se recolecten
+
             self._scan_threads[serial] = th
             self._scan_workers[serial] = worker
 
@@ -302,7 +313,6 @@ class MainWindow(QWidget):
     def _on_scan_finished(self, serial):
         print(f"✅ Escaneo terminado en {serial}")
         self._pending_scans.discard(serial)
-        # liberar refs de ese serial
         self._scan_workers.pop(serial, None)
         self._scan_threads.pop(serial, None)
 
@@ -323,16 +333,13 @@ class MainWindow(QWidget):
         self.estado_dispositivos[serial] = None
         self._set_estado_visual(serial, None)
         self._pending_scans.discard(serial)
-        # liberar refs
         self._scan_workers.pop(serial, None)
         self._scan_threads.pop(serial, None)
 
         if not self._pending_scans:
             print("⚠ Escaneo finalizado con errores.")
-            # decide si abres diálogo igual o no
 
     def _iniciar_cambio_seleccionados(self):
-        # Por defecto: cambiar SOLO los que se escanearon
         seleccionados = list(self._last_scanned) if self._last_scanned else [
             s for s in self.seriales if self.is_selected(s)
         ]
@@ -340,10 +347,11 @@ class MainWindow(QWidget):
             print("⚠ No hay dispositivos para cambiar cuentas.")
             return
 
-        # Marcar estado visual
+        # Marcar estado + ENCENDER FLAG antes de crear el QThread
         for s in seleccionados:
             self.estado_dispositivos[s] = "cambiar_cuentas"
             self._set_estado_visual(s, "cambiar_cuentas")
+            hilos_activos[s] = True  # 🔵 clave para que no se auto-detenga
 
         self._pending_changes = set(seleccionados)
 
@@ -360,7 +368,6 @@ class MainWindow(QWidget):
             worker.failed.connect(th.quit)
             th.finished.connect(th.deleteLater)
 
-            # Guardar refs
             self._change_threads[serial] = th
             self._change_workers[serial] = worker
 
@@ -371,7 +378,6 @@ class MainWindow(QWidget):
         self.estado_dispositivos[serial] = None
         self._set_estado_visual(serial, None)
         self._pending_changes.discard(serial)
-        # liberar refs
         self._change_workers.pop(serial, None)
         self._change_threads.pop(serial, None)
 
@@ -383,7 +389,6 @@ class MainWindow(QWidget):
         self.estado_dispositivos[serial] = None
         self._set_estado_visual(serial, None)
         self._pending_changes.discard(serial)
-        # liberar refs
         self._change_workers.pop(serial, None)
         self._change_threads.pop(serial, None)
 
@@ -392,11 +397,18 @@ class MainWindow(QWidget):
 
     # ====== Cambio directo (para botón 'Cambiar cuentas (directo)') ======
     def _cambiar_directo_worker(self, serial):
-        # Esta versión usa threading simple (no bloquea la UI principal)
-        cambiar_todas_las_cuentas(serial)
-        # Al terminar, resetea el dot
-        self.estado_dispositivos[serial] = None
-        self._set_estado_visual(serial, None)
+        # 🔵 enciende flag ANTES de arrancar el hilo simple
+        hilos_activos[serial] = True
+        def _work():
+            try:
+                cambiar_todas_las_cuentas(serial)
+            finally:
+                # al terminar, resetea
+                self.estado_dispositivos[serial] = None
+                self._set_estado_visual(serial, None)
+                hilos_activos[serial] = False
+        t = threading.Thread(target=_work, daemon=True)
+        t.start()
 
     # ====== Indicadores (dot) ======
     def _set_estado_visual(self, serial, accion):

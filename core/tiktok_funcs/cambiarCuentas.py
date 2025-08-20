@@ -7,23 +7,22 @@ from datetime import datetime
 
 from core.tiktok_funcs.utils import ejecteg, switchAccount
 from core.tiktok_funcs.TiktokCuentaScan import (
-    cargar_dispositivos, ultimacuenta, detectar_usuarios_en_pantalla,
+     ultimacuenta, detectar_usuarios_en_pantalla,
     actualizar_estado_cuenta
 )
+from .utils import cargar_dispositivos
 from .CarruselTiktok import ejecutar_gestos
 from ..adb_utils import (
     modificar_fechas_en_orden, procesar_celular, get_screen_size,
     parse_coord, crear_funciones_con_serial
 )
-from ..config import hilos_activos
+from ..config import hilos_activos  # ⬅️ mismo diccionario global
 
 # ==================== helpers de parada ====================
 def should_stop(serial: str) -> bool:
-    """Devuelve True si se pidió detener para este serial."""
     return not hilos_activos.get(serial, False)
 
 def _sleep(serial: str, segundos: float):
-    """Sleep cooperativo: sale rápido si llega stop."""
     fin = time.time() + max(0.0, segundos)
     while time.time() < fin:
         if should_stop(serial):
@@ -37,64 +36,67 @@ USADOS_PATH = os.path.join(BASE_PATH, "CarruselesUsados")
 # ==================== flujo principal ====================
 def cambiar_todas_las_cuentas(serial: str):
     """
-    Itera sobre 'cuentasPorSubir' del dispositivo, descargando y subiendo
-    lo que corresponda; respeta 'stop' en cada paso.
+    Itera sobre 'cuentasPorSubir' del dispositivo y ejecuta el flujo.
     """
-    contador = 0
-    while True:
-        if should_stop(serial):
-            print(f"⏹ [{serial}] Detenido por usuario (inicio de loop).")
-            break
+    # 🔵 Enciende el flag al entrar (por si la UI no lo hizo)
+    hilos_activos[serial] = True
+    try:
+        contador = 0
+        while True:
+            if should_stop(serial):
+                print(f"⏹ [{serial}] Detenido por usuario (inicio de loop).")
+                break
 
-        datos_serial = cargar_dispositivos().get(serial, {})
-        pendientes = datos_serial.get("cuentasPorSubir", [])
-        if not pendientes:
-            print(f"✅ [{serial}] Ya no hay más cuentas por subir.")
-            break
+            datos_serial = cargar_dispositivos().get(serial, {})
+            pendientes = datos_serial.get("cuentasPorSubir", [])
+            if not pendientes:
+                print(f"✅ [{serial}] Ya no hay más cuentas por subir.")
+                break
 
-        # última cuenta visible en TikTok
-        cuenta_actual = ultimacuenta(serial)
-        if should_stop(serial):
-            print(f"⏹ [{serial}] Detenido por usuario tras 'ultimacuenta'.")
-            break
+            cuenta_actual = ultimacuenta(serial)
+            if should_stop(serial):
+                print(f"⏹ [{serial}] Detenido por usuario tras 'ultimacuenta'.")
+                break
 
-        print(f"[{serial}] Cambiar Cuentas detecta: {cuenta_actual}")
+            print(f"[{serial}] Cambiar Cuentas detecta: {cuenta_actual}")
 
-        if cuenta_actual in pendientes:
-            print(f"[{serial}] Última cuenta está en pendientes (descarga + gestos + cambiar)")
-            if descarga(serial, cuenta_actual):
+            if cuenta_actual in pendientes:
+                print(f"[{serial}] Última cuenta está en pendientes (descarga + gestos + cambiar)")
+                if descarga(serial, cuenta_actual):
+                    if should_stop(serial): break
+                    ejecteg(serial)
+                    if should_stop(serial): break
+                    ejecutar_gestos(serial)
+                    if should_stop(serial): break
+                    cambiarcuenta(serial)
+                    if should_stop(serial): break
+            else:
+                print(f"[{serial}] La cuenta actual no está en pendientes → intentar cambiar.")
+                cambiarcuenta(serial)
                 if should_stop(serial): break
-                ejecteg(serial)
-                if should_stop(serial): break
-                ejecutar_gestos(serial)
-                if should_stop(serial): break
-                cambiarcuenta(serial)  # intenta pasar a la siguiente en menú
-                if should_stop(serial): break
+
+            _sleep(serial, 1.0)
+            contador += 1
+
+        print(f"[{serial}] Iteraciones: {contador}")
+        print(f"[{serial}] Proceso terminado. Moviendo carpetas usadas…")
+        if not should_stop(serial):
+            MoverCarpetasUsadas(serial)
         else:
-            print(f"[{serial}] La cuenta actual no está en pendientes → intentar cambiar.")
-            cambiarcuenta(serial)
-            if should_stop(serial): break
-
-        _sleep(serial, 1.0)
-        contador += 1
-
-    print(f"[{serial}] Iteraciones: {contador}")
-    print(f"[{serial}] Proceso terminado. Moviendo carpetas usadas…")
-    if not should_stop(serial):
-        MoverCarpetasUsadas(serial)
-    else:
-        print(f"⏹ [{serial}] Detenido antes de mover carpetas.")
+            print(f"⏹ [{serial}] Detenido antes de mover carpetas.")
+    finally:
+        # 🔴 Apagar al salir
+        hilos_activos[serial] = False
 
 # ==================== cambiar cuenta en el switcher ====================
 def cambiarcuenta(serial: str):
     """
     Abre el switcher y selecciona la siguiente cuenta por subir.
-    Sin recursión: usa bucle + stop cooperativo.
     """
     intentos = 0
     while True:
         if should_stop(serial):
-            print(f"⏹ [{serial}] Detenido antes/depués de switchAccount.")
+            print(f"⏹ [{serial}] Detenido antes/después de switchAccount.")
             return
 
         try:
@@ -111,10 +113,9 @@ def cambiarcuenta(serial: str):
             if not cuenta:
                 intentos += 1
                 print(f"⚠️ [{serial}] No se pudo cambiar (intento #{intentos}), reintentando…")
-                _sleep(serial, min(5, 1 + intentos))  # backoff suave
+                _sleep(serial, min(5, 1 + intentos))
                 continue
 
-            # cuenta seleccionada; espera breve a que tiktok quede listo
             _sleep(serial, 5)
             return
 
@@ -122,14 +123,10 @@ def cambiarcuenta(serial: str):
             intentos += 1
             print(f"💥 [{serial}] Error en cambiarcuenta: {e} (intento #{intentos})")
             _sleep(serial, min(5, 1 + intentos))
-            # continúa loop (reintento) respetando stop
+            # sigue reintentando (respetando stop)
 
 # ==================== descarga (carpeta local) ====================
 def descarga(serial: str, cuentaactual: str):
-    """
-    Usa carpeta local ya mapeada (carpeta_path) para la cuenta y procesa
-    en el teléfono. Respeta stop.
-    """
     data = cargar_dispositivos()
     if serial not in data:
         print(f"❌ [{serial}] No existe entrada en dispositivos.json.")
@@ -160,9 +157,6 @@ def descarga(serial: str, cuentaactual: str):
 
 # ==================== mover carpetas usadas ====================
 def MoverCarpetasUsadas(serial: str):
-    """
-    Mueve a 'CarruselesUsados' las carpetas de las cuentas que ya pasaron por 'cuentasSubidas'.
-    """
     if not os.path.exists(USADOS_PATH):
         os.makedirs(USADOS_PATH, exist_ok=True)
         print(f"📂 Carpeta creada: {USADOS_PATH}")
@@ -197,13 +191,6 @@ def MoverCarpetasUsadas(serial: str):
 
 # ==================== seleccionar siguiente cuenta ====================
 def cambiar_a_siguiente_cuenta(serial: str):
-    """
-    Dentro del switcher de TikTok: detecta la cuenta actual y selecciona
-    la próxima en 'cuentasPorSubir'. Devuelve:
-      - string con el nombre si hizo tap a esa cuenta
-      - "FIN" si no hay más por subir
-      - None/False si no pudo cambiar
-    """
     if should_stop(serial):
         return None
 
