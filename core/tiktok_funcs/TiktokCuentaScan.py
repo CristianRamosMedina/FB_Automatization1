@@ -1,5 +1,5 @@
 import threading, subprocess, os, json, io, time
-from .utils import switchAccount
+from .utils import switchAccount,cargar_dispositivos
 from core.tiktok_funcs.utils import ejecteg, cerrary_salir, get_screen_size
 from core.adb_utils import parse_coord  , crear_service_drive  , modificar_fechas_en_orden, procesar_celular, guardar_dispositivos                
 from core.paths import ADB_PATH, TESSERACT_PATH 
@@ -284,12 +284,7 @@ def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/dispositivos.
     except Exception as e:
         print(f"❌ Error al guardar en JSON: {e}")
 
-def cargar_dispositivos():
-    """Lee el archivo dispositivos.json y devuelve el contenido como diccionario."""
-    if os.path.exists("data/dispositivos.json"):
-        with open("data/dispositivos.json", "r") as f:
-            return json.load(f)
-    return {}
+
 
 # -------------------- Utilidades de cuentas --------------------
 def ultimacuenta(serial):

@@ -5,17 +5,12 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-
+from core.tiktok_funcs.utils import cargar_dispositivos
 from core.adb_utils import guardar_dispositivos
 import json, os
 
 DISPOSITIVOS_FILE = "data/dispositivos.json"
 
-def cargar_dispositivos_local():
-    if os.path.exists(DISPOSITIVOS_FILE):
-        with open(DISPOSITIVOS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
 
 class SeleccionCuentasDialog(QDialog):
     """
@@ -151,7 +146,7 @@ class SeleccionCuentasDialog(QDialog):
             }
         """)
 
-        self._data = cargar_dispositivos_local()
+        self._data = cargar_dispositivos()
         self._checks_por_serial = {}  # serial -> [(cuenta, QCheckBox), ...]
         self._counters = {}           # serial -> QLabel contador
 
