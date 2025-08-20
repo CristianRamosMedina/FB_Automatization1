@@ -2,7 +2,7 @@
 import time
 import re
 import subprocess
-import io
+import io,json,os
 from PIL import Image, UnidentifiedImageError
 import pytesseract
 
@@ -31,6 +31,12 @@ def should_stop(serial: str) -> bool:
         return True
     return False
 
+def cargar_dispositivos():
+    if os.path.exists("dispositivos.json"):
+        with open("dispositivos.json", "r") as f:
+            return json.load(f)
+    return {}
+    
 
 # ------------------- Helpers ADB/UI -------------------
 def silenciar_dispositivo(serial: str):
