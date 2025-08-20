@@ -32,8 +32,8 @@ def should_stop(serial: str) -> bool:
     return False
 
 def cargar_dispositivos():
-    if os.path.exists("dispositivos.json"):
-        with open("dispositivos.json", "r") as f:
+    if os.path.exists("data/dispositivos.json"):
+        with open("data/dispositivos.json", "r") as f:
             return json.load(f)
     return {}
     

@@ -148,7 +148,7 @@ def subir_a_celular_con_scan(serial, carpeta_origen, carpeta_destino):
         print(f"❌ Error general en subida para {serial}: {e}")
 
 def guardar_dispositivos(dispositivos):
-    with open("dispositivos.json", "w") as f:
+    with open("data/dispositivos.json", "w") as f:
         json.dump(dispositivos, f, indent=2)
 
 def modificar_fechas_en_orden(carpeta_path, intervalo_horas=1):

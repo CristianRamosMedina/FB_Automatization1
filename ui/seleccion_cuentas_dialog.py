@@ -9,7 +9,7 @@ from PyQt5.QtGui import QFont
 from core.adb_utils import guardar_dispositivos
 import json, os
 
-DISPOSITIVOS_FILE = "dispositivos.json"
+DISPOSITIVOS_FILE = "data/dispositivos.json"
 
 def cargar_dispositivos_local():
     if os.path.exists(DISPOSITIVOS_FILE):

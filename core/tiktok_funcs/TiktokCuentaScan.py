@@ -258,7 +258,7 @@ def escanear_cuentas_tiktok(serial):
     }
 
 # -------------------- Guardado / lectura --------------------
-def guardar_resultado2(serial, cuentas_con_carpetas, archivo='dispositivos.json'):
+def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/dispositivos.json'):
     try:
         if os.path.exists(archivo):
             with open(archivo, 'r', encoding='utf-8') as f:
@@ -286,8 +286,8 @@ def guardar_resultado2(serial, cuentas_con_carpetas, archivo='dispositivos.json'
 
 def cargar_dispositivos():
     """Lee el archivo dispositivos.json y devuelve el contenido como diccionario."""
-    if os.path.exists("dispositivos.json"):
-        with open("dispositivos.json", "r") as f:
+    if os.path.exists("data/dispositivos.json"):
+        with open("data/dispositivos.json", "r") as f:
             return json.load(f)
     return {}
 
