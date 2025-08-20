@@ -18,7 +18,12 @@ from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres import Gestos_VIDEOS
 from core.config import hilos_activos
-from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import crear_cuenta_para_serial
+# en ui/main_window.py (importa arriba)
+from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
+    preasignar_para_seriales,
+    crear_cuenta_para_serial,
+)
+
 
 
 # =================== Workers en QThread ===================
@@ -199,8 +204,10 @@ class MainWindow(QWidget):
         btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
         btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", Gestos_VIDEOS))
 
-        btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)"); btn_crear_cuentas.setObjectName("create")
-        btn_crear_cuentas.clicked.connect(lambda: self.ejecutar_seleccionados("crear_cuenta", crear_cuenta_para_serial))
+        btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)")
+        btn_crear_cuentas.setObjectName("create")
+        btn_crear_cuentas.clicked.connect(self.crear_cuentas_seleccionados)
+
 
         btn_detener_sel = QPushButton("⏹ Detener (seleccionados)"); btn_detener_sel.setObjectName("danger")
         btn_detener_sel.clicked.connect(self.detener_seleccionados)
@@ -342,6 +349,20 @@ class MainWindow(QWidget):
             self._scan_workers[serial] = worker
 
             th.start()
+    def crear_cuentas_seleccionados(self):
+        seriales = [s for s in self.seriales if self.is_selected(s)]
+        if not seriales:
+            print("⚠ No hay dispositivos seleccionados.")
+            return
+
+        # 1) reservar pares únicos para TODOS los seleccionados
+        preasignar_para_seriales(seriales)
+
+        # 2) lanzar un worker por serial
+        for s in seriales:
+            self._start_generic_worker(s, "crear_cuenta", crear_cuenta_para_serial)
+
+        self.limpiar_checkboxes_checkbox_global()
 
     def _on_scan_finished(self, serial):
         print(f"✅ Escaneo terminado en {serial}")

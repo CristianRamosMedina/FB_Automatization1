@@ -1,4 +1,5 @@
-# core/tiktok_funcs/CrearCuentasTiktok/CrearCuentasTitktok.py
+# core/tiktok_funcs/CrearCuentasTiktok/crear_cuentas.py
+import os
 import json
 import time
 from pathlib import Path
@@ -11,19 +12,18 @@ from .puzzleSolver import puzzle
 from ..entrenar import entrenar
 from .VerifyHelpers import esperar_nickname_o_verificar, buscar_y_verificar_link
 
-
-# ---------- Ubicar la carpeta "data" de forma robusta ----------
+# ---------------- Rutas robustas ----------------
 def _find_data_dir(start_file: Path) -> Path:
     p = start_file.resolve()
     for parent in [p.parent, *p.parents]:
-        candidate = parent / "data"
-        if candidate.exists() and candidate.is_dir():
-            return candidate
-    # Fallback: asume proyecto en 3 niveles arriba (tu estructura original)
+        d = parent / "data"
+        if d.is_dir():
+            return d
+    # Fallback (si tu estructura es ControlDePantallas/core/...):
     return p.parents[3] / "data"
 
-DATA_DIR = _find_data_dir(Path(__file__))
-CRED_PATH = DATA_DIR / "credenciales.json"
+DATA_DIR     = _find_data_dir(Path(__file__))
+CRED_PATH    = DATA_DIR / "credenciales.json"
 CORREOS_PATH = DATA_DIR / "correos.json"
 
 if not CRED_PATH.exists():
@@ -31,67 +31,121 @@ if not CRED_PATH.exists():
 if not CORREOS_PATH.exists():
     raise FileNotFoundError(f"No se encontró correos.json en: {CORREOS_PATH}")
 
-# ---------- Google Sheets ----------
+# ---------------- Google Sheets ----------------
 _gc = gspread.service_account(filename=str(CRED_PATH))
 _sheet = _gc.open("Cuentas").sheet1
-# Encabezados (idempotente)
 if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
     _sheet.insert_row(
-        ["Correo", "UserName", "Contraseña", "Fecha de nacimiento", "Plataforma", "Marca", "Serial"], 1
+        ["Correo", "UserName", "Contraseña", "Fecha de nacimiento", "Plataforma", "Marca", "Serial"],
+        1
     )
 
+# ---------------- Estado en memoria (opcional) ----------------
+# Se llenará cuando llames preasignar_para_seriales([...])
+_cuentas_por_serial: dict[str, dict] = {}
 
-# ---------- Asignar correo + apodo ----------
+# ---------------- Lock de asignación ----------------
+_LOCK_PATH = (CORREOS_PATH.parent / "correos.json.lock")
+
+def _acquire_lock(timeout: float = 10.0, poll: float = 0.05):
+    start = time.time()
+    while True:
+        try:
+            fd = os.open(str(_LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd)
+            return
+        except FileExistsError:
+            if time.time() - start > timeout:
+                raise TimeoutError("Lock de correos.json ocupado")
+            time.sleep(poll)
+
+def _release_lock():
+    try:
+        _LOCK_PATH.unlink(missing_ok=True)
+    except Exception:
+        pass
+
+def _usados_globales(data: dict, app: str):
+    correos_usados = set()
+    apodos_usados = set()
+    for s in data.get(app, {}).values():
+        for c in s.get("cuentas", []):
+            correos_usados.add(c.get("correo"))
+            apodos_usados.add(c.get("apodo"))
+    correos_usados.discard(None); apodos_usados.discard(None)
+    return correos_usados, apodos_usados
+
+# ---------------- Asignación atómica ----------------
 def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_PATH, app: str = "Tiktok"):
     path_json = Path(path_json)
-    if not path_json.exists():
-        raise FileNotFoundError(f"No se encontró {path_json}")
+    _acquire_lock()
+    try:
+        with open(path_json, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-    with open(path_json, "r", encoding="utf-8") as f:
-        data = json.load(f)
+        data.setdefault("correos_disponibles", [])
+        data.setdefault("apodos_disponibles", [])
+        data.setdefault(app, {})
 
-    data.setdefault("correos_disponibles", [])
-    data.setdefault("apodos_disponibles", [])
-    data.setdefault(app, {})
+        if serial not in data[app]:
+            data[app][serial] = {"cuentas": []}
 
-    if serial not in data[app]:
-        data[app][serial] = {"cuentas": []}
+        correos_usados, apodos_usados = _usados_globales(data, app)
+        correo = next((c for c in data["correos_disponibles"] if c not in correos_usados), None)
+        apodo  = next((a for a in data["apodos_disponibles"]  if a not in apodos_usados),  None)
 
-    cuentas_existentes = data[app][serial]["cuentas"]
+        if not correo or not apodo:
+            print("❌ No hay correo/apodo disponible.")
+            return None, None
 
-    # Usados globalmente en la app
-    correos_usados = {c["correo"] for s in data[app].values() for c in s.get("cuentas", [])}
-    apodos_usados  = {c["apodo"]  for s in data[app].values() for c in s.get("cuentas", [])}
+        # quitar del pool
+        try: data["correos_disponibles"].remove(correo)
+        except ValueError: pass
+        try: data["apodos_disponibles"].remove(apodo)
+        except ValueError: pass
 
-    correo = next((c for c in data["correos_disponibles"] if c not in correos_usados), None)
-    apodo  = next((a for a in data["apodos_disponibles"]  if a not in apodos_usados),  None)
+        # registrar en el serial
+        data[app][serial]["cuentas"].append({"correo": correo, "apodo": apodo})
 
-    if not correo:
-        print("❌ No hay correos disponibles.")
-        return None, None
-    if not apodo:
-        print("❌ No hay apodos disponibles.")
-        return None, None
+        # guardar
+        tmp = path_json.with_suffix(".tmp")
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp, path_json)
 
-    cuentas_existentes.append({"correo": correo, "apodo": apodo})
+        print(f"✅ Asignado a {serial}: {correo} / {apodo}")
+        return correo, apodo
+    finally:
+        _release_lock()
 
-    with open(path_json, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+# ---------------- Preasignación masiva (desde UI) ----------------
+def preasignar_para_seriales(rf_seriales, app: str = "Tiktok"):
+    """
+    Igual que tu bloque antiguo, pero atómico y seguro entre hilos.
+    Rellena _cuentas_por_serial {serial: {correo, apodo}}.
+    """
+    for serial in rf_seriales:
+        correo, apodo = asignar_correo_y_apodo_a_serial(serial, app=app)
+        if correo and apodo:
+            _cuentas_por_serial[serial] = {"correo": correo, "apodo": apodo}
 
-    print(f"✅ Asignado a '{serial}': {correo} / {apodo}")
-    return correo, apodo
-
-
-# ---------- API pública para la UI ----------
+# ---------------- API para la UI (por serial) ----------------
 def crear_cuenta_para_serial(serial: str):
-    correo, apodo = asignar_correo_y_apodo_a_serial(serial)
+    """
+    Usa preasignación si existe; si no, asigna on-demand y crea.
+    La llamas desde el worker con crear_cuenta_para_serial(serial)
+    """
+    par = _cuentas_por_serial.get(serial)
+    if par:
+        correo, apodo = par["correo"], par["apodo"]
+    else:
+        correo, apodo = asignar_correo_y_apodo_a_serial(serial)
     if not correo or not apodo:
-        print(f"⚠️ {serial}: No se pudo asignar correo/apodo.")
+        print(f"⚠️ {serial}: no hay correo/apodo.")
         return
     CrearTiktokCuenta(serial, correo, apodo)
 
-
-# ---------- Flujo de creación ----------
+# ---------------- Flujo de creación (tu lógica) ----------------
 def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     print(f"➡️ CrearTiktokCuenta: {serial} | {correo} / {apodo}")
     run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap, leerTextoEnRegion = crear_funciones_con_serial(serial)
@@ -105,10 +159,7 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     tap("50%","88.29%")
     time.sleep(1.2)
     coords = buscarTextoEnRegion(("0%","0%","100%","100%"), "Sign")
-    if coords:
-        tap(*coords)
-    else:
-        print("No 'Sign' (puede ya estar en login)")
+    if coords: tap(*coords)
 
     time.sleep(1.2)
     coords = buscarTextoEnRegion(("24.07%","14.53%","85%","77.44%"), "email")
@@ -124,7 +175,6 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     else:
         coords = buscarTextoEnRegion(("3%","7%","100%","50%"), "Email")
         if coords: tap(*coords)
-        else: print("No se encontró 'Email'")
 
     print("📧 Ingresando correo…")
     tap("50.2%","47.6%"); time.sleep(2)
@@ -158,22 +208,18 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     puzzle(serial); time.sleep(3)
     esperar_nickname_o_verificar(serial, correo, apodo)
 
-    # ⚠️ Mueve estas credenciales a variables de entorno en producción
     buscar_y_verificar_link(
         serial,
         user="previ4303@gmail.com",
-        app_password="tibf uoar hpvl kuog",
+        app_password="tibf uoar hpvl kuog",   # ⚠️ llévalo a variables de entorno
         cuenta_hija=correo,
     )
 
     time.sleep(2)
     tap("49.4%","53.2%"); time.sleep(4)
 
-    if apodo:
-        fila = [correo, apodo, "AFifhrauhg342f@", "April 15,2006", "Tiktok", "Samsung", serial]
-        _sheet.append_row(fila)
-        print("✅ Datos agregados a Google Sheets.")
-    else:
-        print("⚠️ Apodo inválido, no se guarda en Sheets.")
+    fila = [correo, apodo, "AFifhrauhg342f@", "April 15,2006", "Tiktok", "Samsung", serial]
+    _sheet.append_row(fila)
+    print("✅ Datos agregados a Google Sheets.")
 
     entrenar(serial)
