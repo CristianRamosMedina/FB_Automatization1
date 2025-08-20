@@ -13,8 +13,8 @@
       },
       {
         "cuenta": "yasmineskin.tips",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
-        "carpeta_nombre": "GRUPO145"
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO153",
+        "carpeta_nombre": "GRUPO153"
       }
     ],
     "cuentasDetectadas": [
@@ -22,11 +22,11 @@
       "natalieglow.tipss",
       "yasmineskin.tips"
     ],
-    "cuentasPorSubir": [
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
       "samanthafresh.health",
       "natalieglow.tipss"
-    ],
-    "cuentasSubidas": []
+    ]
   },
   "R8YY602XCAE": {
     "cuentas": [
@@ -36,49 +36,49 @@
         "carpeta_nombre": "26"
       },
       {
-        "cuenta": "quinnroutine.tips",
+        "cuenta": "allisonvital.heal",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
         "carpeta_nombre": "GRUPO145"
       },
       {
-        "cuenta": "allisonvital.heal",
+        "cuenta": "lilyenergy.healthh",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO146",
         "carpeta_nombre": "GRUPO146"
       },
       {
-        "cuenta": "harperstyle.tipss",
+        "cuenta": "quinnroutine.tips",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO149",
         "carpeta_nombre": "GRUPO149"
       },
       {
-        "cuenta": "lilyenergy.healthh",
+        "cuenta": "harperstyle.tipss",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO150",
         "carpeta_nombre": "GRUPO150"
       }
     ],
     "cuentasDetectadas": [
       "victoriaglow.tipss",
-      "quinnroutine.tips",
       "allisonvital.heal",
-      "harperstyle.tipss",
-      "lilyenergy.healthh"
+      "lilyenergy.healthh",
+      "quinnroutine.tips",
+      "harperstyle.tipss"
     ],
-    "cuentasPorSubir": [
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
       "victoriaglow.tipss"
-    ],
-    "cuentasSubidas": []
+    ]
   },
   "R8YY602XFGW": {
     "cuentas": [
       {
-        "cuenta": "taylorlife.healthh",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\16",
-        "carpeta_nombre": "16"
-      },
-      {
         "cuenta": "candiceglow.tips",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\32",
         "carpeta_nombre": "32"
+      },
+      {
+        "cuenta": "taylorlife.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\16",
+        "carpeta_nombre": "16"
       },
       {
         "cuenta": "oliviaskin.health",
@@ -87,32 +87,32 @@
       }
     ],
     "cuentasDetectadas": [
-      "taylorlife.healthh",
       "candiceglow.tips",
+      "taylorlife.healthh",
       "oliviaskin.health"
     ],
-    "cuentasPorSubir": [
-      "taylorlife.healthh",
-      "candiceglow.tips"
-    ],
-    "cuentasSubidas": []
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "candiceglow.tips",
+      "taylorlife.healthh"
+    ]
   },
   "R8YY602XW7Y": {
     "cuentas": [
-      {
-        "cuenta": "brooklyn.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\3",
-        "carpeta_nombre": "3"
-      },
       {
         "cuenta": "kristencare.healt",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\4",
         "carpeta_nombre": "4"
       },
       {
-        "cuenta": "rachelshine.tips",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\1",
-        "carpeta_nombre": "1"
+        "cuenta": "naomiwelliness.tip",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\2",
+        "carpeta_nombre": "2"
+      },
+      {
+        "cuenta": "brooklyn.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\3",
+        "carpeta_nombre": "3"
       },
       {
         "cuenta": "rebeccafresh.healthh",
@@ -120,26 +120,26 @@
         "carpeta_nombre": "5"
       },
       {
-        "cuenta": "naomiwelliness.tip",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\2",
-        "carpeta_nombre": "2"
+        "cuenta": "rachelshine.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\1",
+        "carpeta_nombre": "1"
       }
     ],
     "cuentasDetectadas": [
-      "brooklyn.tipss",
       "kristencare.healt",
-      "rachelshine.tips",
-      "rebeccafresh.healthh",
-      "naomiwelliness.tip"
-    ],
-    "cuentasPorSubir": [
+      "naomiwelliness.tip",
       "brooklyn.tipss",
-      "kristencare.healt",
-      "rachelshine.tips",
       "rebeccafresh.healthh",
-      "naomiwelliness.tip"
+      "rachelshine.tips"
     ],
-    "cuentasSubidas": []
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "rachelshine.tips",
+      "kristencare.healt",
+      "naomiwelliness.tip",
+      "brooklyn.tipss",
+      "rebeccafresh.healthh"
+    ]
   },
   "R8YY602XGED": {
     "cuentas": [
@@ -155,8 +155,8 @@
       },
       {
         "cuenta": "paigebeauty.healthh",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO146",
-        "carpeta_nombre": "GRUPO146"
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
+        "carpeta_nombre": "GRUPO145"
       }
     ],
     "cuentasDetectadas": [
@@ -164,11 +164,11 @@
       "ursulawellness.tips",
       "paigebeauty.healthh"
     ],
-    "cuentasPorSubir": [
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
       "daisysmooth.tipss",
       "ursulawellness.tips"
-    ],
-    "cuentasSubidas": []
+    ]
   },
   "R8YY602XDAW": {
     "cuentas": [
@@ -187,10 +187,10 @@
       "rachelsmooth.tipss",
       "madelinecare.tips"
     ],
-    "cuentasPorSubir": [
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
       "rachelsmooth.tipss"
-    ],
-    "cuentasSubidas": []
+    ]
   },
   "R8YY602XXFH": {
     "cuentas": [
@@ -209,40 +209,40 @@
       "francescarefresh.healthh",
       "sabrinaroutine.tipss"
     ],
-    "cuentasPorSubir": [
-      "francescarefresh.healthh",
-      "sabrinaroutine.tipss"
-    ],
-    "cuentasSubidas": []
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "sabrinaroutine.tipss",
+      "francescarefresh.healthh"
+    ]
   },
   "R8YY602WSYX": {
     "cuentas": [
       {
-        "cuenta": "daily.scoop4",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO153",
-        "carpeta_nombre": "GRUPO153"
+        "cuenta": "fresh.update85",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
+        "carpeta_nombre": "GRUPO145"
       },
       {
-        "cuenta": "news.flash98",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO154",
-        "carpeta_nombre": "GRUPO154"
+        "cuenta": "daily.scoop4",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO146",
+        "carpeta_nombre": "GRUPO146"
       },
       {
         "cuenta": "pulse.cast1",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO155",
-        "carpeta_nombre": "GRUPO155"
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO149",
+        "carpeta_nombre": "GRUPO149"
       },
       {
-        "cuenta": "fresh.update85",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO156",
-        "carpeta_nombre": "GRUPO156"
+        "cuenta": "news.flash98",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO150",
+        "carpeta_nombre": "GRUPO150"
       }
     ],
     "cuentasDetectadas": [
+      "fresh.update85",
       "daily.scoop4",
-      "news.flash98",
       "pulse.cast1",
-      "fresh.update85"
+      "news.flash98"
     ],
     "cuentasPorSubir": [],
     "cuentasSubidas": []
@@ -250,7 +250,7 @@
   "R8YY602XA3R": {
     "cuentas": [
       {
-        "cuenta": "hype.alert7",
+        "cuenta": "viral.report7",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
         "carpeta_nombre": "GRUPO145"
       },
@@ -260,17 +260,17 @@
         "carpeta_nombre": "GRUPO146"
       },
       {
-        "cuenta": "viral.report7",
+        "cuenta": "trend.alertt5",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO149",
         "carpeta_nombre": "GRUPO149"
       },
       {
-        "cuenta": "trend.alertt5",
+        "cuenta": "buzz.frame1",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO150",
         "carpeta_nombre": "GRUPO150"
       },
       {
-        "cuenta": "buzz.frame1",
+        "cuenta": "hype.alert7",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO151",
         "carpeta_nombre": "GRUPO151"
       },
@@ -281,11 +281,11 @@
       }
     ],
     "cuentasDetectadas": [
-      "hype.alert7",
-      "top.stories229",
       "viral.report7",
+      "top.stories229",
       "trend.alertt5",
       "buzz.frame1",
+      "hype.alert7",
       "breaking.neewss"
     ],
     "cuentasPorSubir": [],
@@ -293,6 +293,21 @@
   },
   "RF8X20ESFGW": {
     "cuentas": [
+      {
+        "cuenta": "ambervital.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\11",
+        "carpeta_nombre": "11"
+      },
+      {
+        "cuenta": "alejandrahealth",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\8",
+        "carpeta_nombre": "8"
+      },
+      {
+        "cuenta": "harper.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\13",
+        "carpeta_nombre": "13"
+      },
       {
         "cuenta": "harper.health8",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\6",
@@ -309,57 +324,37 @@
         "carpeta_nombre": "21"
       },
       {
-        "cuenta": "alejandrahealth",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\8",
-        "carpeta_nombre": "8"
-      },
-      {
-        "cuenta": "harper.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\13",
-        "carpeta_nombre": "13"
-      },
-      {
-        "cuenta": "ambervital.tips",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\11",
-        "carpeta_nombre": "11"
-      },
-      {
         "cuenta": "anthonygreenmitj85",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\GRUPO145",
         "carpeta_nombre": "GRUPO145"
       }
     ],
     "cuentasDetectadas": [
+      "ambervital.tips",
+      "alejandrahealth",
+      "harper.tipss",
       "harper.health8",
       "ivyfresh.tips",
       "emilyfit.tips",
-      "alejandrahealth",
-      "harper.tipss",
-      "ambervital.tips",
       "anthonygreenmitj85"
     ],
-    "cuentasPorSubir": [
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "anthonygreenmitj85",
+      "ambervital.tips",
+      "alejandrahealth",
+      "harper.tipss",
       "harper.health8",
       "ivyfresh.tips",
-      "emilyfit.tips",
-      "alejandrahealth",
-      "harper.tipss",
-      "ambervital.tips",
-      "anthonygreenmitj85"
-    ],
-    "cuentasSubidas": []
+      "emilyfit.tips"
+    ]
   },
   "RF8X20S0C7D": {
     "cuentas": [
       {
-        "cuenta": "brookecalm.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\12",
-        "carpeta_nombre": "12"
-      },
-      {
-        "cuenta": "chloebeauty.health",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\15",
-        "carpeta_nombre": "15"
+        "cuenta": "alexa.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\7",
+        "carpeta_nombre": "7"
       },
       {
         "cuenta": "jessicafit.tipss",
@@ -367,14 +362,19 @@
         "carpeta_nombre": "10"
       },
       {
+        "cuenta": "brookecalm.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\12",
+        "carpeta_nombre": "12"
+      },
+      {
+        "cuenta": "daniellecare.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\14",
+        "carpeta_nombre": "14"
+      },
+      {
         "cuenta": "fionasmooth.tipss",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\22",
         "carpeta_nombre": "22"
-      },
-      {
-        "cuenta": "alexa.tips",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\7",
-        "carpeta_nombre": "7"
       },
       {
         "cuenta": "georgiacare.tips",
@@ -382,33 +382,48 @@
         "carpeta_nombre": "33"
       },
       {
-        "cuenta": "daniellecare.healthh",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\14",
-        "carpeta_nombre": "14"
+        "cuenta": "chloebeauty.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\15",
+        "carpeta_nombre": "15"
       }
     ],
     "cuentasDetectadas": [
-      "brookecalm.tipss",
-      "chloebeauty.health",
-      "jessicafit.tipss",
-      "fionasmooth.tipss",
       "alexa.tips",
-      "georgiacare.tips",
-      "daniellecare.healthh"
-    ],
-    "cuentasPorSubir": [
-      "brookecalm.tipss",
-      "chloebeauty.health",
       "jessicafit.tipss",
+      "brookecalm.tipss",
+      "daniellecare.healthh",
       "fionasmooth.tipss",
-      "alexa.tips",
       "georgiacare.tips",
-      "daniellecare.healthh"
+      "chloebeauty.health"
     ],
-    "cuentasSubidas": []
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "jessicafit.tipss",
+      "alexa.tips",
+      "brookecalm.tipss",
+      "daniellecare.healthh",
+      "fionasmooth.tipss",
+      "georgiacare.tips",
+      "chloebeauty.health"
+    ]
   },
   "R8YY602XXAY": {
     "cuentas": [
+      {
+        "cuenta": "paigewellness.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\18",
+        "carpeta_nombre": "18"
+      },
+      {
+        "cuenta": "elainebeauty.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\30",
+        "carpeta_nombre": "30"
+      },
+      {
+        "cuenta": "tayloractive.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\20",
+        "carpeta_nombre": "20"
+      },
       {
         "cuenta": "nicolehealth.health",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\17",
@@ -418,37 +433,22 @@
         "cuenta": "hannahwellness.healthh",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\25",
         "carpeta_nombre": "25"
-      },
-      {
-        "cuenta": "elainebeauty.health",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\30",
-        "carpeta_nombre": "30"
-      },
-      {
-        "cuenta": "paigewellness.healthh",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\18",
-        "carpeta_nombre": "18"
-      },
-      {
-        "cuenta": "tayloractive.health",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Carrusel\\20",
-        "carpeta_nombre": "20"
       }
     ],
     "cuentasDetectadas": [
+      "paigewellness.healthh",
+      "elainebeauty.health",
+      "tayloractive.health",
       "nicolehealth.health",
-      "hannahwellness.healthh",
+      "hannahwellness.healthh"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
       "elainebeauty.health",
       "paigewellness.healthh",
-      "tayloractive.health"
-    ],
-    "cuentasPorSubir": [
+      "tayloractive.health",
       "nicolehealth.health",
-      "hannahwellness.healthh",
-      "elainebeauty.health",
-      "paigewellness.healthh",
-      "tayloractive.health"
-    ],
-    "cuentasSubidas": []
+      "hannahwellness.healthh"
+    ]
   }
 }
