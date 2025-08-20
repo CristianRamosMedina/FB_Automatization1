@@ -13,7 +13,7 @@ from .config import pytesseract
 import difflib
 # ------------------- FUNCIONES BASE ADB -------------------
 
-DISPOSITIVOS_JSON = "dispositivos.json"
+DISPOSITIVOS_JSON = "data/dispositivos.json"
 CREDENTIALS_FILE = "credenciales.json"
 
 def crear_service_drive():
