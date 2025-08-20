@@ -1,8 +1,7 @@
 import time
 import random
-from .utils import ejecteg, hilos_activos, crear_funciones_con_serial
-
-
+from .utils import ejecteg, crear_funciones_con_serial
+from ..config import hilos_activos
 def entrenar(serial):
     """Simula ver videos en TikTok aleatoriamente."""
     hilos_activos[serial] = True
