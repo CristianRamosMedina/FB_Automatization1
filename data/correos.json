@@ -1,0 +1,447 @@
+{
+  "correos_disponibles": [
+    "con16@techsolues.com",
+    "con17@techsolues.com",
+    "con18@techsolues.com",
+    "con19@techsolues.com",
+    "con20@techsolues.com",
+    "con21@techsolues.com",
+    "con23@techsolues.com",
+    "con24@techsolues.com",
+    "con25@techsolues.com",
+    "con26@techsolues.com",
+    "con27@techsolues.com",
+    "con28@techsolues.com",
+    "con29@techsolues.com",
+    "con30@techsolues.com",
+    "con31@techsolues.com",
+    "con32@techsolues.com",
+    "con33@techsolues.com",
+    "con34@techsolues.com",
+    "con35@techsolues.com",
+    "con36@techsolues.com",
+    "con37@techsolues.com",
+    "con38@techsolues.com",
+    "con39@techsolues.com",
+    "con40@techsolues.com",
+    "con41@techsolues.com",
+    "con42@techsolues.com",
+    "con43@techsolues.com",
+    "con44@techsolues.com",
+    "con45@techsolues.com",
+    "con46@techsolues.com",
+    "con47@techsolues.com",
+    "con48@techsolues.com",
+    "con49@techsolues.com",
+    "con50@techsolues.com",
+    "con51@techsolues.com",
+    "con52@techsolues.com",
+    "con53@techsolues.com",
+    "con54@techsolues.com",
+    "con55@techsolues.com",
+    "con56@techsolues.com",
+    "con57@techsolues.com",
+    "con58@techsolues.com",
+    "con59@techsolues.com",
+    "con60@techsolues.com",
+    "con61@techsolues.com",
+    "con64@techsolues.com",
+    "con65@techsolues.com",
+    "con66@techsolues.com",
+    "con67@techsolues.com",
+    "con68@techsolues.com",
+    "con69@techsolues.com",
+    "con70@techsolues.com",
+    "con71@techsolues.com",
+    "con72@techsolues.com",
+    "con73@techsolues.com",
+    "con74@techsolues.com",
+    "con75@techsolues.com",
+    "con76@techsolues.com",
+    "con77@techsolues.com",
+    "con78@techsolues.com",
+    "con79@techsolues.com",
+    "con80@techsolues.com",
+    "con81@techsolues.com",
+    "con82@techsolues.com",
+    "con83@techsolues.com",
+    "con84@techsolues.com",
+    "con85@techsolues.com",
+    "con86@techsolues.com",
+    "con87@techsolues.com",
+    "con88@techsolues.com",
+    "con89@techsolues.com",
+    "con90@techsolues.com",
+    "con91@techsolues.com",
+    "con92@techsolues.com",
+    "con93@techsolues.com",
+    "con94@techsolues.com",
+    "con95@techsolues.com",
+    "con96@techsolues.com",
+    "con97@techsolues.com",
+    "con98@techsolues.com",
+    "con99@techsolues.com",
+    "con100@techsolues.com"
+  ],
+  "apodos_disponibles": [
+    "ambervital.tips",
+    "brookecalm.tipss",
+    "chloebeauty.health",
+    "daniellecare.healthh",
+    "emilyfit.tips",
+    "fionasmooth.tipss",
+    "graceglow.health",
+    "hannahwellness.healthh",
+    "ivyfresh.tips",
+    "jessicafit.tipss",
+    "kaylawarm.health",
+    "lilyenergy.healthh",
+    "madelinecare.tips",
+    "natalieglow.tipss",
+    "oliviaskin.health",
+    "paigebeauty.healthh",
+    "quinnroutine.tips",
+    "rachelsmooth.tipss",
+    "samanthafresh.health",
+    "taylorlife.healthh",
+    "ursulawellness.tips",
+    "victoriaglow.tipss",
+    "wendyfit.health",
+    "xenabeauty.healthh",
+    "yasmineskin.tips",
+    "zoewarm.tipss",
+    "allisonvital.health",
+    "bethanyenergy.healthh",
+    "Breaking News",
+    "Viral Report",
+    "Trend.Alertt",
+    "candiceglow.tips",
+    "daisysmooth.tipss",
+    "elainebeauty.health",
+    "francescarefresh.healthh",
+    "georgiacare.tips",
+    "news.flash",
+    "viral.digest",
+    "pulse.cast",
+    "buzz.frame",
+    "Fresh.Update",
+    "Top.Stories",
+    "harperstyle.tipss",
+    "karenskin.tips",
+    "laurenroutine.tipss",
+    "marissalife.health",
+    "noellefresh.healthh",
+    "opheliaenergy.tips",
+    "phoebebeauty.tipss",
+    "rebeccaskin.health",
+    "sabrinaglow.healthh",
+    "tessawarm.tips",
+    "unahealth.tipss",
+    "valeriecare.health",
+    "whitneyfit.healthh",
+    "xenialife.tips",
+    "yolandabeauty.tipss",
+    "zoefresh.health",
+    "arielvital.healthh",
+    "brendasmooth.tips",
+    "celineglow.tipss",
+    "donnaskin.health",
+    "ellieroutine.healthh",
+    "fayecare.tips",
+    "giselestyle.tipss",
+    "haleyfit.health",
+    "inezvibe.healthh",
+    "joanenergy.tips",
+    "kyliesmooth.tipss",
+    "leahbeauty.health",
+    "mollyfresh.healthh",
+    "nikkicare.tips",
+    "opalfit.tipss",
+    "peytonskin.health",
+    "queeniewellness.healthh",
+    "rosalieglow.tips",
+    "siennasmooth.tipss",
+    "taraenergy.health",
+    "ursulafit.healthh",
+    "veronicaskin.tips",
+    "willowbeauty.tipss",
+    "xandrawellness.health",
+    "yasminecare.healthh",
+    "zoeyglow.tips",
+    "amberwarm.tipss",
+    "brittanyfresh.health",
+    "cassandrabeauty.healthh",
+    "dianacalm.tips",
+    "evangelinesmooth.tipss",
+    "feliciaglows.health",
+    "genevieveenergy.healthh",
+    "hazelfresh.tips",
+    "ilanafit.tipss",
+    "julianneroutine.health",
+    "kelseyvital.healthh",
+    "lilianabeauty.tips",
+    "mckenziesmooth.tipss",
+    "ninaskin.health",
+    "oliviaroutine.healthh",
+    "pattyglow.tips",
+    "quincywarm.tipss",
+    "rosalindabeauty.health",
+    "skylerfresh.healthh",
+    "tracysmooth.tips",
+    "ursulaglows.tipss",
+    "valeriabeauty.health",
+    "whitneylife.healthh",
+    "xenafit.tips",
+    "yvetteenergy.tipss",
+    "zeldaskin.health",
+    "abbycare.healthh",
+    "briannabeauty.tips",
+    "carolynfresh.tipss",
+    "darlasmooth.health",
+    "elainaglow.healthh",
+    "fayroutine.tips",
+    "gwenfit.tipss",
+    "haleyenergy.health",
+    "islasmooth.healthh",
+    "janinebeauty.tips",
+    "kristenglow.tipss"
+  ],
+  "Tiktok": {
+    "RF8X20ESFGW": {
+      "cuentas": [
+        {
+          "correo": "con24@techsolues.com",
+          "apodo": "ivyfresh.tips"
+        },
+        {
+          "correo": "con16@techsolues.com",
+          "apodo": "ambervital.tips"
+        },
+        {
+          "correo": "con20@techsolues.com",
+          "apodo": "emilyfit.tips"
+        }
+      ]
+    },
+    "RF8X20S0C7D": {
+      "cuentas": [
+        {
+          "correo": "con25@techsolues.com",
+          "apodo": "jessicafit.tipss"
+        },
+        {
+          "correo": "con17@techsolues.com",
+          "apodo": "brookecalm.tipss"
+        },
+        {
+          "correo": "con19@techsolues.com",
+          "apodo": "daniellecare.healthh"
+        },
+        {
+          "correo": "con18@techsolues.com",
+          "apodo": "chloebeauty.health"
+        },
+        {
+          "correo": "con21@techsolues.com",
+          "apodo": "fionasmooth.tipss"
+        },
+        {
+          "correo": "con52@techsolues.com",
+          "apodo": "georgiacare.tips"
+        }
+      ]
+    },
+    "R8YY602XW7Y": {
+      "cuentas": [
+        {
+          "correo": "con27@techsolues.com",
+          "apodo": "graceglow.health"
+        }
+      ]
+    },
+    "R8YY602XXAY": {
+      "cuentas": [
+        {
+          "correo": "con23@techsolues.com",
+          "apodo": "hannahwellness.healthh"
+        },
+        {
+          "correo": "con50@techsolues.com",
+          "apodo": "elainebeauty.health"
+        }
+      ]
+    },
+    "R8YY602XXFH": {
+      "cuentas": [
+        {
+          "correo": "con26@techsolues.com",
+          "apodo": "kaylawarm.health"
+        },
+        {
+          "correo": "con39@techsolues.com",
+          "apodo": "wendyfit.health"
+        },
+        {
+          "correo": "con51@techsolues.com",
+          "apodo": "francescarefresh.healthh"
+        }
+      ]
+    },
+    "R8YY602XCAE": {
+      "cuentas": [
+        {
+          "correo": "con28@techsolues.com",
+          "apodo": "lilyenergy.healthh"
+        },
+        {
+          "correo": "con33@techsolues.com",
+          "apodo": "quinnroutine.tips"
+        },
+        {
+          "correo": "con43@techsolues.com",
+          "apodo": "allisonvital.health"
+        },
+        {
+          "correo": "con61@techsolues.com",
+          "apodo": "harperstyle.tipss"
+        }
+      ]
+    },
+    "R8YY602XDAW": {
+      "cuentas": [
+        {
+          "correo": "con29@techsolues.com",
+          "apodo": "madelinecare.tips"
+        },
+        {
+          "correo": "con34@techsolues.com",
+          "apodo": "rachelsmooth.tipss"
+        },
+        {
+          "correo": "con42@techsolues.com",
+          "apodo": "zoewarm.tipss"
+        }
+      ]
+    },
+    "R8YY602XDEX": {
+      "cuentas": [
+        {
+          "correo": "con30@techsolues.com",
+          "apodo": "natalieglow.tipss"
+        },
+        {
+          "correo": "con35@techsolues.com",
+          "apodo": "samanthafresh.health"
+        },
+        {
+          "correo": "con38@techsolues.com",
+          "apodo": "victoriaglow.tipss"
+        },
+        {
+          "correo": "con41@techsolues.com",
+          "apodo": "yasmineskin.tips"
+        }
+      ]
+    },
+    "R8YY602XFGW": {
+      "cuentas": [
+        {
+          "correo": "con31@techsolues.com",
+          "apodo": "oliviaskin.health"
+        },
+        {
+          "correo": "con36@techsolues.com",
+          "apodo": "taylorlife.healthh"
+        },
+        {
+          "correo": "con40@techsolues.com",
+          "apodo": "xenabeauty.healthh"
+        },
+        {
+          "correo": "con48@techsolues.com",
+          "apodo": "candiceglow.tips"
+        }
+      ]
+    },
+    "R8YY602XGED": {
+      "cuentas": [
+        {
+          "correo": "con32@techsolues.com",
+          "apodo": "paigebeauty.healthh"
+        },
+        {
+          "correo": "con37@techsolues.com",
+          "apodo": "ursulawellness.tips"
+        },
+        {
+          "correo": "con44@techsolues.com",
+          "apodo": "bethanyenergy.healthh"
+        },
+        {
+          "correo": "con49@techsolues.com",
+          "apodo": "daisysmooth.tipss"
+        }
+      ]
+    },
+    "R8YY602WSYX": {
+      "cuentas": [
+        {
+          "correo": "con45@techsolues.com",
+          "apodo": "Breaking News"
+        },
+        {
+          "correo": "con53@techsolues.com",
+          "apodo": "news.flash"
+        },
+        {
+          "correo": "con55@techsolues.com",
+          "apodo": "daily.scoop4"
+        },
+        {
+          "correo": "con57@techsolues.com",
+          "apodo": "pulse.cast"
+        },
+        {
+          "correo": "con59@techsolues.com",
+          "apodo": "Fresh.Update"
+        },
+        {
+          "correo": "con62@techsolues.com",
+          "apodo": "isabellafit.health"
+        }
+      ]
+    },
+    "R8YY602XA3R": {
+      "cuentas": [
+        {
+          "correo": "con46@techsolues.com",
+          "apodo": "Viral Report"
+        },
+        {
+          "correo": "con47@techsolues.com",
+          "apodo": "Trend.Alertt"
+        },
+        {
+          "correo": "con54@techsolues.com",
+          "apodo": "viral.digest"
+        },
+        {
+          "correo": "con56@techsolues.com",
+          "apodo": "hype.alert7"
+        },
+        {
+          "correo": "con58@techsolues.com",
+          "apodo": "buzz.frame"
+        },
+        {
+          "correo": "con60@techsolues.com",
+          "apodo": "Top.Stories"
+        },
+        {
+          "correo": "con63@techsolues.com",
+          "apodo": "jacquelinevibe.healthh"
+        }
+      ]
+    }
+  }
+}

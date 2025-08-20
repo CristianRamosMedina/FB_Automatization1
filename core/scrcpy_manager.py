@@ -3,7 +3,7 @@ import psutil
 import time
 import math
 import ctypes
-from .paths import ADB_PATH, SCRCPY_PATH
+from core.paths import ADB_PATH, SCRCPY_PATH  
 
 
 def obtener_seriales():

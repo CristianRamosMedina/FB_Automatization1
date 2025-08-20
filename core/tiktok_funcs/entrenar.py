@@ -1,13 +1,11 @@
 import time
 import random
+from .utils import ejecteg, crear_funciones_con_serial
 from ..config import hilos_activos
-from ..adb_utils import crear_funciones_con_serial
-from .utils import ejecteg
-
 def entrenar(serial):
     """Simula ver videos en TikTok aleatoriamente."""
     hilos_activos[serial] = True
-    run, tap, long_tap, move, write, buscarTextoEnRegion = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     ciclos = random.randint(90, 110)
     run("shell input keyevent 224")  # Encender pantalla
