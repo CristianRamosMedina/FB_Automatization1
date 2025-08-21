@@ -1,0 +1,62 @@
+{
+    "R8YY602WSYX": {
+        "cuentas": [
+            {
+                "cuenta": "daily.scoop4",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian 2",
+                "carpeta_nombre": "GRUPO143"
+            },
+            {
+                "cuenta": "news.flash98",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
+                "carpeta_nombre": "GRUPO145"
+            }
+        ],
+        "cuentasDetectadas": [
+            "daily.scoop4",
+            "news.flash98"
+        ],
+        "cuentasPorSubir": [
+            "daily.scoop4",
+            "news.flash98"
+        ],
+        "cuentasSubidas": []
+    },
+    "R8YY602XA3R": {
+        "cuentas": [
+            {
+                "cuenta": "hype.alert7",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
+                "carpeta_nombre": "Australian Woman"
+            },
+            {
+                "cuenta": "viral.report7",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+                "carpeta_nombre": "Asian"
+            },
+            {
+                "cuenta": "breaking.neewss",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\Caucasian",
+                "carpeta_nombre": "Caucasian"
+            },
+            {
+                "cuenta": "trend.alertt5",
+                "carpeta_path": "C:\\Users\\Acer\\Documents\\Carrusel\\ImagenesCrudas\\Videos\\African 2",
+                "carpeta_nombre": "African 2"
+            }
+        ],
+        "cuentasDetectadas": [
+            "hype.alert7",
+            "viral.report7",
+            "breaking.neewss",
+            "trend.alertt5"
+        ],
+        "cuentasPorSubir": [
+            "hype.alert7",
+            "viral.report7",
+            "breaking.neewss",
+            "trend.alertt5"
+        ],
+        "cuentasSubidas": []
+    }
+}

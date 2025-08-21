@@ -358,6 +358,7 @@ def crear_funciones_con_serial(serial):
             tap(tx, ty)
             return {"detectado": False, "encontrados": 0}
 
+    
        
     def leerTextoEnRegion(region):
         resultado = subprocess.run([ADB_PATH, "-s", serial, 'exec-out', 'screencap', '-p'], capture_output=True)
@@ -371,3 +372,4 @@ def crear_funciones_con_serial(serial):
 
     
     return run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap,leerTextoEnRegion
+    

@@ -36,7 +36,13 @@ def cargar_dispositivos():
         with open("data/dispositivos.json", "r") as f:
             return json.load(f)
     return {}
-    
+
+def cargar_videos():
+    if os.path.exists("data/videos.json"):
+        with open("data/videos.json", "r") as f:
+            return json.load(f)
+    return {}
+      
 
 # ------------------- Helpers ADB/UI -------------------
 def silenciar_dispositivo(serial: str):
@@ -122,12 +128,13 @@ def switchAccount(serial: str):
     # Ir al perfil (press & hold como tenías)
     if should_stop(serial): return
     long_tap("90.09%", "92.31%")
-    time.sleep(0.5)
+    time.sleep(1)
 
     # Si aparece "keep", tocar el texto a la izquierda (tu lógica original)
     if should_stop(serial): return
     if buscarTextoEnRegion(("20.57%","4.6%","98%","8%"), "keep"):
         tap("40%","10.5%")
+        time.sleep(0.8)
     else:
         print("Estamos safe")
 

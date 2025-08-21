@@ -45,10 +45,6 @@
     "con59@techsolues.com",
     "con60@techsolues.com",
     "con61@techsolues.com",
-    "con64@techsolues.com",
-    "con65@techsolues.com",
-    "con66@techsolues.com",
-    "con67@techsolues.com",
     "con68@techsolues.com",
     "con69@techsolues.com",
     "con70@techsolues.com",
@@ -127,84 +123,195 @@
     "Fresh.Update",
     "Top.Stories",
     "harperstyle.tipss",
-    "karenskin.tips",
-    "laurenroutine.tipss",
-    "marissalife.health",
-    "noellefresh.healthh",
-    "opheliaenergy.tips",
-    "phoebebeauty.tipss",
-    "rebeccaskin.health",
-    "sabrinaglow.healthh",
-    "tessawarm.tips",
-    "unahealth.tipss",
-    "valeriecare.health",
-    "whitneyfit.healthh",
-    "xenialife.tips",
-    "yolandabeauty.tipss",
-    "zoefresh.health",
-    "arielvital.healthh",
-    "brendasmooth.tips",
-    "celineglow.tipss",
-    "donnaskin.health",
-    "ellieroutine.healthh",
-    "fayecare.tips",
-    "giselestyle.tipss",
-    "haleyfit.health",
-    "inezvibe.healthh",
-    "joanenergy.tips",
-    "kyliesmooth.tipss",
-    "leahbeauty.health",
-    "mollyfresh.healthh",
-    "nikkicare.tips",
-    "opalfit.tipss",
-    "peytonskin.health",
-    "queeniewellness.healthh",
-    "rosalieglow.tips",
-    "siennasmooth.tipss",
-    "taraenergy.health",
-    "ursulafit.healthh",
-    "veronicaskin.tips",
-    "willowbeauty.tipss",
-    "xandrawellness.health",
-    "yasminecare.healthh",
-    "zoeyglow.tips",
-    "amberwarm.tipss",
-    "brittanyfresh.health",
-    "cassandrabeauty.healthh",
-    "dianacalm.tips",
-    "evangelinesmooth.tipss",
-    "feliciaglows.health",
-    "genevieveenergy.healthh",
-    "hazelfresh.tips",
-    "ilanafit.tipss",
-    "julianneroutine.health",
-    "kelseyvital.healthh",
-    "lilianabeauty.tips",
-    "mckenziesmooth.tipss",
-    "ninaskin.health",
-    "oliviaroutine.healthh",
-    "pattyglow.tips",
-    "quincywarm.tipss",
-    "rosalindabeauty.health",
-    "skylerfresh.healthh",
-    "tracysmooth.tips",
-    "ursulaglows.tipss",
-    "valeriabeauty.health",
-    "whitneylife.healthh",
-    "xenafit.tips",
-    "yvetteenergy.tipss",
-    "zeldaskin.health",
-    "abbycare.healthh",
-    "briannabeauty.tips",
-    "carolynfresh.tipss",
-    "darlasmooth.health",
-    "elainaglow.healthh",
-    "fayroutine.tips",
-    "gwenfit.tipss",
-    "haleyenergy.health",
-    "islasmooth.healthh",
-    "janinebeauty.tips",
-    "kristenglow.tipss"
+    "ava.tips",
+    "kyla.tips",
+    "ruth.tips",
+    "nori.tipss",
+    "ella.tips",
+    "kira.health",
+    "faye.health",
+    "ruby.healthh",
+    "kira.healthh",
+    "kyle.tips",
+    "luci.tipss",
+    "cora.tips",
+    "ebba.health",
+    "vivi.tips",
+    "nira.healthh",
+    "aral.tipss",
+    "jazz.tips",
+    "neva.tipss",
+    "nori.tips",
+    "joan.tipss",
+    "kiya.tipss",
+    "lisa.health",
+    "fawn.healthh",
+    "kiya.tips",
+    "joy.tips",
+    "luna.health",
+    "joy.tipss",
+    "nyla.tipss",
+    "lani.tips",
+    "tina.tips",
+    "dina.health",
+    "bree.tipss",
+    "sade.health",
+    "aria.tipss",
+    "ella.healthh",
+    "noa.tipss",
+    "neva.health",
+    "amy.healthh",
+    "gigi.tipss",
+    "esme.healthh",
+    "fawn.tipss",
+    "rosa.tipss",
+    "anya.healthh",
+    "dior.tipss",
+    "skye.tipss",
+    "nala.health",
+    "ryan.tipss",
+    "ivy.health",
+    "cora.healthh",
+    "anya.tipss",
+    "ebba.tipss",
+    "mona.healthh",
+    "noa.healthh",
+    "tori.health",
+    "zena.health",
+    "yara.health",
+    "gail.tipss",
+    "lana.healthh",
+    "alma.tipss",
+    "dawn.healthh",
+    "amy.tips",
+    "ella.health",
+    "ruth.healthh",
+    "ava.tipss",
+    "hope.health",
+    "rosa.health",
+    "naya.tipss",
+    "lynn.health",
+    "zuri.health",
+    "zoey.tipss",
+    "kali.tips",
+    "cora.health",
+    "ivy.healthh",
+    "fina.tipss",
+    "zara.healthh",
+    "zoey.health",
+    "nora.health",
+    "mila.tipss",
+    "dina.tipss",
+    "anya.tips",
+    "ivy.tipss",
+    "gwen.tipss",
+    "ryan.health",
+    "alma.health",
+    "nora.tipss",
+    "neva.healthh",
+    "fawn.health",
+    "naya.healthh",
+    "esme.tipss",
+    "vega.tipss",
+    "kyla.health",
+    "joan.tipss",
+    "june.health",
+    "zoey.healthh",
+    "chlo.tipss",
+    "bree.tipss",
+    "erin.health",
+    "ruby.healthh",
+    "joy.tipss",
+    "fawn.healthh",
+    "ella.tipss",
+    "kali.healthh",
+    "zoey.tipss",
+    "nira.healthh",
+    "noa.healthh",
+    "nyla.health",
+    "hope.tipss",
+    "nala.tipss",
+    "june.tipss",
+    "amy.healthh",
+    "tess.tipss",
+    "ryan.health",
+    "alma.tipss",
+    "zara.tipss",
+    "mona.tipss",
+    "gwen.health",
+    "neva.tipss",
+    "dawn.tipss",
+    "sade.tipss",
+    "rosa.tipss",
+    "vega.health",
+    "lynn.tipss",
+    "cora.tipss",
+    "nyla.tipss",
+    "kira.healthh",
+    "lani.tips",
+    "lola.tipss",
+    "sara.healthh",
+    "noa.tipss",
+    "anya.tipss",
+    "kyla.tipss",
+    "aria.healthh",
+    "lacy.tipss",
+    "nala.health",
+    "skye.health",
+    "anya.tips",
+    "rosa.health",
+    "lana.tipss",
+    "amy.tips",
+    "nora.tipss",
+    "erin.tipss",
+    "zoey.healthh",
+    "lani.health",
+    "ebba.healthh",
+    "ava.healthh",
+    "tess.health",
+    "neva.health",
+    "lana.healthh",
+    "cora.healthh",
+    "ivy.health",
+    "vivi.tipss",
+    "jazz.tipss",
+    "dawn.tipss",
+    "noa.healthh",
+    "naya.healthh",
+    "lily.healthh",
+    "zuri.health",
+    "ella.tipss",
+    "rosa.health",
+    "skye.tipss",
+    "amy.tips",
+    "nori.tips",
+    "joy.tips",
+    "tina.healthh",
+    "chlo.tipss",
+    "luci.tipss",
+    "ruth.tipss",
+    "ryan.tipss",
+    "nala.tipss",
+    "aria.tipss",
+    "dina.health",
+    "zena.tipss",
+    "dior.tipss",
+    "vega.tipss",
+    "mila.tipss",
+    "ruth.healthh",
+    "kali.tips",
+    "zara.healthh",
+    "esme.healthh",
+    "tori.tipss",
+    "faye.health",
+    "joan.tipss",
+    "ella.healthh",
+    "kyla.tipss",
+    "gail.tipss",
+    "cora.health",
+    "tina.tipss",
+    "nora.health",
+    "zoey.tipss"
   ],
   "Tiktok": {
     "RF8X20ESFGW": {
@@ -220,6 +327,10 @@
         {
           "correo": "con20@techsolues.com",
           "apodo": "emilyfit.tips"
+        },
+        {
+          "correo": "con74@techsolues.com",
+          "apodo": "faye.health"
         }
       ]
     },
@@ -256,6 +367,10 @@
         {
           "correo": "con27@techsolues.com",
           "apodo": "graceglow.health"
+        },
+        {
+          "correo": "con71@techsolues.com",
+          "apodo": "nori.tipss"
         }
       ]
     },
@@ -268,6 +383,10 @@
         {
           "correo": "con50@techsolues.com",
           "apodo": "elainebeauty.health"
+        },
+        {
+          "correo": "con72@techsolues.com",
+          "apodo": "ella.tips"
         }
       ]
     },
@@ -284,6 +403,10 @@
         {
           "correo": "con51@techsolues.com",
           "apodo": "francescarefresh.healthh"
+        },
+        {
+          "correo": "con73@techsolues.com",
+          "apodo": "kira.health"
         }
       ]
     },
@@ -304,6 +427,14 @@
         {
           "correo": "con61@techsolues.com",
           "apodo": "harperstyle.tipss"
+        },
+        {
+          "correo": "con67@techsolues.com",
+          "apodo": "noellefresh.healthh"
+        },
+        {
+          "correo": "con76@techsolues.com",
+          "apodo": "kira.healthh"
         }
       ]
     },
@@ -320,6 +451,10 @@
         {
           "correo": "con42@techsolues.com",
           "apodo": "zoewarm.tipss"
+        },
+        {
+          "correo": "con77@techsolues.com",
+          "apodo": "kyle.tips"
         }
       ]
     },
@@ -340,6 +475,10 @@
         {
           "correo": "con41@techsolues.com",
           "apodo": "yasmineskin.tips"
+        },
+        {
+          "correo": "con68@techsolues.com",
+          "apodo": "ava.tips"
         }
       ]
     },
@@ -360,6 +499,10 @@
         {
           "correo": "con48@techsolues.com",
           "apodo": "candiceglow.tips"
+        },
+        {
+          "correo": "con69@techsolues.com",
+          "apodo": "kyla.tips"
         }
       ]
     },
@@ -380,6 +523,10 @@
         {
           "correo": "con49@techsolues.com",
           "apodo": "daisysmooth.tipss"
+        },
+        {
+          "correo": "con70@techsolues.com",
+          "apodo": "ruth.tips"
         }
       ]
     },
@@ -408,6 +555,10 @@
         {
           "correo": "con62@techsolues.com",
           "apodo": "isabellafit.health"
+        },
+        {
+          "correo": "con65@techsolues.com",
+          "apodo": "laurenroutine.tipss"
         }
       ]
     },
@@ -440,6 +591,14 @@
         {
           "correo": "con63@techsolues.com",
           "apodo": "jacquelinevibe.healthh"
+        },
+        {
+          "correo": "con66@techsolues.com",
+          "apodo": "marissalife.health"
+        },
+        {
+          "correo": "con75@techsolues.com",
+          "apodo": "ruby.healthh"
         }
       ]
     }

@@ -83,7 +83,7 @@ def mover_puzzle(serial):
 
 def detectarTextoObjetivo(texto_objetivo, region, serial):
     Width,Height = get_screen_size(serial)
-    run, tap, long_tap, move, write, buscarTextoEnRegion , leerTextoEnRegion = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
 
     resultado = subprocess.run([ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"], capture_output=True)
     imagen_bytes = resultado.stdout
@@ -115,7 +115,7 @@ def detectarTextoObjetivo(texto_objetivo, region, serial):
         return False
 
 def capture_screen(serial):
-    run, tap, long_tap, move, write, buscarTextoEnRegion , leerTextoEnRegion = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     resultado = subprocess.run([ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"], capture_output=True)
     imagen_bytes = resultado.stdout
     if not imagen_bytes:
