@@ -1,13 +1,16 @@
 # ui/main_window.py
 import sys
 import threading
+import os
+import subprocess
+from pathlib import Path
 
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QScrollArea,
     QGridLayout, QCheckBox, QApplication, QLabel, QGraphicsOpacityEffect,
     QFrame, QSizePolicy
 )
-from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve, QObject, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve, QObject, QThread, pyqtSignal, QTimer
 from PyQt5.QtGui import QPixmap
 
 # ✅ Importaciones locales
@@ -24,6 +27,8 @@ from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
     crear_cuenta_para_serial,
 )
 
+# 🚀 Módulos de carruseles/unpack (se intentará usar .main() si existe)
+from core.tiktok_funcs.CarruselesCrearImagenes import carruseles, unpack
 
 
 # =================== Workers en QThread ===================
@@ -91,6 +96,25 @@ class GenericWorker(QObject):
             self.failed.emit(self.serial, str(e))
         finally:
             hilos_activos[self.serial] = False
+
+
+# =================== Worker sin argumentos/serial ===================
+class NoArgWorker(QObject):
+    finished = pyqtSignal()
+    failed   = pyqtSignal(str)
+
+    def __init__(self, func):
+        super().__init__()
+        self.func = func  # callable sin args
+
+    def run(self):
+        try:
+            print(f"[NoArgWorker] ▶ Ejecutando {getattr(self.func, '__name__', str(self.func))}()")
+            self.func()
+            print(f"[NoArgWorker] ✅ Finalizado")
+            self.finished.emit()
+        except Exception as e:
+            self.failed.emit(str(e))
 
 
 # =================== Ventana principal ===================
@@ -208,7 +232,6 @@ class MainWindow(QWidget):
         btn_crear_cuentas.setObjectName("create")
         btn_crear_cuentas.clicked.connect(self.crear_cuentas_seleccionados)
 
-
         btn_detener_sel = QPushButton("⏹ Detener (seleccionados)"); btn_detener_sel.setObjectName("danger")
         btn_detener_sel.clicked.connect(self.detener_seleccionados)
 
@@ -237,6 +260,46 @@ class MainWindow(QWidget):
         tbv.addLayout(row1)
         tbv.addLayout(row2)
         root.addWidget(toolbar)
+
+        # ====== Sección: Creación de carruseles ======
+        sep = QFrame()
+        sep.setFrameShape(QFrame.HLine)
+        sep.setStyleSheet("color:#242a36;")
+        root.addWidget(sep)
+
+        carru_section = QFrame()
+        carru_section.setObjectName("Toolbar")
+        carru_layout = QHBoxLayout(carru_section)
+        carru_layout.setContentsMargins(10, 10, 10, 10)
+        carru_layout.setSpacing(8)
+
+        lbl_carru = QLabel("🖼️  Creación de carruseles")
+        lbl_carru.setStyleSheet("font-weight:600;")
+
+        btn_crear_carruseles = QPushButton("🧩 Crear carruseles")
+        btn_crear_carruseles.setObjectName("create")
+        btn_crear_carruseles.clicked.connect(self._run_carruseles_async)
+
+        btn_unpack = QPushButton("📦 Unpack")
+        btn_unpack.setObjectName("create")
+        btn_unpack.clicked.connect(self._run_unpack_async)
+
+        # Label de estado con animación de puntos
+        lbl_carru_status = QLabel("—")
+        lbl_carru_status.setStyleSheet("color:#a8b3cf;")
+        self._lbl_carru_status = lbl_carru_status  # guardar referencia
+
+        carru_layout.addWidget(lbl_carru)
+        carru_layout.addStretch(1)
+        carru_layout.addWidget(btn_crear_carruseles)
+        carru_layout.addWidget(btn_unpack)
+        carru_layout.addWidget(lbl_carru_status)
+
+        root.addWidget(carru_section)
+
+        # referencias para habilitar/deshabilitar
+        self._btn_crear_carruseles = btn_crear_carruseles
+        self._btn_unpack = btn_unpack
 
         # ====== Checkbox "Marcar todos" ======
         marcar_todos_layout = QHBoxLayout()
@@ -314,6 +377,109 @@ class MainWindow(QWidget):
         scroll.setWidget(container)
         root.addWidget(scroll, 1)
 
+        # === Inicializa timer de animación de puntos (lazy)
+        self._ell_timer = None
+        self._ell_base_text = ""
+        self._ell_count = 0
+
+    # ====== Lanzadores backend (sin bloquear UI) ======
+    def _call_carruseles(self):
+        """Intenta carruseles.main(); si no existe, fallback a ejecutar el script."""
+        if hasattr(carruseles, "main"):
+            carruseles.main()
+            return
+        base = Path(__file__).resolve().parents[1]  # .../ControlDePantallas
+        script = base / "core" / "tiktok_funcs" / "CarruselesCrearImagenes" / "carruseles.py"
+        subprocess.run([sys.executable, str(script)], check=True)
+
+    def _call_unpack(self):
+        """Intenta unpack.main(); si no existe, fallback a ejecutar el script."""
+        if hasattr(unpack, "main"):
+            unpack.main()
+            return
+        base = Path(__file__).resolve().parents[1]
+        script = base / "core" / "tiktok_funcs" / "CarruselesCrearImagenes" / "unpack.py"
+        subprocess.run([sys.executable, str(script)], check=True)
+
+    # ====== Animación "Realizando..." con puntos ======
+    def _ensure_ell_timer(self):
+        if self._ell_timer is not None:
+            return
+        self._ell_timer = QTimer(self)
+        self._ell_timer.setInterval(400)  # velocidad de los puntos
+        self._ell_timer.timeout.connect(self._on_ell_tick)
+
+    def _on_ell_tick(self):
+        self._ell_count = (self._ell_count + 1) % 4
+        dots = "." * self._ell_count
+        self._lbl_carru_status.setText(f"{self._ell_base_text}{dots}")
+
+    def _start_busy(self, base_text: str):
+        """Inicia animación 'Realizando…' y deshabilita botones."""
+        self._ensure_ell_timer()
+        self._ell_base_text = base_text
+        self._ell_count = 0
+        self._lbl_carru_status.setText(base_text)
+        self._ell_timer.start()
+        # deshabilitar botones mientras corre
+        self._btn_crear_carruseles.setEnabled(False)
+        self._btn_unpack.setEnabled(False)
+
+    def _stop_busy(self, final_text: str, ok=True):
+        """Detiene animación y muestra resultado."""
+        self._ensure_ell_timer()
+        self._ell_timer.stop()
+        prefix = "✅ " if ok else "💥 "
+        self._lbl_carru_status.setText(prefix + final_text)
+        # re-habilitar
+        self._btn_crear_carruseles.setEnabled(True)
+        self._btn_unpack.setEnabled(True)
+
+    # ====== Lanzadores async con animación ======
+    def _run_carruseles_async(self):
+        self._start_busy("Realizando carruseles")
+        th = QThread(self)
+        worker = NoArgWorker(self._call_carruseles)
+        worker.moveToThread(th)
+
+        th.started.connect(worker.run)
+        worker.finished.connect(lambda: self._on_noarg_done("Carruseles"))
+        worker.failed.connect(lambda err: self._on_noarg_fail("Carruseles", err))
+
+        worker.finished.connect(th.quit)
+        worker.failed.connect(th.quit)
+        th.finished.connect(th.deleteLater)
+
+        self._th_carru = th
+        self._wk_carru = worker
+        th.start()
+
+    def _run_unpack_async(self):
+        self._start_busy("Realizando unpack")
+        th = QThread(self)
+        worker = NoArgWorker(self._call_unpack)
+        worker.moveToThread(th)
+
+        th.started.connect(worker.run)
+        worker.finished.connect(lambda: self._on_noarg_done("Unpack"))
+        worker.failed.connect(lambda err: self._on_noarg_fail("Unpack", err))
+
+        worker.finished.connect(th.quit)
+        worker.failed.connect(th.quit)
+        th.finished.connect(th.deleteLater)
+
+        self._th_unpack = th
+        self._wk_unpack = worker
+        th.start()
+
+    def _on_noarg_done(self, nombre):
+        print(f"✅ {nombre} finalizado.")
+        self._stop_busy(f"{nombre} listo", ok=True)
+
+    def _on_noarg_fail(self, nombre, err):
+        print(f"💥 Error en {nombre}: {err}")
+        self._stop_busy(f"{nombre} con error", ok=False)
+
     # ====== Flujo Detectar → Dialogo → Cambiar (sin bloquear UI) ======
     def flujo_cuentas(self):
         seleccionados = [s for s in self.seriales if self.is_selected(s)]
@@ -349,6 +515,7 @@ class MainWindow(QWidget):
             self._scan_workers[serial] = worker
 
             th.start()
+
     def crear_cuentas_seleccionados(self):
         seriales = [s for s in self.seriales if self.is_selected(s)]
         if not seriales:
