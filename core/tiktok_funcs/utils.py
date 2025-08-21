@@ -36,6 +36,10 @@ def cargar_dispositivos():
         with open("data/dispositivos.json", "r") as f:
             return json.load(f)
     return {}
+def AbrirJsonCarruseles():
+    if os.path.exists("data/carrusel.json"):
+        with open("data/carrusel.json", "r", encoding="utf-8") as f:
+            return json.load(f)
 
 def cargar_videos():
     if os.path.exists("data/videos.json"):
