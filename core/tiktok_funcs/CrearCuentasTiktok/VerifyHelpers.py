@@ -1,8 +1,9 @@
-import time, requests,datetime,imaplib,re,email
-from datetime import timezone,timedelta
-from ..utils import parse_coord,get_screen_size,crear_funciones_con_serial
+import time, requests, imaplib, re, email
+from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 from bs4 import BeautifulSoup
+from ..utils import parse_coord, get_screen_size, crear_funciones_con_serial
+
 
 def esperar_nickname_o_verificar(serial,correo,apodo):
     w,h=get_screen_size(serial)
@@ -51,17 +52,41 @@ def esperar_nickname_o_verificar(serial,correo,apodo):
                     tap("50%","90.38%")
         else:
             print("❌ No se detectó nickname luego de verify. Continuamos sin escribir apodo.")
+    elif "check your email" in texto:
+        print("🔐 Detectado verify. Ejecutando verify()...")
+        verify(serial,correo)
+        time.sleep(4)
+
+        texto = leerTextoEnRegion(region)
+        if "create nickname" in texto:
+            print("✅ Detectado tras verify. Continuamos.")
+            write(apodo)
+            coords = buscarTextoEnRegion(("1.76%", "37.39%", "96.39%", "93.59%"),"continue")
+            if coords:
+                tap(*coords)
+            else:
+                coords = buscarTextoEnRegion(("1.76%", "37.39%", "96.39%", "93.59%"),"next")
+                if coords:
+                    tap(*coords) 
+                else:    
+                    tap("86.57%", "97.47%")
+                    time.sleep(1)
+                    tap("50%","90.38%")
+        else:
+            print("❌ No se detectó nickname luego de verify. Continuamos sin escribir apodo.")        
 
     else:
         print("❌ Texto no esperado. Continuamos sin hacer nada.")
 
 
+
 def verify(serial,correo):
-    run, tap, long_tap, move, write, buscarTextoEnRegion , leerTextoEnRegion = crear_funciones_con_serial(serial)
+    run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap ,leerTextoEnRegion = crear_funciones_con_serial(serial)
     print("\n⏳ Esperando correo...")
-    for i in range(30):  # ~2.5 minutos max
+    for i in range(15):  # ~2.5 minutos max
         print(f"🔁 Intento {i+1}/30")
         codigo = buscar_codigo_de_cuenta_hija(
+            serial,
             user="previ4303@gmail.com",
             app_password="tibf uoar hpvl kuog",
             cuenta_hija= correo
@@ -74,15 +99,22 @@ def verify(serial,correo):
     else:
         print("❌ No se encontró el código tras varios intentos.")
 
-
-def buscar_codigo_de_cuenta_hija(serial,user, app_password, cuenta_hija, remitente_filtro="noreply@account.tiktok.com"):
+def buscar_codigo_de_cuenta_hija(
+    serial,
+    user,
+    app_password,
+    cuenta_hija,
+    remitentes=("noreply@account.tiktok.com", "register@account.tiktok.com") 
+):
     print(f"📬 Buscando código para: {cuenta_hija}")
 
     mail = imaplib.IMAP4_SSL("imap.gmail.com")
     mail.login(user, app_password)
     mail.select("inbox")
 
-    result, data = mail.search(None, f'(FROM "{remitente_filtro}")')
+    # 🔎 Construir query para varios remitentes (usando OR en IMAP)
+    remitentes_query = " OR ".join([f'(FROM "{r}")' for r in remitentes])
+    result, data = mail.search(None, remitentes_query)
     ids = data[0].split()[::-1]  # Correos más recientes primero
 
     now_utc = datetime.now(timezone.utc)
@@ -101,7 +133,7 @@ def buscar_codigo_de_cuenta_hija(serial,user, app_password, cuenta_hija, remiten
         if cuenta_hija.lower() not in to:
             continue
 
-        # Parsear fecha del correo
+        # Parsear fecha
         try:
             msg_datetime = parsedate_to_datetime(date_str)
             if msg_datetime.tzinfo is None:
@@ -112,17 +144,17 @@ def buscar_codigo_de_cuenta_hija(serial,user, app_password, cuenta_hija, remiten
             print(f"⚠️ Error al interpretar la fecha: {e}")
             continue
 
-        # Filtrar correos que no son del día de hoy (en UTC)
+        # Solo de hoy
         if msg_datetime.date() != hoy_utc:
             print(f"⏳ Correo descartado: no es de hoy ({msg_datetime.date()})")
             continue
 
-        # Filtrar correos con más de 20 minutos de antigüedad
+        # No más viejo de 20 minutos
         if (now_utc - msg_datetime) > timedelta(minutes=20):
             print(f"⏰ Correo descartado: más de 20 minutos de antigüedad ({msg_datetime})")
             continue
 
-        # Leer el contenido
+        # Leer contenido
         body = ""
         if msg.is_multipart():
             for part in msg.walk():
@@ -132,7 +164,7 @@ def buscar_codigo_de_cuenta_hija(serial,user, app_password, cuenta_hija, remiten
         else:
             body = msg.get_payload(decode=True).decode(errors="ignore")
 
-        # Buscar código
+        # Buscar código (5 o 6 dígitos)
         match = re.search(r"\b(\d{5,6})\b", subject + " " + body)
         if match:
             codigo = match.group(1)

@@ -77,6 +77,11 @@ def _usados_globales(data: dict, app: str):
 
 # ---------------- Asignación atómica ----------------
 def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_PATH, app: str = "Tiktok"):
+    """
+    Asigna a un serial un correo y un apodo que:
+    - Estén en la lista de disponibles.
+    - No hayan sido usados en ningún otro serial.
+    """
     path_json = Path(path_json)
     _acquire_lock()
     try:
@@ -90,24 +95,21 @@ def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_PATH,
         if serial not in data[app]:
             data[app][serial] = {"cuentas": []}
 
+        # 🔎 recolectar usados en TODO el archivo (todos los seriales)
         correos_usados, apodos_usados = _usados_globales(data, app)
+
+        # buscar el primer correo/apodo disponible que no haya sido usado
         correo = next((c for c in data["correos_disponibles"] if c not in correos_usados), None)
-        apodo  = next((a for a in data["apodos_disponibles"]  if a not in apodos_usados),  None)
+        apodo  = next((a for a in data["apodos_disponibles"]  if a not in apodos_usados), None)
 
         if not correo or not apodo:
-            print("❌ No hay correo/apodo disponible.")
+            print("❌ No hay correo/apodo disponible que no esté usado.")
             return None, None
 
-        # quitar del pool
-        try: data["correos_disponibles"].remove(correo)
-        except ValueError: pass
-        try: data["apodos_disponibles"].remove(apodo)
-        except ValueError: pass
-
-        # registrar en el serial
+        # ✅ registrar en el serial (pero NO quitarlos del pool)
         data[app][serial]["cuentas"].append({"correo": correo, "apodo": apodo})
 
-        # guardar
+        # guardar cambios
         tmp = path_json.with_suffix(".tmp")
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
@@ -115,6 +117,7 @@ def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_PATH,
 
         print(f"✅ Asignado a {serial}: {correo} / {apodo}")
         return correo, apodo
+
     finally:
         _release_lock()
 
@@ -221,9 +224,16 @@ def inputpassword(serial):
         write("AFifhrauhg342f@")
         if _sleep_coop(serial, 1): return
         coords = buscarTextoEnRegion(("1.76%","37.39%","96.39%","93.59%"), "continue", "next", umbral_similitud=0.75)
-        tap(*coords) if coords else tap("86.57%","97.47%")
+        
+        if coords:
+            tap(*coords)  
+        else :
+            tap("79.58%","97.47%")
+            time.sleep(0.4)
+            tap("60%","90%")
         if _sleep_coop(serial, 1): return
     else:
+        
         print("no password")    
 
 def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
