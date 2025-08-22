@@ -19,11 +19,9 @@ from core.scrcpy_manager import obtener_seriales, abrir_scrcpy, cerrar_scrcpy
 from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo
 from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
-<<<<<<< HEAD
+
 from core.tiktok_funcs.VideosMujeres.pipeline import ejecutar_pipeline
-=======
-from core.tiktok_funcs.VideosMujeres import Gestos_VIDEOS
->>>>>>> 777fabbef1757743a97ea3b1bf72b731f89b82f1
+
 from core.config import hilos_activos
 # en ui/main_window.py (importa arriba)
 from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
@@ -230,11 +228,9 @@ class MainWindow(QWidget):
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
         btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
-<<<<<<< HEAD
+
         btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", ejecutar_pipeline))
-=======
-        btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", Gestos_VIDEOS))
->>>>>>> 777fabbef1757743a97ea3b1bf72b731f89b82f1
+
 
         btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)")
         btn_crear_cuentas.setObjectName("create")

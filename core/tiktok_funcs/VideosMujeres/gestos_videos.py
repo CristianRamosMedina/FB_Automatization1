@@ -1,3 +1,7 @@
+import time, random
+from core.adb_utils import crear_funciones_con_serial
+from ..utils import ejecteg
+
 def Gestos_VIDEOS(serial, cuenta, video):
     run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap = crear_funciones_con_serial(serial)
     stickerMood = random.randint(1, 3)

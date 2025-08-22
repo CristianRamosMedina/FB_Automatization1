@@ -77,3 +77,30 @@ def descargar_stickers_y_subir(serial):
 
     forzar_indexado(serial, "DCIM/Camera")
     print(f"✅ Stickers actualizados en {serial}")
+
+def subir_video_a_dispositivo(serial, cuenta, dispositivos):
+    """
+    Sube el video correspondiente a la cuenta indicada
+    desde la carpeta local al dispositivo Android.
+    """
+    data_serial = dispositivos.get(serial, {})
+    cuenta_data = data_serial.get("videos", {}).get(cuenta)
+
+    if not cuenta_data:
+        print(f"⚠️ No se encontró video asignado para {cuenta} en {serial}")
+        return None
+
+    ruta_video_local = cuenta_data.get("ruta")
+    if not ruta_video_local or not os.path.exists(ruta_video_local):
+        print(f"❌ Video no encontrado en ruta: {ruta_video_local}")
+        return None
+
+    # Asegurar carpeta en el dispositivo
+    run_adb(serial, "shell", "mkdir", "-p", DEVICE_VIDEOS_DIR)
+
+    # Subir video
+    print(f"⬆️ Subiendo {ruta_video_local} → {serial}:{DEVICE_VIDEOS_DIR}")
+    run_adb(serial, "push", ruta_video_local, DEVICE_VIDEOS_DIR)
+
+    # Devolver el nombre del archivo (para usar en TikTok)
+    return os.path.basename(ruta_video_local)
