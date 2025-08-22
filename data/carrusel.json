@@ -51,6 +51,36 @@
   },
   {
     "CarpetaNumero": "6",
+    "pathSticker": "Carrusel/ImagenesCrudas/Gabiotix/F6/Diseño6",
+    "pathImagenes": "Carrusel/ImagenesCrudas/Gabiotix/F6",
+    "driveIdSticker": "1MKVPosksPtgCkjaf3FtkcaWrqDNfMixG",
+    "rutalocal": {
+      "carpeta": "Ideogram Batch Download - GOBIOTIX_COMBINADO_MAESTRO",
+      "csv": "GOBIOTIX_COMBINADO_MAESTRO.csv"
+    }
+  },
+  {
+    "CarpetaNumero": "7",
+    "pathSticker": "Carrusel/ImagenesCrudas/Gabiotix/F7/Diseño7",
+    "pathImagenes": "Carrusel/ImagenesCrudas/Gabiotix/F7",
+    "driveIdSticker": "1o1cVXgDvXWJD58yZmt8QC5D8ftGDRWRa",
+    "rutalocal": {
+      "carpeta": "Ideogram Batch Download - GOBIOTIX_COMBINADO_MAESTRO",
+      "csv": "GOBIOTIX_COMBINADO_MAESTRO.csv"
+    }
+  },
+  {
+    "CarpetaNumero": "8",
+    "pathSticker": "Carrusel/ImagenesCrudas/Gabiotix/F8/Diseño8",
+    "pathImagenes": "Carrusel/ImagenesCrudas/Gabiotix/F8",
+    "driveIdSticker": "1T6OfZ6t-i7cnm9MozVoMB1oAwYDzzG45",
+    "rutalocal": {
+      "carpeta": "Ideogram Batch Download - GOBIOTIX_COMBINADO_MAESTRO",
+      "csv": "GOBIOTIX_COMBINADO_MAESTRO.csv"
+    }
+  },
+  {
+    "CarpetaNumero": "9",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F1",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -60,7 +90,7 @@
     }
   },
   {
-    "CarpetaNumero": "7",
+    "CarpetaNumero": "10",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F2",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -70,7 +100,7 @@
     }
   },
   {
-    "CarpetaNumero": "8",
+    "CarpetaNumero": "11",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F3",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -80,7 +110,7 @@
     }
   },
   {
-    "CarpetaNumero": "9",
+    "CarpetaNumero": "12",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F4",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -90,7 +120,7 @@
     }
   },
   {
-    "CarpetaNumero": "10",
+    "CarpetaNumero": "13",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F5",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -100,7 +130,7 @@
     }
   },
   {
-    "CarpetaNumero": "11",
+    "CarpetaNumero": "14",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F6",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -110,7 +140,7 @@
     }
   },
   {
-    "CarpetaNumero": "12",
+    "CarpetaNumero": "15",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F7",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -120,7 +150,7 @@
     }
   },
   {
-    "CarpetaNumero": "13",
+    "CarpetaNumero": "16",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F8",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -130,7 +160,7 @@
     }
   },
   {
-    "CarpetaNumero": "14",
+    "CarpetaNumero": "17",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F9",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -140,7 +170,7 @@
     }
   },
   {
-    "CarpetaNumero": "15",
+    "CarpetaNumero": "18",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F10",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -150,7 +180,7 @@
     }
   },
   {
-    "CarpetaNumero": "16",
+    "CarpetaNumero": "19",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F11",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -160,7 +190,7 @@
     }
   },
   {
-    "CarpetaNumero": "17",
+    "CarpetaNumero": "20",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F12",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -170,7 +200,7 @@
     }
   },
   {
-    "CarpetaNumero": "18",
+    "CarpetaNumero": "21",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F13",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -180,7 +210,7 @@
     }
   },
   {
-    "CarpetaNumero": "19",
+    "CarpetaNumero": "22",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F14",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -190,17 +220,7 @@
     }
   },
   {
-    "CarpetaNumero": "20",
-    "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
-    "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F15",
-    "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
-    "rutalocal": {
-      "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
-      "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
-    }
-  },
-  {
-    "CarpetaNumero": "21",
+    "CarpetaNumero": "23",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F16/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F16",
     "driveIdSticker": "1JVwSN1Hmrq42YzwM8d0GWBMT2Ei_N0h9",
@@ -210,7 +230,7 @@
     }
   },
   {
-    "CarpetaNumero": "22",
+    "CarpetaNumero": "24",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F17/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F17",
     "driveIdSticker": "1zaJDaKbU5WkGjaK5a08wjF-bl9BRpkr9",
@@ -220,7 +240,7 @@
     }
   },
   {
-    "CarpetaNumero": "23",
+    "CarpetaNumero": "25",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F18/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F18",
     "driveIdSticker": "1qt3vBvLsBjjv0gdoC7FVbFH7W0AbfOeO",
@@ -230,7 +250,7 @@
     }
   },
   {
-    "CarpetaNumero": "24",
+    "CarpetaNumero": "26",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F19/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F19",
     "driveIdSticker": "1eYJW4EhSwPRv3Pnq-MHifiAoUxNY4gRy",
@@ -240,7 +260,7 @@
     }
   },
   {
-    "CarpetaNumero": "25",
+    "CarpetaNumero": "27",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F20/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F20",
     "driveIdSticker": "1dO0sPV8aV2jy6K0K6pvWBAzflHdlXrUf",
@@ -249,9 +269,8 @@
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
   },
-
   {
-    "CarpetaNumero": "26",
+    "CarpetaNumero": "28",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F21/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F21",
     "driveIdSticker": "1ldg5w4bJXbQzH08luC7mSLtqcaS_bQgW",
@@ -261,7 +280,7 @@
     }
   },
   {
-    "CarpetaNumero": "27",
+    "CarpetaNumero": "29",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/F22/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F22",
     "driveIdSticker": "1D6Hxa_deyaXaTysQFh1lgHpIe8b2F_Go",
@@ -271,7 +290,7 @@
     }
   },
   {
-    "CarpetaNumero": "28",
+    "CarpetaNumero": "30",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F23",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -279,10 +298,9 @@
       "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
-  }
-  ,
+  },
   {
-    "CarpetaNumero": "29",
+    "CarpetaNumero": "31",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F24",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -290,10 +308,9 @@
       "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
-  }
-  ,
+  },
   {
-    "CarpetaNumero": "30",
+    "CarpetaNumero": "32",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F25",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -301,10 +318,9 @@
       "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
-  }
-  ,
+  },
   {
-    "CarpetaNumero": "31",
+    "CarpetaNumero": "33",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F26",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -312,10 +328,9 @@
       "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
-  }
-  ,
+  },
   {
-    "CarpetaNumero": "32",
+    "CarpetaNumero": "34",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F27",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -323,10 +338,9 @@
       "carpeta": "Ideogram Batch Download - FORCHICS_COMBINADO_MAESTRO",
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
-  }
-  ,
+  },
   {
-    "CarpetaNumero": "33",
+    "CarpetaNumero": "35",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F28",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -335,8 +349,8 @@
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
   },
-   {
-    "CarpetaNumero": "34",
+  {
+    "CarpetaNumero": "36",
     "pathSticker": "./Carrusel/ImagenesCrudas/Forchis/Diseño",
     "pathImagenes": "Carrusel/ImagenesCrudas/Forchis/F29",
     "driveIdSticker": "1WOf2IEWPZolBlWqSbV9M-d-LnJnqBmQ7",
@@ -345,5 +359,4 @@
       "csv": "FORCHICS_COMBINADO_MAESTRO.csv"
     }
   }
- 
 ]
