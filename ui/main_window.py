@@ -19,7 +19,9 @@ from core.scrcpy_manager import obtener_seriales, abrir_scrcpy, cerrar_scrcpy
 from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo
 from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
-
+from core.tiktok_funcs.VideosMujeres.TiktokVideoScan import TitkokCuentasVideos
+from core.tiktok_funcs.VideosMujeres.cambiarcuentasVideo import cambiar_todas_las_cuentas_videos
+from ui.seleecion_cuentas_videos_dialog import  SeleccionCuentasDialogVideo
 from core.tiktok_funcs.VideosMujeres.pipeline import ejecutar_pipeline
 
 from core.config import hilos_activos
@@ -52,7 +54,6 @@ class ScanWorker(QObject):
         except Exception as e:
             self.failed.emit(self.serial, str(e))
         finally:
-            # Nota: no forzamos False; quizás quieras seguir con otro paso
             pass
 
 
@@ -70,6 +71,49 @@ class ChangeWorker(QObject):
             hilos_activos[self.serial] = True
             cambiar_todas_las_cuentas(self.serial)
             print(f"[ChangeWorker] ✅ Cambio finalizado en {self.serial}")
+            self.finished.emit(self.serial)
+        except Exception as e:
+            self.failed.emit(self.serial, str(e))
+        finally:
+            hilos_activos[self.serial] = False
+
+
+# ====== Workers VIDEO ======
+class ScanWorkerVideo(QObject):
+    finished = pyqtSignal(str)           # serial
+    failed  = pyqtSignal(str, str)       # serial, error
+
+    def __init__(self, serial):
+        super().__init__()
+        self.serial = serial
+
+    def run(self):
+        try:
+            print(f"[ScanWorkerVideo] ▶ Iniciando escaneo VIDEO en {self.serial}")
+            hilos_activos[self.serial] = True
+            TitkokCuentasVideos(self.serial)
+            print(f"[ScanWorkerVideo] ✅ Escaneo VIDEO finalizado en {self.serial}")
+            self.finished.emit(self.serial)
+        except Exception as e:
+            self.failed.emit(self.serial, str(e))
+        finally:
+            pass
+
+
+class ChangeWorkerVideo(QObject):
+    finished = pyqtSignal(str)
+    failed  = pyqtSignal(str, str)
+
+    def __init__(self, serial):
+        super().__init__()
+        self.serial = serial
+
+    def run(self):
+        try:
+            print(f"[ChangeWorkerVideo] ▶ Iniciando cambio VIDEO en {self.serial}")
+            hilos_activos[self.serial] = True
+            cambiar_todas_las_cuentas_videos(self.serial)
+            print(f"[ChangeWorkerVideo] ✅ Cambio VIDEO finalizado en {self.serial}")
             self.finished.emit(self.serial)
         except Exception as e:
             self.failed.emit(self.serial, str(e))
@@ -175,12 +219,23 @@ class MainWindow(QWidget):
         self._pending_changes = set()
         self._last_scanned   = set()
 
+        # VIDEO refs
+        self._scan_threads_v   = {}
+        self._scan_workers_v   = {}
+        self._change_threads_v = {}
+        self._change_workers_v = {}
+        self._pending_scans_v  = set()
+        self._pending_changes_v= set()
+        self._last_scanned_v   = set()
+
         # Iconos opcionales
         self.iconos = {
             "entrenar": QPixmap("icons/entrenar.png").scaled(16, 16),
             "gestos": QPixmap("icons/gestos.png").scaled(16, 16),
             "cambiar_cuentas": QPixmap("icons/cuentas.png").scaled(16, 16),
             "crear_cuenta": QPixmap("icons/cuentas.png").scaled(16, 16),
+            "gestos_video": QPixmap("icons/gestos.png").scaled(16, 16),
+            "cambiar_cuentas_video": QPixmap("icons/cuentas.png").scaled(16, 16),
             None: QPixmap()
         }
 
@@ -190,6 +245,8 @@ class MainWindow(QWidget):
             "gestos": "#ff9800",
             "cambiar_cuentas": "#2196f3",
             "crear_cuenta": "#8b5cf6",
+            "gestos_video": "#ffb74d",
+            "cambiar_cuentas_video": "#42a5f5",
             None: "#606060"
         }
 
@@ -215,7 +272,7 @@ class MainWindow(QWidget):
         btn_close = QPushButton("❌ Cerrar SCRCPY"); btn_close.setObjectName("danger")
         btn_close.clicked.connect(cerrar_scrcpy)
 
-        btn_gestos_video = QPushButton("🎬 Detectar cuentas → Seleccionar → Cambiar"); btn_gestos_video.setObjectName("accent")
+        btn_gestos_video = QPushButton("🔎 Detectar cuentas → Seleccionar → Cambiar"); btn_gestos_video.setObjectName("accent")
         btn_gestos_video.clicked.connect(self.flujo_cuentas)
 
         btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas (directo)"); btn_cambiar_cuentas.setObjectName("accent")
@@ -223,14 +280,17 @@ class MainWindow(QWidget):
             lambda: self.ejecutar_seleccionados("cambiar_cuentas", cambiar_todas_las_cuentas)
         )
 
+        # 👉 Nuevo botón para el flujo basado en SeleccionCuentasDialogVideo
+        btn_gestos_video2 = QPushButton("🎬 Detectar VIDEO → Seleccionar → Cambiar")
+        btn_gestos_video2.setObjectName("accent")
+        btn_gestos_video2.clicked.connect(self.flujo_cuentas_video)
+
         # Fila 2
         btn_entrenar_sel = QPushButton("▶ Entrenar (seleccionados)"); btn_entrenar_sel.setObjectName("ok")
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
         btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
-
         btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", ejecutar_pipeline))
-
 
         btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)")
         btn_crear_cuentas.setObjectName("create")
@@ -246,14 +306,14 @@ class MainWindow(QWidget):
         btn_clear.clicked.connect(self.limpiar_checkboxes)
 
         # tamaños
-        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas,
+        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2,
                   btn_entrenar_sel, btn_gestos_videos, btn_crear_cuentas,
                   btn_detener_sel, btn_silenciar_sel, btn_clear]:
             b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             b.setMinimumHeight(34)
 
         # Distribución filas
-        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas]:
+        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2]:
             row1.addWidget(b)
         row1.addStretch(1)
 
@@ -484,7 +544,7 @@ class MainWindow(QWidget):
         print(f"💥 Error en {nombre}: {err}")
         self._stop_busy(f"{nombre} con error", ok=False)
 
-    # ====== Flujo Detectar → Dialogo → Cambiar (sin bloquear UI) ======
+    # ====== Flujo Detectar → Dialogo → Cambiar (texto)
     def flujo_cuentas(self):
         seleccionados = [s for s in self.seriales if self.is_selected(s)]
         if not seleccionados:
@@ -510,13 +570,47 @@ class MainWindow(QWidget):
             worker.finished.connect(self._on_scan_finished)
             worker.failed.connect(self._on_scan_failed)
 
-            # Limpieza y mantener refs
+            # Limpieza y refs
             worker.finished.connect(th.quit)
             worker.failed.connect(th.quit)
             th.finished.connect(th.deleteLater)
 
             self._scan_threads[serial] = th
             self._scan_workers[serial] = worker
+
+            th.start()
+
+    # ====== Flujo Detectar → Dialogo → Cambiar (VIDEO)
+    def flujo_cuentas_video(self):
+        seleccionados = [s for s in self.seriales if self.is_selected(s)]
+        if not seleccionados:
+            print("⚠ No hay dispositivos seleccionados para escanear (VIDEO).")
+            return
+
+        print("🎬 Escaneando cuentas TikTok (VIDEO)...")
+        for s in seleccionados:
+            self.estado_dispositivos[s] = "gestos_video"
+            self._set_estado_visual(s, "gestos_video")
+            hilos_activos[s] = True
+
+        self._last_scanned_v   = set(seleccionados)
+        self._pending_scans_v  = set(seleccionados)
+
+        for serial in seleccionados:
+            th = QThread(self)
+            worker = ScanWorkerVideo(serial)
+            worker.moveToThread(th)
+
+            th.started.connect(worker.run)
+            worker.finished.connect(self._on_scan_finished_video)
+            worker.failed.connect(self._on_scan_failed_video)
+
+            worker.finished.connect(th.quit)
+            worker.failed.connect(th.quit)
+            th.finished.connect(th.deleteLater)
+
+            self._scan_threads_v[serial] = th
+            self._scan_workers_v[serial] = worker
 
             th.start()
 
@@ -564,6 +658,36 @@ class MainWindow(QWidget):
         if not self._pending_scans:
             print("⚠ Escaneo finalizado con errores.")
 
+    # ====== Callbacks VIDEO ======
+    def _on_scan_finished_video(self, serial):
+        print(f"✅ Escaneo VIDEO terminado en {serial}")
+        self._pending_scans_v.discard(serial)
+        self._scan_workers_v.pop(serial, None)
+        self._scan_threads_v.pop(serial, None)
+
+        if not self._pending_scans_v:
+            print("✅ Escaneo VIDEO completo. Mostrando diálogo (VIDEO)...")
+            dlg = SeleccionCuentasDialogVideo(self)
+            if dlg.exec_():
+                print("✅ Selección VIDEO guardada. Cambiando cuentas (VIDEO)...")
+                self._iniciar_cambio_seleccionados_video()
+            else:
+                print("↩️ Selección VIDEO cancelada. Reseteando indicadores.")
+                for s in list(self.status_buttons.keys()):
+                    self.estado_dispositivos[s] = None
+                    self._set_estado_visual(s, None)
+
+    def _on_scan_failed_video(self, serial, err):
+        print(f"💥 Error escaneando VIDEO {serial}: {err}")
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self._pending_scans_v.discard(serial)
+        self._scan_workers_v.pop(serial, None)
+        self._scan_threads_v.pop(serial, None)
+
+        if not self._pending_scans_v:
+            print("⚠ Escaneo VIDEO finalizado con errores.")
+
     def _iniciar_cambio_seleccionados(self):
         # Cambiar SOLO los que se escanearon, o los que sigan seleccionados si no hay set previo
         seleccionados = list(self._last_scanned) if self._last_scanned else [
@@ -598,6 +722,40 @@ class MainWindow(QWidget):
 
             th.start()
 
+    # ====== Cambio VIDEO ======
+    def _iniciar_cambio_seleccionados_video(self):
+        seleccionados = list(self._last_scanned_v) if self._last_scanned_v else [
+            s for s in self.seriales if self.is_selected(s)
+        ]
+        if not seleccionados:
+            print("⚠ No hay dispositivos para cambiar cuentas (VIDEO).")
+            return
+
+        for s in seleccionados:
+            self.estado_dispositivos[s] = "cambiar_cuentas_video"
+            self._set_estado_visual(s, "cambiar_cuentas_video")
+            hilos_activos[s] = True
+
+        self._pending_changes_v = set(seleccionados)
+
+        for serial in seleccionados:
+            th = QThread(self)
+            worker = ChangeWorkerVideo(serial)
+            worker.moveToThread(th)
+
+            th.started.connect(worker.run)
+            worker.finished.connect(self._on_change_finished_video)
+            worker.failed.connect(self._on_change_failed_video)
+
+            worker.finished.connect(th.quit)
+            worker.failed.connect(th.quit)
+            th.finished.connect(th.deleteLater)
+
+            self._change_threads_v[serial] = th
+            self._change_workers_v[serial] = worker
+
+            th.start()
+
     def _on_change_finished(self, serial):
         print(f"✅ Cambio de cuentas terminado en {serial}")
         self.estado_dispositivos[serial] = None
@@ -619,6 +777,29 @@ class MainWindow(QWidget):
 
         if not self._pending_changes:
             print("⚠ Cambio finalizado con errores en algunos dispositivos.")
+
+    # ====== Callbacks fin de cambio VIDEO ======
+    def _on_change_finished_video(self, serial):
+        print(f"✅ Cambio de cuentas (VIDEO) terminado en {serial}")
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self._pending_changes_v.discard(serial)
+        self._change_workers_v.pop(serial, None)
+        self._change_threads_v.pop(serial, None)
+
+        if not self._pending_changes_v:
+            print("✅ Proceso VIDEO completado en todos los dispositivos.")
+
+    def _on_change_failed_video(self, serial, err):
+        print(f"💥 Error cambiando cuentas (VIDEO) en {serial}: {err}")
+        self.estado_dispositivos[serial] = None
+        self._set_estado_visual(serial, None)
+        self._pending_changes_v.discard(serial)
+        self._change_workers_v.pop(serial, None)
+        self._change_threads_v.pop(serial, None)
+
+        if not self._pending_changes_v:
+            print("⚠ Cambio VIDEO finalizado con errores en algunos dispositivos.")
 
     # ====== Generic workers (para botones) ======
     def _start_generic_worker(self, serial, accion, func):

@@ -30,7 +30,7 @@ def _sleep(serial: str, segundos: float):
         time.sleep(0.1)
 
 # -------------------- Flujo principal --------------------
-def TitkokCuentas(serial, cooldown=2.0, cierre_cada=3):
+def TitkokCuentasVideos(serial, cooldown=2.0, cierre_cada=3):
     hilos_activos[serial] = True
     fallos = 0
     while True:

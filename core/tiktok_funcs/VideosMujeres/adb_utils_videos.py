@@ -1,4 +1,4 @@
-import os, subprocess, io
+import os, subprocess, io,json
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
@@ -27,6 +27,23 @@ os.makedirs(TEMP_STICKERS_DIR, exist_ok=True)
 # ============================
 # Funciones utilitarias
 # ============================
+
+
+
+
+
+def cargar_dispositivos():
+    if os.path.exists("data/videos.json"):
+        with open("data/videos.json", "r") as f:
+            return json.load(f)
+    return {}
+
+
+def guardar_dispositivos(dispositivos):
+    with open("data/videos.json", "w") as f:
+        json.dump(dispositivos, f, indent=2)
+        
+        
 def run_adb(serial, *args, check=True):
     cmd = [ADB_PATH, "-s", serial] + list(args)
     return subprocess.run(cmd, check=check)
@@ -52,7 +69,6 @@ def _drive_service():
     creds = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
     return build("drive", "v3", credentials=creds)
-
 
 # ============================
 # Funciones principales
