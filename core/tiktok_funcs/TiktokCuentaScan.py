@@ -342,11 +342,11 @@ def detectar_usuarios_en_pantalla(serial):
 
     if stop_requested(serial):
         return [], False
-
-    x1 = parse_coord("19.72%", Width)
-    y1 = parse_coord("6.63%", Heigth)
-    x2 = parse_coord("87.87%", Width)
-    y2 = parse_coord("90.71%", Heigth)
+    
+    x1 = parse_coord("21.00%", Width)
+    y1 = parse_coord("18.88%", Heigth)
+    x2 = parse_coord("82.71%", Width)
+    y2 = parse_coord("93.88%", Heigth)
 
     img = Image.open(io.BytesIO(imagen_bytes))
     img = img.crop((x1, y1, x2, y2))
