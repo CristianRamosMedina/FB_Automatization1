@@ -373,7 +373,7 @@ def crear_funciones_con_serial(serial):
     
     return run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap,leerTextoEnRegion
     
-# core/tiktok_funcs/VideosMujeres/json_utils.py
+
 import os, json
 
 VIDEOS_FILE = "data/videos.json"

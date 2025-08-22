@@ -119,7 +119,7 @@ def listar_carpetas_locales_ordenadas():
 
 lock = threading.Lock()
 
-ASIGNACIONES_FILE = "data/asignaciones.json"
+ASIGNACIONES_FILE = "data/asignacionesVideo.json"
 
 def cargar_asignaciones():
     if not os.path.exists(ASIGNACIONES_FILE):
@@ -263,7 +263,7 @@ def escanear_cuentas_tiktok(serial):
     }
 
 # -------------------- Guardado / lectura --------------------
-def guardar_resultado2(serial, cuentas_con_carpetas, archivo='../data/videos.json'):
+def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/videos.json'):
     try:
         if os.path.exists(archivo):
             with open(archivo, 'r', encoding='utf-8') as f:

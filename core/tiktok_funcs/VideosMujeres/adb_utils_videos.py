@@ -3,18 +3,30 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
 
+# ============================
+# Configuración
+# ============================
 ADB_PATH = r"C:\Users\Acer\Documents\platform-tools-latest-windows\platform-tools\adb.exe"
 DEVICE_VIDEOS_DIR = "/sdcard/DCIM/Video"
 DEVICE_CAMERA_DIR = "/sdcard/DCIM/Camera"
 
-# credenciales del servicio (tu JSON de Google Drive API)
-SERVICE_ACCOUNT_FILE = "credentials.json"
+# Archivos locales
+SERVICE_ACCOUNT_FILE = os.path.join("data", "credenciales.json")
+VIDEOS_FILE = os.path.join("data", "videos.json")
+
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
-# carpeta stickers en Drive
+# Carpeta de stickers en Drive
 STICKERS_FOLDER_ID = "1A8xCcSs1oecVZsxtkzEyusmWC_GPW71q"
 
+# Carpeta temporal local
+TEMP_STICKERS_DIR = os.path.join("data", "temp_stickers")
+os.makedirs(TEMP_STICKERS_DIR, exist_ok=True)
 
+
+# ============================
+# Funciones utilitarias
+# ============================
 def run_adb(serial, *args, check=True):
     cmd = [ADB_PATH, "-s", serial] + list(args)
     return subprocess.run(cmd, check=check)
@@ -42,7 +54,10 @@ def _drive_service():
     return build("drive", "v3", credentials=creds)
 
 
-def descargar_stickers_y_subir(serial):
+# ============================
+# Funciones principales
+# ============================
+def descargar_stickers_y_subir(serial: str) -> bool:
     """Descarga los stickers desde Google Drive y los sube directo a DCIM/Camera"""
     service = _drive_service()
 
@@ -53,16 +68,19 @@ def descargar_stickers_y_subir(serial):
 
     if not files:
         print("⚠️ No se encontraron stickers en Google Drive")
-        return
+        return False
 
     print(f"📥 Descargando y subiendo {len(files)} stickers → {serial}")
 
     for f in files:
         file_id, name = f["id"], f["name"]
 
-        # descarga en memoria
+        # archivo temporal
+        temp_path = os.path.join(TEMP_STICKERS_DIR, name)
+
+        # descarga desde Drive
         request = service.files().get_media(fileId=file_id)
-        fh = io.FileIO(name, "wb")
+        fh = io.FileIO(temp_path, "wb")
         downloader = MediaIoBaseDownload(fh, request)
 
         done = False
@@ -72,11 +90,15 @@ def descargar_stickers_y_subir(serial):
 
         # subir al dispositivo
         run_adb(serial, "shell", "mkdir", "-p", DEVICE_CAMERA_DIR)
-        run_adb(serial, "push", name, DEVICE_CAMERA_DIR)
-        os.remove(name)  # borrar archivo local temporal
+        run_adb(serial, "push", temp_path, DEVICE_CAMERA_DIR)
+
+        # limpiar archivo temporal
+        os.remove(temp_path)
 
     forzar_indexado(serial, "DCIM/Camera")
     print(f"✅ Stickers actualizados en {serial}")
+    return True
+
 
 def subir_video_a_dispositivo(serial, cuenta, dispositivos):
     """
