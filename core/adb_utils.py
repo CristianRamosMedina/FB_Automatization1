@@ -373,3 +373,24 @@ def crear_funciones_con_serial(serial):
     
     return run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap,leerTextoEnRegion
     
+# core/tiktok_funcs/VideosMujeres/json_utils.py
+import os, json
+
+VIDEOS_FILE = "data/videos.json"
+
+def cargar_videos():
+    if not os.path.exists(VIDEOS_FILE):
+        return {}
+    with open(VIDEOS_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def guardar_videos(data):
+    with open(VIDEOS_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+def marcar_cuenta_subida(serial, cuenta, dispositivos):
+    data_serial = dispositivos.get(serial, {})
+    if cuenta in data_serial.get("cuentasPorSubir", []):
+        data_serial["cuentasPorSubir"].remove(cuenta)
+        data_serial["cuentasSubidas"].append(cuenta)
+    guardar_videos(dispositivos)
