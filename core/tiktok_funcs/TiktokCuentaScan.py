@@ -117,7 +117,6 @@ def listar_carpetas_locales_ordenadas():
     carpetas.sort(key=lambda c: c["name"])  # ordenar por nombre
     return carpetas
 
-carpetas_disponibles = listar_carpetas_locales_ordenadas()
 lock = threading.Lock()
 
 ASIGNACIONES_FILE = "data/asignaciones.json"
@@ -135,10 +134,11 @@ def normalizar_nombre(nombre):
     return nombre.strip().lower()
 
 def buscar_carpeta_por_nombre(nombre_objetivo):
-    for carpeta in carpetas_disponibles:
+    for carpeta in listar_carpetas_locales_ordenadas():
         if carpeta["name"] == nombre_objetivo:
             return carpeta
     return None
+
 
 # -------------------- Escaneo de cuentas --------------------
 def escanear_cuentas_tiktok(serial):
@@ -203,10 +203,10 @@ def escanear_cuentas_tiktok(serial):
 
     cuentas_con_carpetas = []
     carpetas_reservadas = set(asignaciones_fijas.values())
-    carpetas_disponibles_filtradas = [c for c in carpetas_disponibles if c["name"] not in carpetas_reservadas]
+    carpetas_disponibles = listar_carpetas_locales_ordenadas()
 
     with lock:
-        # Asignar cuentas fijas
+        # Asignaciones fijas (puedes dejar como estaba)
         for cuenta in todas_cuentas:
             cuenta_norm = normalizar_nombre(cuenta)
             if cuenta_norm in asignaciones_fijas:
@@ -220,9 +220,14 @@ def escanear_cuentas_tiktok(serial):
                     })
                     print(f"📌 Cuenta fija: {cuenta} → {carpeta_fija['name']}")
                 else:
-                    print(f"⚠️ Carpeta fija '{nombre_carpeta_fija}' para {cuenta} no encontrada. No se guardará esta cuenta.")
+                    print(f"⚠️ Carpeta fija '{nombre_carpeta_fija}' para {cuenta} no encontrada.")
 
-        # Asignar dinámicamente
+        # Dinámicas: filtra contra la lista viva
+        carpetas_reservadas = set(asignaciones_fijas.values())
+        carpetas_disponibles_filtradas = [
+            c for c in carpetas_disponibles if c["name"] not in carpetas_reservadas
+        ]
+
         for cuenta in todas_cuentas:
             cuenta_norm = normalizar_nombre(cuenta)
             if cuenta_norm in asignaciones_fijas:
@@ -237,7 +242,7 @@ def escanear_cuentas_tiktok(serial):
                 })
                 print(f"📦 Cuenta asignada: {cuenta} → {carpeta['name']}")
             else:
-                print(f"⚠️ No hay más carpetas disponibles para asignar a {cuenta}. No se guardará esta cuenta.")
+                print(f"⚠️ No hay más carpetas disponibles para asignar a {cuenta}.")
 
     # Si no hay cuentas asignables → señal de corte por falta de carpetas
     if not cuentas_con_carpetas:
@@ -337,11 +342,11 @@ def detectar_usuarios_en_pantalla(serial):
 
     if stop_requested(serial):
         return [], False
-
-    x1 = parse_coord("19.72%", Width)
-    y1 = parse_coord("6.63%", Heigth)
-    x2 = parse_coord("87.87%", Width)
-    y2 = parse_coord("90.71%", Heigth)
+    
+    x1 = parse_coord("21.00%", Width)
+    y1 = parse_coord("18.88%", Heigth)
+    x2 = parse_coord("82.71%", Width)
+    y2 = parse_coord("93.88%", Heigth)
 
     img = Image.open(io.BytesIO(imagen_bytes))
     img = img.crop((x1, y1, x2, y2))
