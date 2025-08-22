@@ -132,158 +132,156 @@
     "faye.health",
     "ruby.healthh",
     "kira.healthh",
-
-  "zenaan.tips",
-  "esmey.healthh",
-  "gwen9h.tipss",
-  "amy7h.healthh",
-  "gailq5.tips",
-  "lacyv.tips",
-  "lynnn.tips",
-  "norixe.tips",
-  "almaaa.tipss",
-  "rosaa.health",
-  "lacyii.health",
-  "anqxya.tipss",
-  "nevaaa.health",
-  "ruqby1.tips",
-  "sadeq.tips",
-  "june99.healthh",
-  "norii.health",
-  "liaa.tips",
-  "lizsay.tipss",
-  "sazden.tipss",
-  "vivii.health",
-  "jozan1.tipss",
-  "alvav.health",
-  "dinav.health",
-  "nora6x.tips",
-  "rixna.health",
-  "zaraia.tipss",
-  "tinaa.tips",
-  "lexih.tipss",
-  "jazzhy.health",
-  "ivy2.health",
-  "kiyav1.health",
-  "kiyah.tips",
-  "skyeq.health",
-  "gailli.health",
-  "zuriii.health",
-  "aralv.healthh",
-  "aral9.healthh",
-  "juneyi.healthh",
-  "norii.healthh",
-  "ariaae.tips",
-  "gigii7.tipss",
-  "kyla5y.tips",
-  "anyav4.tips",
-  "noqlay.tips",
-  "nyla42.tipss",
-  "lunan.tips",
-  "arxaln.healthh",
-  "vega6y.health",
-  "dawn4.tips",
-  "nylah.tips",
-  "luqciy.health",
-  "avxaa.tips",
-  "zoie4.tips",
-  "noria.health",
-  "kiyai.health",
-  "faqye.tipss",
-  "yarany.tipss",
-  "lexi1.tipss",
-  "kali6.tips",
-  "finaqq.tips",
-  "erin1.healthh",
-  "anyaay.tipss",
-  "gailh.health",
-  "noza.tipss",
-  "mila2.tipss",
-  "anya1n.health",
-  "alma3.tipss",
-  "coraqq.tipss",
-  "alqva.health",
-  "ellaxv.health",
-  "almaq.tips",
-  "niraia.tipss",
-  "alvai9.health",
-  "gaily3.tips",
-  "nova9.tips",
-  "laxxna.health",
-  "fawn8.tipss",
-  "aral6h.healthh",
-  "zaxra.healthh",
-  "milaa.tipss",
-  "dawnnn.tips",
-  "eiraya.healthh",
-  "niran.tips",
-  "nylan.healthh",
-  "fawnh.tips",
-  "kiya1.healthh",
-  "gailn8.tipss",
-  "chlox.health",
-  "tori99.healthh",
-  "lunavn.tipss",
-  "aral47.health",
-  "nevavv.healthh",
-  "anqyaa.healthh",
-  "kylee.healthh",
-  "noray.tips",
-  "coraq4.tips",
-  "nozla.healthh",
-  "anya3.health",
-  "saxraa.health",
-  "luzcie.healthh",
-  "gaily.health",
-  "ariaiy.health",
-  "esme2i.healthh",
-  "lezxi4.tipss",
-  "luqqna.tipss",
-  "yazray.tipss",
-  "alvah.healthh",
-  "zoeyy.tips",
-  "yaraxn.healthh",
-  "noa7.tipss",
-  "laniiy.tipss",
-  "hoxpea.tips",
-  "nevay.healthh",
-  "rubyv.health",
-  "lexi3a.health",
-  "yazraa.tips",
-  "erinxi.tipss",
-  "yaraaq.tips",
-  "liaav.health",
-  "araly.healthh",
-  "lunaq.tipss",
-  "alva9a.healthh",
-  "joynn.health",
-  "noqa.healthh",
-  "mayaq.health",
-  "ivyn.tips",
-  "emmyh.healthh",
-  "corana.tips",
-  "dinaai.tips",
-  "kixyan.tipss",
-  "auxrahq.tipss",
-  "lacy5.tipss",
-  "ryan6e.health",
-  "faxwn9.tips",
-  "ryzan.tipss",
-  "ebbav.health",
-  "erineh.tipss",
-  "lynn9y.health",
-  "noqraq.health",
-  "ivya.health",
-  "rinav.healthh",
-  "ivyi7.tips",
-  "nylai.tipss",
-  "anyahn.tips",
-  "laqnah.tips",
-  "toqnix.tips",
-  "toniee.tipss",
-  "arale.healthh",
-  "zenayi.health"
-
+    "zenaan.tips",
+    "esmey.healthh",
+    "gwen9h.tipss",
+    "amy7h.healthh",
+    "gailq5.tips",
+    "lacyv.tips",
+    "lynnn.tips",
+    "norixe.tips",
+    "almaaa.tipss",
+    "rosaa.health",
+    "lacyii.health",
+    "anqxya.tipss",
+    "nevaaa.health",
+    "ruqby1.tips",
+    "sadeq.tips",
+    "june99.healthh",
+    "norii.health",
+    "liaa.tips",
+    "lizsay.tipss",
+    "sazden.tipss",
+    "vivii.health",
+    "jozan1.tipss",
+    "alvav.health",
+    "dinav.health",
+    "nora6x.tips",
+    "rixna.health",
+    "zaraia.tipss",
+    "tinaa.tips",
+    "lexih.tipss",
+    "jazzhy.health",
+    "ivy2.health",
+    "kiyav1.health",
+    "kiyah.tips",
+    "skyeq.health",
+    "gailli.health",
+    "zuriii.health",
+    "aralv.healthh",
+    "aral9.healthh",
+    "juneyi.healthh",
+    "norii.healthh",
+    "ariaae.tips",
+    "gigii7.tipss",
+    "kyla5y.tips",
+    "anyav4.tips",
+    "noqlay.tips",
+    "nyla42.tipss",
+    "lunan.tips",
+    "arxaln.healthh",
+    "vega6y.health",
+    "dawn4.tips",
+    "nylah.tips",
+    "luqciy.health",
+    "avxaa.tips",
+    "zoie4.tips",
+    "noria.health",
+    "kiyai.health",
+    "faqye.tipss",
+    "yarany.tipss",
+    "lexi1.tipss",
+    "kali6.tips",
+    "finaqq.tips",
+    "erin1.healthh",
+    "anyaay.tipss",
+    "gailh.health",
+    "noza.tipss",
+    "mila2.tipss",
+    "anya1n.health",
+    "alma3.tipss",
+    "coraqq.tipss",
+    "alqva.health",
+    "ellaxv.health",
+    "almaq.tips",
+    "niraia.tipss",
+    "alvai9.health",
+    "gaily3.tips",
+    "nova9.tips",
+    "laxxna.health",
+    "fawn8.tipss",
+    "aral6h.healthh",
+    "zaxra.healthh",
+    "milaa.tipss",
+    "dawnnn.tips",
+    "eiraya.healthh",
+    "niran.tips",
+    "nylan.healthh",
+    "fawnh.tips",
+    "kiya1.healthh",
+    "gailn8.tipss",
+    "chlox.health",
+    "tori99.healthh",
+    "lunavn.tipss",
+    "aral47.health",
+    "nevavv.healthh",
+    "anqyaa.healthh",
+    "kylee.healthh",
+    "noray.tips",
+    "coraq4.tips",
+    "nozla.healthh",
+    "anya3.health",
+    "saxraa.health",
+    "luzcie.healthh",
+    "gaily.health",
+    "ariaiy.health",
+    "esme2i.healthh",
+    "lezxi4.tipss",
+    "luqqna.tipss",
+    "yazray.tipss",
+    "alvah.healthh",
+    "zoeyy.tips",
+    "yaraxn.healthh",
+    "noa7.tipss",
+    "laniiy.tipss",
+    "hoxpea.tips",
+    "nevay.healthh",
+    "rubyv.health",
+    "lexi3a.health",
+    "yazraa.tips",
+    "erinxi.tipss",
+    "yaraaq.tips",
+    "liaav.health",
+    "araly.healthh",
+    "lunaq.tipss",
+    "alva9a.healthh",
+    "joynn.health",
+    "noqa.healthh",
+    "mayaq.health",
+    "ivyn.tips",
+    "emmyh.healthh",
+    "corana.tips",
+    "dinaai.tips",
+    "kixyan.tipss",
+    "auxrahq.tipss",
+    "lacy5.tipss",
+    "ryan6e.health",
+    "faxwn9.tips",
+    "ryzan.tipss",
+    "ebbav.health",
+    "erineh.tipss",
+    "lynn9y.health",
+    "noqraq.health",
+    "ivya.health",
+    "rinav.healthh",
+    "ivyi7.tips",
+    "nylai.tipss",
+    "anyahn.tips",
+    "laqnah.tips",
+    "toqnix.tips",
+    "toniee.tipss",
+    "arale.healthh",
+    "zenayi.health"
   ],
   "Tiktok": {
     "RF8X20ESFGW": {
@@ -303,6 +301,14 @@
         {
           "correo": "con74@techsolues.com",
           "apodo": "faye.health"
+        },
+        {
+          "correo": "con88@techsolues.com",
+          "apodo": "lacyii.health"
+        },
+        {
+          "correo": "con100@techsolues.com",
+          "apodo": "alvav.health"
         }
       ]
     },
@@ -331,6 +337,10 @@
         {
           "correo": "con52@techsolues.com",
           "apodo": "georgiacare.tips"
+        },
+        {
+          "correo": "con89@techsolues.com",
+          "apodo": "anqxya.tipss"
         }
       ]
     },
@@ -343,6 +353,14 @@
         {
           "correo": "con71@techsolues.com",
           "apodo": "nori.tipss"
+        },
+        {
+          "correo": "con85@techsolues.com",
+          "apodo": "norixe.tips"
+        },
+        {
+          "correo": "con97@techsolues.com",
+          "apodo": "sazden.tipss"
         }
       ]
     },
@@ -359,6 +377,14 @@
         {
           "correo": "con72@techsolues.com",
           "apodo": "ella.tips"
+        },
+        {
+          "correo": "con86@techsolues.com",
+          "apodo": "almaaa.tipss"
+        },
+        {
+          "correo": "con98@techsolues.com",
+          "apodo": "vivii.health"
         }
       ]
     },
@@ -379,6 +405,14 @@
         {
           "correo": "con73@techsolues.com",
           "apodo": "kira.health"
+        },
+        {
+          "correo": "con87@techsolues.com",
+          "apodo": "rosaa.health"
+        },
+        {
+          "correo": "con99@techsolues.com",
+          "apodo": "jozan1.tipss"
         }
       ]
     },
@@ -407,6 +441,14 @@
         {
           "correo": "con76@techsolues.com",
           "apodo": "kira.healthh"
+        },
+        {
+          "correo": "con80@techsolues.com",
+          "apodo": "gwen9h.tipss"
+        },
+        {
+          "correo": "con92@techsolues.com",
+          "apodo": "sadeq.tips"
         }
       ]
     },
@@ -427,6 +469,14 @@
         {
           "correo": "con77@techsolues.com",
           "apodo": "kyle.tips"
+        },
+        {
+          "correo": "con81@techsolues.com",
+          "apodo": "amy7h.healthh"
+        },
+        {
+          "correo": "con93@techsolues.com",
+          "apodo": "june99.healthh"
         }
       ]
     },
@@ -451,6 +501,14 @@
         {
           "correo": "con68@techsolues.com",
           "apodo": "ava.tips"
+        },
+        {
+          "correo": "con82@techsolues.com",
+          "apodo": "gailq5.tips"
+        },
+        {
+          "correo": "con94@techsolues.com",
+          "apodo": "norii.health"
         }
       ]
     },
@@ -475,6 +533,14 @@
         {
           "correo": "con69@techsolues.com",
           "apodo": "kyla.tips"
+        },
+        {
+          "correo": "con83@techsolues.com",
+          "apodo": "lacyv.tips"
+        },
+        {
+          "correo": "con95@techsolues.com",
+          "apodo": "liaa.tips"
         }
       ]
     },
@@ -499,6 +565,14 @@
         {
           "correo": "con70@techsolues.com",
           "apodo": "ruth.tips"
+        },
+        {
+          "correo": "con84@techsolues.com",
+          "apodo": "lynnn.tips"
+        },
+        {
+          "correo": "con96@techsolues.com",
+          "apodo": "lizsay.tipss"
         }
       ]
     },
@@ -531,6 +605,14 @@
         {
           "correo": "con65@techsolues.com",
           "apodo": "laurenroutine.tipss"
+        },
+        {
+          "correo": "con78@techsolues.com",
+          "apodo": "zenaan.tips"
+        },
+        {
+          "correo": "con90@techsolues.com",
+          "apodo": "nevaaa.health"
         }
       ]
     },
@@ -571,6 +653,14 @@
         {
           "correo": "con75@techsolues.com",
           "apodo": "ruby.healthh"
+        },
+        {
+          "correo": "con79@techsolues.com",
+          "apodo": "esmey.healthh"
+        },
+        {
+          "correo": "con91@techsolues.com",
+          "apodo": "ruqby1.tips"
         }
       ]
     }

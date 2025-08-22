@@ -1,9 +1,8 @@
-from ..adb_utils import crear_funciones_con_serial, procesar_celular,guardar_dispositivos
-import random, time, subprocess,json
-from .utils import ejecteg, switchAccount,cargar_videos
+####FUNCIONA EL GESTOS DE VIDEO
+from ..adb_utils import crear_funciones_con_serial
+import random, time
+from .utils import ejecteg
 import os, shutil, subprocess
-from .TiktokCuentaScan import actualizar_estado_cuenta,stop_requested,_sleep
-from core.paths import ADB_PATH
 
 # Ruta local donde tienes los videos
 BASE_VIDEOS_PATH = r"C:\Users\Acer\Documents\Carrusel\ImagenesCrudas\Videos"
@@ -16,8 +15,8 @@ ADB_PATH = r"C:\Users\Acer\Documents\platform-tools-latest-windows\platform-tool
 
 # 📌 Asignación de celulares a carpetas de videos
 ASIGNACION_VIDEOS = {
-    "R8YY602WSYX": "Asian 2",   # cell1
-    "R8YY602XA3R": "Australian Woman",     # cell2
+    #"R8YY602WSYX": "Asian 2",   # cell1
+    "R8YY602XA3R": "African 2",     # cell2
 }
 
 def forzar_indexado(serial, carpeta="DCIM/Video"):
@@ -63,23 +62,24 @@ def subir_un_video_y_mover(serial, carpeta_asignada):
     print(f"📤 Subiendo {video_a_subir} → {serial}:{DEVICE_VIDEOS_DIR}")
     try:
         run_adb(serial, "push", ruta_video, DEVICE_VIDEOS_DIR)
-        # ✅ Forzar indexado de la carpeta de videos
+        # Forzar indexado de la carpeta de videos
         forzar_indexado(serial, "DCIM/Video")
+
     except subprocess.CalledProcessError as e:
         print(f"❌ Error subiendo {video_a_subir}: {e}")
         return None
 
-    # Copiar a videosUsados/<carpeta> en lugar de mover
+    # Mover a videosUsados/<carpeta>
     destino_subcarpeta = os.path.join(USADOS_VIDEOS_PATH, carpeta_asignada)
     os.makedirs(destino_subcarpeta, exist_ok=True)
 
     nuevo_destino = os.path.join(destino_subcarpeta, video_a_subir)
     try:
-        shutil.copy2(ruta_video, nuevo_destino)  # 📌 ahora es copia
-        print(f"✅ {video_a_subir} copiado a {nuevo_destino}")
+        shutil.move(ruta_video, nuevo_destino)
     except Exception as e:
-        print(f"⚠️ No se pudo copiar a usados: {e}")
+        print(f"⚠️ No se pudo mover a usados: {e}")
 
+    print(f"✅ {video_a_subir} subido y movido a {nuevo_destino}")
     return video_a_subir
 
 def Gestos_VIDEOS(serial):
@@ -93,6 +93,7 @@ def Gestos_VIDEOS(serial):
     if not video_subido:
         print("⚠️ No se pudo subir ningún video. Cancelando.")
         return
+
     
     run, tap, long_tap, move, write, buscarTextoEnRegion, detectarColorOTap,leerTextoEnRegion = crear_funciones_con_serial(serial)
     stickerMood = random.randint(1, 3)
@@ -176,9 +177,9 @@ def Gestos_VIDEOS(serial):
     time.sleep(1)
     
     switch_musica = {
-        1: "Make America Great Again - Brian Kelley",
-        2: "There She Goes - Cyril Riley & idkxlcfzmk4 & MOONLGHT",
-        3: "Boundless Worship - Josue Novais Piano Worship"
+        1: " Make America Great Again - Brian Kelley ",
+        2: " There She Goes - Cyril Riley & idkxlcfzmk4 & MOONLGHT ",
+        3: " Boundless Worship - Josue Novais Piano Worship "
     }
 
     music = switch_musica.get(stickerMood)
@@ -207,14 +208,14 @@ def Gestos_VIDEOS(serial):
     time.sleep(2.5)
     move("95%","89.5%","5%","89.5%",1000)  
     time.sleep(1.6)
-    coords= buscarTextoEnRegion(("2.50%", "75.98%", "98.70%", "85.76%"), "Overlay",umbral_similitud=0.6)
+    coords= buscarTextoEnRegion(("2.50%", "90%", "98.70%", "93.56%"), "Overlay")
     if coords:
         tap(*coords)
     else:
         time.sleep(1.6)
         move("95%","89.5%","9%","89.5%",1000) 
         time.sleep(1.6)
-        coords= buscarTextoEnRegion(("2.50%", "75.98%", "98.70%", "85.76%"), "Overlay", umbral_similitud=0.5)
+        coords= buscarTextoEnRegion(("2.50%", "90%", "98.70%", "93.56%"), "Overlay", umbral_similitud=0.5)
         if coords:
             tap(*coords)
         else:
@@ -303,68 +304,4 @@ def Gestos_VIDEOS(serial):
             if coords:
                 tap(*coords)
     
-    time.sleep(30) 
-        # ✅ Borrar todos los videos del dispositivo al terminar
-    limpiar_videos_dispositivo(serial)
-
-    
-def limpiar_videos_dispositivo(serial, carpeta=DEVICE_VIDEOS_DIR):
-    try:
-        run_adb(serial, "shell", "rm", "-rf", f"{carpeta}/*")
-        print(f"🧹 Carpeta de videos limpiada en {serial}: {carpeta}")
-    except Exception as e:
-        print(f"⚠️ Error limpiando carpeta en {serial}: {e}")
-
-def VideosMujeres(serial):
-    from core.tiktok_funcs.TiktokCuentaScan import ultimacuenta
-    dispositivos = cargar_videos()
-    if serial not in dispositivos:
-        print(f"❌ Serial {serial} no encontrado en JSON.")
-        return
-
-    data = dispositivos[serial]
-    por_subir = data.get("cuentasPorSubir", [])
-
-    while por_subir:
-        cuenta_actual = por_subir[0]
-        print(f"\n🎬 Procesando cuenta {cuenta_actual} en {serial}...")
-
-        # 1️⃣ Cambiar a la cuenta actual
-        switchAccount(serial)
-
-        # 2️⃣ Buscar carpeta asignada
-        cuenta_info = next((c for c in data["cuentas"] if c["cuenta"] == cuenta_actual), None)
-        if not cuenta_info:
-            print(f"⚠️ No se encontró carpeta para {cuenta_actual}")
-            break
-
-        carpeta_path = cuenta_info.get("carpeta_path")
-        if not carpeta_path or not os.path.exists(carpeta_path):
-            print(f"⚠️ Carpeta inválida: {carpeta_path}")
-            break
-
-        print(f"📂 Usando videos desde: {carpeta_path}")
-
-        # 3️⃣ Subir videos a DCIM/Videos
-        procesar_celular(serial, carpeta_path)
-
-        # 4️⃣ Ejecutar los gestos de subida a TikTok
-        try:
-            Gestos_VIDEOS(serial)   # 👉 tu función que hace taps y sube el video
-        except Exception as e:
-            print(f"❌ Error subiendo video: {e}")
-            break
-
-        # 5️⃣ Borrar videos del teléfono después de subir
-        try:
-            subprocess.run([ADB_PATH, "-s", serial, "shell", "rm", "-rf", "/sdcard/DCIM/Videos/*"])
-            print("🧹 Videos borrados del teléfono.")
-        except Exception as e:
-            print(f"⚠️ No se pudo limpiar carpeta: {e}")
-
-        # 6️⃣ Actualizar estado
-        siguiente = actualizar_estado_cuenta(serial, cuenta_actual)
-        if not siguiente:
-            break
-        por_subir = data.get("cuentasPorSubir", [])
-        
+    time.sleep(30), 
