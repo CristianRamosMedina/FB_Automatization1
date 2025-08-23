@@ -9,7 +9,7 @@ from core.tiktok_funcs.utils import cargar_dispositivos
 from core.adb_utils import guardar_dispositivos
 import json, os
 
-DISPOSITIVOS_FILE = "data/dispositivos.json"
+DISPOSITIVOS_FILE = "data/videos.json"
 
 
 class SeleccionCuentasDialog(QDialog):

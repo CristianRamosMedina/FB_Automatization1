@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from core.tiktok_funcs.VideosMujeres.adb_utils_videos import cargar_dispositivos_video
-from core.tiktok_funcs.VideosMujeres.adb_utils_videos import guardar_dispositivos
+from core.tiktok_funcs.VideosMujeres.adb_utils_videos import cargar_videos
+from core.tiktok_funcs.VideosMujeres.adb_utils_videos import guardar_videos
 import json, os
 
 DISPOSITIVOS_FILE = "data/videos.json"
@@ -146,7 +146,7 @@ class SeleccionCuentasDialogVideo(QDialog):
             }
         """)
 
-        self._data = cargar_dispositivos_video()
+        self._data = cargar_videos()
         self._checks_por_serial = {}  # serial -> [(cuenta, QCheckBox), ...]
         self._counters = {}           # serial -> QLabel contador
 
@@ -334,7 +334,7 @@ class SeleccionCuentasDialogVideo(QDialog):
             self._data[serial]["cuentasPorSubir"] = seleccionadas
 
         try:
-            guardar_dispositivos(self._data)
+            guardar_videos(self._data)
         except Exception:
             with open(DISPOSITIVOS_FILE, "w", encoding="utf-8") as f:
                 json.dump(self._data, f, indent=2, ensure_ascii=False)

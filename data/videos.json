@@ -12,7 +12,7 @@
         "carpeta_nombre": "Asian 2"
       },
       {
-        "cuenta": "fresh.update85",
+        "cuenta": "lexih.tipss",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
         "carpeta_nombre": "Bangladeshi Woman"
       },
@@ -22,7 +22,7 @@
         "carpeta_nombre": "Blonde"
       },
       {
-        "cuenta": "lexih.tipss",
+        "cuenta": "fresh.update85",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde 2",
         "carpeta_nombre": "Blonde 2"
       }
@@ -30,9 +30,9 @@
     "cuentasDetectadas": [
       "news.flash98",
       "daily.scoop4",
-      "fresh.update85",
+      "lexih.tipss",
       "pulse.cast1",
-      "lexih.tipss"
+      "fresh.update85"
     ],
     "cuentasPorSubir": [
       "news.flash98",
@@ -53,17 +53,17 @@
         "carpeta_nombre": "Australian Woman"
       },
       {
-        "cuenta": "top.stories229",
+        "cuenta": "buzz.frame1",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
         "carpeta_nombre": "Bangladeshi Woman"
       },
       {
-        "cuenta": "marissalife.healt",
+        "cuenta": "top.stories229",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde",
         "carpeta_nombre": "Blonde"
       },
       {
-        "cuenta": "buzz.frame1",
+        "cuenta": "marissalife.healt",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde 2",
         "carpeta_nombre": "Blonde 2"
       },
@@ -73,12 +73,12 @@
         "carpeta_nombre": "Brazilian Woman"
       },
       {
-        "cuenta": "viral.report7",
+        "cuenta": "trend.alertts",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman",
         "carpeta_nombre": "Canadian Woman"
       },
       {
-        "cuenta": "trend.alertts",
+        "cuenta": "viral.report7",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
         "carpeta_nombre": "Canadian Woman 2"
       }
@@ -86,12 +86,12 @@
     "cuentasDetectadas": [
       "breaking.neewss",
       "hype.alert7",
+      "buzz.frame1",
       "top.stories229",
       "marissalife.healt",
-      "buzz.frame1",
       "jozan'.tipss",
-      "viral.report7",
-      "trend.alertts"
+      "trend.alertts",
+      "viral.report7"
     ],
     "cuentasPorSubir": [
       "breaking.neewss",

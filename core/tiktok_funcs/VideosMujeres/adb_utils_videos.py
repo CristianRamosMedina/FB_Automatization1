@@ -2,6 +2,8 @@ import os, subprocess, io,json
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
+from core.utils.sync_utils import sincronizar_videos_a_dispositivos
+sincronizar_videos_a_dispositivos()
 
 # ============================
 # Configuración
@@ -28,21 +30,24 @@ os.makedirs(TEMP_STICKERS_DIR, exist_ok=True)
 # Funciones utilitarias
 # ============================
 
-
-
-
-
-def cargar_dispositivos_video():
+def cargar_videos():
     if os.path.exists("data/videos.json"):
         with open("data/videos.json", "r") as f:
             return json.load(f)
     return {}
 
 
-def guardar_dispositivos(dispositivos):
-    with open("data/videos.json", "w") as f:
-        json.dump(dispositivos, f, indent=2)
-        
+def guardar_videos(dispositivos):
+    with open("data/videos.json", "w", encoding="utf-8") as f:
+        json.dump(dispositivos, f, indent=2, ensure_ascii=False)
+
+    # 🔄 Mantener sincronizados los archivos
+    try:
+        from core.utils.sync_utils import sincronizar_videos_a_dispositivos
+        sincronizar_videos_a_dispositivos()
+    except Exception as e:
+        print(f"⚠️ No se pudo sincronizar dispositivos.json: {e}")
+  
         
 def run_adb(serial, *args, check=True):
     cmd = [ADB_PATH, "-s", serial] + list(args)
@@ -118,20 +123,33 @@ def descargar_stickers_y_subir(serial: str) -> bool:
 
 def subir_video_a_dispositivo(serial, cuenta, dispositivos):
     """
-    Sube el video correspondiente a la cuenta indicada
-    desde la carpeta local al dispositivo Android.
+    Busca la carpeta asignada a la cuenta en videos.json,
+    selecciona un video y lo sube al dispositivo.
     """
     data_serial = dispositivos.get(serial, {})
-    cuenta_data = data_serial.get("videos", {}).get(cuenta)
+    cuentas = data_serial.get("cuentas", [])
 
+    cuenta_data = next((c for c in cuentas if c["cuenta"] == cuenta), None)
     if not cuenta_data:
-        print(f"⚠️ No se encontró video asignado para {cuenta} en {serial}")
+        print(f"⚠️ No se encontró carpeta asignada para {cuenta} en {serial}")
         return None
 
-    ruta_video_local = cuenta_data.get("ruta")
-    if not ruta_video_local or not os.path.exists(ruta_video_local):
-        print(f"❌ Video no encontrado en ruta: {ruta_video_local}")
+    carpeta_path = cuenta_data.get("carpeta_path")
+    if not carpeta_path or not os.path.exists(carpeta_path):
+        print(f"❌ Carpeta no encontrada para {cuenta}: {carpeta_path}")
         return None
+
+    # Buscar videos en la carpeta
+    videos = [f for f in os.listdir(carpeta_path)
+              if f.lower().endswith((".mp4", ".mov", ".mkv", ".webm", ".avi", ".m4v"))]
+
+    if not videos:
+        print(f"⚠️ No se encontraron videos en {carpeta_path}")
+        return None
+
+    videos.sort()
+    video_a_subir = videos[0]
+    ruta_video_local = os.path.join(carpeta_path, video_a_subir)
 
     # Asegurar carpeta en el dispositivo
     run_adb(serial, "shell", "mkdir", "-p", DEVICE_VIDEOS_DIR)
@@ -140,5 +158,4 @@ def subir_video_a_dispositivo(serial, cuenta, dispositivos):
     print(f"⬆️ Subiendo {ruta_video_local} → {serial}:{DEVICE_VIDEOS_DIR}")
     run_adb(serial, "push", ruta_video_local, DEVICE_VIDEOS_DIR)
 
-    # Devolver el nombre del archivo (para usar en TikTok)
-    return os.path.basename(ruta_video_local)
+    return video_a_subir  # nombre del archivo para usar en TikTok

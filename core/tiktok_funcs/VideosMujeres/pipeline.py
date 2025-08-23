@@ -3,18 +3,19 @@
 from .adb_utils_videos import (
     subir_video_a_dispositivo,
     limpiar_memoria,
-    descargar_stickers_y_subir
+    descargar_stickers_y_subir,
+    cargar_videos,
 )
 
-from core.adb_utils import cargar_videos, marcar_cuenta_subida
 from .TiktokVideoScan import TitkokCuentasVideos
+from .gestos_videos import gestos_videos
 
 
 def ejecutar_pipeline(serial=None):
-    # Escanear cuentas en el dispositivo
+    # 🔍 Escanear cuentas en el dispositivo y actualizar videos.json
     TitkokCuentasVideos(serial)
 
-    # Cargar configuración de dispositivos
+    # 📂 Cargar configuración de dispositivos desde videos.json
     dispositivos = cargar_videos()
 
     for serial, data in dispositivos.items():
@@ -24,7 +25,7 @@ def ejecutar_pipeline(serial=None):
         limpiar_memoria(serial)
 
         # 🔹 Descargar y subir stickers al dispositivo
-        local_stickers_path = descargar_stickers_y_subir(serial)
+        descargar_stickers_y_subir(serial)
 
         # 🔹 Subir los videos por cada cuenta pendiente
         for cuenta in data.get("cuentasPorSubir", [])[:]:
@@ -33,7 +34,7 @@ def ejecutar_pipeline(serial=None):
                 continue
 
             # 🔹 Automatizar flujo de subida en TikTok
-            (serial, cuenta, video)
+            gestos_videos(serial, cuenta, video)
 
             # 🔹 Después de publicar → limpiar todo
             limpiar_memoria(serial)
