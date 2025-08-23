@@ -9,9 +9,9 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from ..utils import AbrirJsonCarruseles
-# Cargo las carpetas desde JSON
 
-carpetas= AbrirJsonCarruseles()
+# Cargo las carpetas desde JSON
+carpetas = AbrirJsonCarruseles()
 ruta_documentos = os.path.expanduser("~/Documents")
 
 base_salida = os.path.join(ruta_documentos, "Carrusel", "ImagenesCrudas", "Carrusel")
@@ -21,6 +21,7 @@ SERVICE_ACCOUNT_FILE = "data/credenciales.json"
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 carpetas_descargadas = set()
+
 
 def descargar_carpeta_drive(folder_id, destino):
     creds = service_account.Credentials.from_service_account_file(
@@ -56,6 +57,7 @@ def descargar_carpeta_drive(folder_id, destino):
         if not page_token:
             break
 
+
 def asegurar_y_descargar(ruta_relativa, drive_id):
     ruta_completa = os.path.join(ruta_documentos, ruta_relativa)
     os.makedirs(ruta_completa, exist_ok=True)
@@ -69,12 +71,14 @@ def asegurar_y_descargar(ruta_relativa, drive_id):
     else:
         print(f"Carpeta ya tiene contenido: {ruta_relativa}")
 
+
 def ordenar_natural(lista):
     import re
     def alfanum(clave):
         return [int(t) if t.isdigit() else t.lower()
                 for t in re.split('([0-9]+)', clave)]
     return sorted(lista, key=alfanum)
+
 
 def procesar_carpeta(carpeta):
     carpeta_num = carpeta["CarpetaNumero"]
@@ -105,6 +109,12 @@ def procesar_carpeta(carpeta):
     imagenes = ordenar_natural([
         f for f in os.listdir(ruta_carpeta_imagenes) if f.lower().endswith(('.png', '.jpg', '.jpeg'))
     ])
+
+    # ✅ Repetir la última imagen hasta igualar la cantidad de stickers
+    if len(imagenes) < len(stickers) and imagenes:
+        ultima = imagenes[-1]
+        diferencia = len(stickers) - len(imagenes)
+        imagenes.extend([ultima] * diferencia)
 
     emparejados = zip(stickers, imagenes)
     ruta_salida = os.path.join(base_salida, carpeta_num)
@@ -150,15 +160,17 @@ def procesar_carpeta(carpeta):
     except Exception as e:
         print(f"[{carpeta_num}] Error moviendo carpeta usada: {e}")
 
+
 def main():
     os.makedirs(base_salida, exist_ok=True)
     os.makedirs(base_usadas, exist_ok=True)
-    #hilos de trabajo
+    # hilos de trabajo
     max_workers = min(16, len(carpetas))
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(procesar_carpeta, carpeta) for carpeta in carpetas]
         for future in as_completed(futures):
             future.result()
+
 
 if __name__ == "__main__":
     main()
