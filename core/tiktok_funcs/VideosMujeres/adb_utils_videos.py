@@ -32,7 +32,7 @@ os.makedirs(TEMP_STICKERS_DIR, exist_ok=True)
 
 
 
-def cargar_dispositivos():
+def cargar_dispositivos_video():
     if os.path.exists("data/videos.json"):
         with open("data/videos.json", "r") as f:
             return json.load(f)

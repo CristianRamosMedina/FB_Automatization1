@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from core.tiktok_funcs.VideosMujeres.adb_utils_videos import cargar_dispositivos
+from core.tiktok_funcs.VideosMujeres.adb_utils_videos import cargar_dispositivos_video
 from core.tiktok_funcs.VideosMujeres.adb_utils_videos import guardar_dispositivos
 import json, os
 
@@ -146,7 +146,7 @@ class SeleccionCuentasDialogVideo(QDialog):
             }
         """)
 
-        self._data = cargar_dispositivos()
+        self._data = cargar_dispositivos_video()
         self._checks_por_serial = {}  # serial -> [(cuenta, QCheckBox), ...]
         self._counters = {}           # serial -> QLabel contador
 

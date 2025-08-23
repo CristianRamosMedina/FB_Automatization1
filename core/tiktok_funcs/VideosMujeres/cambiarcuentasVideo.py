@@ -20,7 +20,7 @@ from core.tiktok_funcs.TiktokCuentaScan import (
     actualizar_estado_cuenta
 )
 from .gestos_videos import gestos_videos
-from .adb_utils_videos import cargar_dispositivos
+from .adb_utils_videos import cargar_dispositivos_video
 
 from ...adb_utils import (
     get_screen_size, parse_coord, crear_funciones_con_serial
@@ -181,7 +181,7 @@ def cambiar_todas_las_cuentas_videos(serial: str):
                 print(f"⏹ [{serial}] Detenido por usuario (inicio de loop).")
                 break
 
-            datos_serial = cargar_dispositivos().get(serial, {})
+            datos_serial = cargar_dispositivos_video().get(serial, {})
             pendientes = datos_serial.get("cuentasPorSubir", [])
             if not pendientes:
                 print(f"✅ [{serial}] Ya no hay más cuentas por subir.")
@@ -258,7 +258,7 @@ def descarga(serial: str, cuentaactual: str, max_imagenes: int | None = None) ->
     - Elige 1 video (orden natural), lo sube a DCIM/Video y lo borra local si el push fue OK.
     - Descarga imágenes desde el FOLDER_ID global de Drive, las ordena y las sube a DCIM/Imagenes.
     """
-    data = cargar_dispositivos()
+    data = cargar_dispositivos_video()
     if serial not in data:
         print(f"❌ [{serial}] No existe entrada en dispositivos.json.")
         return False
