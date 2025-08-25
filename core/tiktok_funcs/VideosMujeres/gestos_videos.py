@@ -1,7 +1,7 @@
 import time, random
 from core.adb_utils import crear_funciones_con_serial
-from ..utils import ejecteg, cerrary_salir, should_stop, _sleep_coop
-
+from ..utils import ejecteg, cerrary_salir, should_stop
+from ..CarruselTiktok import _sleep_coop
 
 def _esperar_texto(serial, buscarTextoEnRegion, texto, region, timeout=40, umbral=0.6, interval=1.0):
     """

@@ -236,11 +236,10 @@
       "pulse.cast1",
       "fresh.update85"
     ],
-    "cuentasPorSubir": [
-      "daily.scoop4"
-    ],
+    "cuentasPorSubir": [],
     "cuentasSubidas": [
-      "news.flash98"
+      "news.flash98",
+      "daily.scoop4"
     ]
   },
   "RF8X20S0C7D": {
@@ -540,11 +539,10 @@
       "trend.alertts",
       "viral.report7"
     ],
-    "cuentasPorSubir": [
-      "hype.alert7"
-    ],
+    "cuentasPorSubir": [],
     "cuentasSubidas": [
-      "breaking.neewss"
+      "breaking.neewss",
+      "hype.alert7"
     ]
   },
   "R8YY602XFGW": {

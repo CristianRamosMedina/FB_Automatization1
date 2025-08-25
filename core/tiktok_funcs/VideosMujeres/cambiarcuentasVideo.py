@@ -15,7 +15,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
 
 from core.tiktok_funcs.utils import ejecteg, switchAccount
-from core.tiktok_funcs.TiktokCuentaScan import (
+from core.tiktok_funcs.VideosMujeres.TiktokVideoScan import (
      ultimacuenta, detectar_usuarios_en_pantalla,
     actualizar_estado_cuenta
 )
@@ -289,7 +289,7 @@ def descarga(serial: str, cuentaactual: str, max_imagenes: int | None = None) ->
 
             # borrar local SOLO si el push fue OK
             try:
-                #os.remove(video_a_subir)
+                os.remove(video_a_subir)
                 print(f"🧹 [{serial}] Eliminado local: {os.path.basename(video_a_subir)}")
             except Exception as e:
                 print(f"⚠️ [{serial}] No se pudo borrar local: {e}")
