@@ -8,7 +8,7 @@ import pytesseract
 from PIL import Image
 from PIL import UnidentifiedImageError
 
-# Configuración pytesseract
+# Configuración pytesseract 
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
 BASE_PATH = os.path.join(

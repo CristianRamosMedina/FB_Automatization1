@@ -34,6 +34,9 @@ from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
 # 🚀 Módulos de carruseles/unpack (se intentará usar .main() si existe)
 from core.tiktok_funcs.CarruselesCrearImagenes import carruseles, unpack
 
+from core.tiktok_funcs.verificacion.carruseles_pendientes import chequear_carruseles_pendientes
+from core.tiktok_funcs.verificacion.videos_pendites import contar_videos_pendientes
+
 
 # =================== Workers en QThread ===================
 class ScanWorker(QObject):
@@ -272,34 +275,34 @@ class MainWindow(QWidget):
         btn_close = QPushButton("❌ Cerrar SCRCPY"); btn_close.setObjectName("danger")
         btn_close.clicked.connect(cerrar_scrcpy)
 
-        btn_gestos_video = QPushButton("🔎 Detectar cuentas → Seleccionar → Cambiar"); btn_gestos_video.setObjectName("accent")
+        btn_gestos_video = QPushButton("🔎 Subir Carruseles"); btn_gestos_video.setObjectName("accent")
         btn_gestos_video.clicked.connect(self.flujo_cuentas)
 
-        btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas (directo)"); btn_cambiar_cuentas.setObjectName("accent")
+        btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas"); btn_cambiar_cuentas.setObjectName("accent")
         btn_cambiar_cuentas.clicked.connect(
             lambda: self.ejecutar_seleccionados("cambiar_cuentas", cambiar_todas_las_cuentas)
         )
 
         # 👉 Nuevo botón para el flujo basado en SeleccionCuentasDialogVideo
-        btn_gestos_video2 = QPushButton("🎬 Detectar VIDEO → Seleccionar → Cambiar")
+        btn_gestos_video2 = QPushButton("🎬 Subir Videos de Mujeres")
         btn_gestos_video2.setObjectName("accent")
         btn_gestos_video2.clicked.connect(self.flujo_cuentas_video)
 
         # Fila 2
-        btn_entrenar_sel = QPushButton("▶ Entrenar (seleccionados)"); btn_entrenar_sel.setObjectName("ok")
+        btn_entrenar_sel = QPushButton("▶ Entrenar"); btn_entrenar_sel.setObjectName("ok")
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
         btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
         btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", ejecutar_pipeline))
 
-        btn_crear_cuentas = QPushButton("➕ Crear cuenta (seleccionados)")
+        btn_crear_cuentas = QPushButton("➕ Crear cuentas")
         btn_crear_cuentas.setObjectName("create")
         btn_crear_cuentas.clicked.connect(self.crear_cuentas_seleccionados)
 
-        btn_detener_sel = QPushButton("⏹ Detener (seleccionados)"); btn_detener_sel.setObjectName("danger")
+        btn_detener_sel = QPushButton("⏹ Detener "); btn_detener_sel.setObjectName("danger")
         btn_detener_sel.clicked.connect(self.detener_seleccionados)
 
-        btn_silenciar_sel = QPushButton("🔇 Silenciar (seleccionados)")
+        btn_silenciar_sel = QPushButton("🔇 Silenciar")
         btn_silenciar_sel.clicked.connect(lambda: self.ejecutar_seleccionados(None, silenciar_dispositivo))
 
         btn_clear = QPushButton("🧹 Limpiar selección")
@@ -325,18 +328,17 @@ class MainWindow(QWidget):
         tbv.addLayout(row2)
         root.addWidget(toolbar)
 
-        # ====== Sección: Creación de carruseles ======
-        sep = QFrame()
-        sep.setFrameShape(QFrame.HLine)
-        sep.setStyleSheet("color:#242a36;")
-        root.addWidget(sep)
-
+       
+        
+       # ====== Sección: Creación de carruseles ======
         carru_section = QFrame()
         carru_section.setObjectName("Toolbar")
-        carru_layout = QHBoxLayout(carru_section)
+        carru_layout = QVBoxLayout(carru_section)   # 👈 ahora vertical
         carru_layout.setContentsMargins(10, 10, 10, 10)
         carru_layout.setSpacing(8)
 
+        # --- Fila 1: creación normal ---
+        row1 = QHBoxLayout()
         lbl_carru = QLabel("🖼️  Creación de carruseles")
         lbl_carru.setStyleSheet("font-weight:600;")
 
@@ -348,23 +350,59 @@ class MainWindow(QWidget):
         btn_unpack.setObjectName("create")
         btn_unpack.clicked.connect(self._run_unpack_async)
 
-        # Label de estado con animación de puntos
         lbl_carru_status = QLabel("—")
         lbl_carru_status.setStyleSheet("color:#a8b3cf;")
-        self._lbl_carru_status = lbl_carru_status  # guardar referencia
+        self._lbl_carru_status = lbl_carru_status
 
-        carru_layout.addWidget(lbl_carru)
-        carru_layout.addStretch(1)
-        carru_layout.addWidget(btn_crear_carruseles)
-        carru_layout.addWidget(btn_unpack)
-        carru_layout.addWidget(lbl_carru_status)
+        row1.addWidget(lbl_carru)
+        row1.addStretch(1)
+        row1.addWidget(btn_crear_carruseles)
+        row1.addWidget(btn_unpack)
+        row1.addWidget(lbl_carru_status)
+
+        # --- Fila 2: pendientes dentro de la misma sección ---
+        row2 = QHBoxLayout()
+        lbl_pending = QLabel("📂 Carruseles pendientes:")
+        lbl_pending.setStyleSheet("font-weight:600;")
+
+        self._lbl_pending_carru = QLabel("—")
+        self._lbl_pending_carru.setStyleSheet("color:#ffcc00;")  # amarillo inicial
+
+        btn_check_pending = QPushButton("🔎 Verificar carruseles")
+        btn_check_pending.setObjectName("warn")
+        btn_check_pending.clicked.connect(self._update_carruseles_pendientes)
+
+        row2.addWidget(lbl_pending)
+        row2.addWidget(self._lbl_pending_carru)
+        row2.addStretch(1)
+        row2.addWidget(btn_check_pending)
+
+        # Agregar ambas filas al layout vertical
+        carru_layout.addLayout(row1)
+        carru_layout.addLayout(row2)
 
         root.addWidget(carru_section)
+        
+        row_videos = QHBoxLayout()
+        lbl_videos = QLabel("🎬 Carpeta de videos vacías:")
+        lbl_videos.setStyleSheet("font-weight:600;")
 
-        # referencias para habilitar/deshabilitar
-        self._btn_crear_carruseles = btn_crear_carruseles
-        self._btn_unpack = btn_unpack
+        self._lbl_pending_videos = QLabel("—")
+        self._lbl_pending_videos.setStyleSheet("color:#ffcc00;")
 
+        btn_check_videos = QPushButton("🔎 Verificar videos")
+        btn_check_videos.setObjectName("warn")
+        btn_check_videos.clicked.connect(self._update_videos_pendientes)
+
+        row_videos.addWidget(lbl_videos)
+        row_videos.addWidget(self._lbl_pending_videos)
+        row_videos.addStretch(1)
+        row_videos.addWidget(btn_check_videos)
+
+        carru_layout.addLayout(row_videos)
+
+
+        
         # ====== Checkbox "Marcar todos" ======
         marcar_todos_layout = QHBoxLayout()
         self.chk_marcar_todos = QCheckBox("✅ Marcar todos")
@@ -372,6 +410,8 @@ class MainWindow(QWidget):
         marcar_todos_layout.addWidget(self.chk_marcar_todos)
         marcar_todos_layout.addStretch(1)
         root.addLayout(marcar_todos_layout)
+        
+         
 
         # ====== Lista de dispositivos ======
         scroll = QScrollArea()
@@ -543,6 +583,28 @@ class MainWindow(QWidget):
     def _on_noarg_fail(self, nombre, err):
         print(f"💥 Error en {nombre}: {err}")
         self._stop_busy(f"{nombre} con error", ok=False)
+        
+     # ====== Actualización de carruseles pendientes ======
+    def _update_carruseles_pendientes(self):
+        pendientes = chequear_carruseles_pendientes()
+        if pendientes > 0:
+          self._lbl_pending_carru.setText(f"⚠️{pendientes} Carruseles pendientes por subir")
+          self._lbl_pending_carru.setStyleSheet("color:#ff4444; font-weight:600;")  # rojo alerta
+        else:
+          self._lbl_pending_carru.setText("✅ Ninguno carrusel por subir")
+          self._lbl_pending_carru.setStyleSheet("color:#4caf50; font-weight:600;")  # verde OK
+    
+    def _update_videos_pendientes(self):
+        vacias = contar_videos_pendientes()
+        if vacias:
+            resumen = ", ".join(vacias[:3])
+            if len(vacias) > 3:
+             resumen += " ..."
+            self._lbl_pending_videos.setText(f"⚠️ {len(vacias)} carpetas vacías → {resumen}")
+            self._lbl_pending_videos.setStyleSheet("color:#ff4444; font-weight:600;")
+        else:
+            self._lbl_pending_videos.setText("✅ Todas las carpetas tienen videos")
+            self._lbl_pending_videos.setStyleSheet("color:#4caf50; font-weight:600;")
 
     # ====== Flujo Detectar → Dialogo → Cambiar (texto)
     def flujo_cuentas(self):

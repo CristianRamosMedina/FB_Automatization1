@@ -2,8 +2,7 @@ import os, subprocess, io,json
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
-from core.utils.sync_utils import sincronizar_videos_a_dispositivos
-sincronizar_videos_a_dispositivos()
+
 
 # ============================
 # Configuración
@@ -41,12 +40,7 @@ def guardar_videos(dispositivos):
     with open("data/videos.json", "w", encoding="utf-8") as f:
         json.dump(dispositivos, f, indent=2, ensure_ascii=False)
 
-    # 🔄 Mantener sincronizados los archivos
-    try:
-        from core.utils.sync_utils import sincronizar_videos_a_dispositivos
-        sincronizar_videos_a_dispositivos()
-    except Exception as e:
-        print(f"⚠️ No se pudo sincronizar dispositivos.json: {e}")
+  
   
         
 def run_adb(serial, *args, check=True):
@@ -61,14 +55,31 @@ def forzar_indexado(serial, carpeta="DCIM/Camera"):
     print(f"📂 Indexado forzado en {serial} → {carpeta}")
 
 
-def limpiar_memoria(serial):
-    """Limpia Video y Camera en el dispositivo"""
-    print(f"🧹 Limpiando {serial} → Videos y Camera...")
-    run_adb(serial, "shell", "rm", "-rf", f"{DEVICE_VIDEOS_DIR}/*")
-    run_adb(serial, "shell", "rm", "-rf", f"{DEVICE_CAMERA_DIR}/*")
-    forzar_indexado(serial, "DCIM/Video")
-    forzar_indexado(serial, "DCIM/Camera")
+def listar_archivos(serial, carpeta):
+    """Devuelve lista de archivos en una carpeta del dispositivo"""
+    result = subprocess.run(
+        [ADB_PATH, "-s", serial, "shell", "ls", "-1", carpeta],
+        capture_output=True, text=True
+    )
+    salida = result.stdout.strip()
+    if not salida or "No such file" in salida:
+        return []
+    return salida.split("\n")
 
+def limpiar_memoria(serial):
+    """Limpia Video y Camera en el dispositivo con verificación"""
+    print(f"🧹 Limpiando {serial} → Videos y Camera...")
+
+    for carpeta in [DEVICE_VIDEOS_DIR, DEVICE_CAMERA_DIR]:
+        antes = listar_archivos(serial, carpeta)
+        print(f"   📂 Archivos antes en {carpeta}: {len(antes)}")
+
+        run_adb(serial, "shell", "rm", "-rf", f"{carpeta}/*")
+
+        despues = listar_archivos(serial, carpeta)
+        print(f"   ✅ Archivos después en {carpeta}: {len(despues)}")
+
+        forzar_indexado(serial, carpeta.replace("/sdcard/", ""))  # indexar
 
 def _drive_service():
     creds = service_account.Credentials.from_service_account_file(
