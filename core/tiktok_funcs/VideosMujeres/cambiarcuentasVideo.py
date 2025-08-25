@@ -20,17 +20,17 @@ from core.tiktok_funcs.TiktokCuentaScan import (
     actualizar_estado_cuenta
 )
 from .gestos_videos import gestos_videos
-from .adb_utils_videos import cargar_videos, limpiar_memoria
+from .adb_utils_videos import cargar_videos, limpiar_memoria,forzar_indexado
 
 from ...adb_utils import (
     get_screen_size, parse_coord, crear_funciones_con_serial
 )
-from ...config import hilos_activos  # ⬅️ mismo diccionario global
+from ...config import hilos_activos, ADB_PATH , SERVICE_ACCOUNT_FILE # ⬅️ mismo diccionario global
 
 
 # ==================== CONFIG GOOGLE DRIVE ====================
 # Usa tu service account JSON (ruta relativa o absoluta)
-SERVICE_ACCOUNT_FILE = "credenciales.json"
+
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 # Carpeta única y compartida para TODAS las cuentas:
@@ -63,9 +63,6 @@ def _sleep(serial: str, segundos: float):
 # ==================== rutas en el dispositivo ====================
 DEVICE_VIDEOS_DIR   = "/sdcard/DCIM/Video"
 DEVICE_IMAGENES_DIR = "/sdcard/DCIM/Camera"
-
-ADB_PATH = "adb"  # o importa tu ADB_PATH si lo tienes centralizado
-
 
 # ==================== utilidades ADB/FS ====================
 def run_adb(args: list[str]) -> subprocess.CompletedProcess:
@@ -292,7 +289,7 @@ def descarga(serial: str, cuentaactual: str, max_imagenes: int | None = None) ->
 
             # borrar local SOLO si el push fue OK
             try:
-                os.remove(video_a_subir)
+                #os.remove(video_a_subir)
                 print(f"🧹 [{serial}] Eliminado local: {os.path.basename(video_a_subir)}")
             except Exception as e:
                 print(f"⚠️ [{serial}] No se pudo borrar local: {e}")
@@ -308,7 +305,8 @@ def descarga(serial: str, cuentaactual: str, max_imagenes: int | None = None) ->
                 if should_stop(serial): 
                     return False
                 subir_imagenes_al_dispositivo(serial, imagenes_locales)
-
+            forzar_indexado(serial,"DCIM/Camera")    
+            forzar_indexado(serial,"DCIM/Video")
             return True
 
     print(f"❌ [{serial}] Cuenta {cuentaactual} no encontrada en el JSON.")

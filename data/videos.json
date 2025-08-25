@@ -2,9 +2,9 @@
   "R8YY602WSYX": {
     "cuentas": [
       {
-        "cuenta": "pulse.cast1",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
-        "carpeta_nombre": "Bangladeshi Woman"
+        "cuenta": "lexih.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Chinese Woman",
+        "carpeta_nombre": "Chinese Woman"
       },
       {
         "cuenta": "daily.scoop4",
@@ -12,14 +12,14 @@
         "carpeta_nombre": "Asian 2"
       },
       {
-        "cuenta": "lexih.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Chinese Woman",
-        "carpeta_nombre": "Chinese Woman"
-      },
-      {
         "cuenta": "news.flash98",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
         "carpeta_nombre": "Argentinian Woman"
+      },
+      {
+        "cuenta": "pulse.cast1",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
+        "carpeta_nombre": "Bangladeshi Woman"
       },
       {
         "cuenta": "fresh.update85",
@@ -38,10 +38,10 @@
       }
     ],
     "cuentasDetectadas": [
-      "pulse.cast1",
-      "daily.scoop4",
       "lexih.tipss",
+      "daily.scoop4",
       "news.flash98",
+      "pulse.cast1",
       "fresh.update85",
       "jazzhy.health",
       "zuriii.health"
@@ -55,11 +55,6 @@
   "R8YY602XA3R": {
     "cuentas": [
       {
-        "cuenta": "hype.alert7",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
-        "carpeta_nombre": "Australian Woman"
-      },
-      {
         "cuenta": "buzz.frame1",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde",
         "carpeta_nombre": "Blonde"
@@ -70,44 +65,49 @@
         "carpeta_nombre": " Caucasian"
       },
       {
+        "cuenta": "hype.alert7",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
+        "carpeta_nombre": "Australian Woman"
+      },
+      {
+        "cuenta": "marissalife.healt",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Brazilian Woman",
+        "carpeta_nombre": "Brazilian Woman"
+      },
+      {
         "cuenta": "top.stories229",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
+        "carpeta_nombre": "Canadian Woman 2"
+      },
+      {
+        "cuenta": "viral.report7",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Colombian Woman",
+        "carpeta_nombre": "Colombian Woman"
+      },
+      {
+        "cuenta": "trend.alertts",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Dutch Woman",
         "carpeta_nombre": "Dutch Woman"
       },
       {
-        "cuenta": "trend.alertts",
+        "cuenta": "jozan'.tipss",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Egyptian Woman",
         "carpeta_nombre": "Egyptian Woman"
-      },
-      {
-        "cuenta": "viral.report7",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Filipina Woman",
-        "carpeta_nombre": "Filipina Woman"
-      },
-      {
-        "cuenta": "jozan'.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\French Woman",
-        "carpeta_nombre": "French Woman"
-      },
-      {
-        "cuenta": "marissalife.healt",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Greek Woman",
-        "carpeta_nombre": "Greek Woman"
       }
     ],
     "cuentasDetectadas": [
-      "hype.alert7",
       "buzz.frame1",
       "breaking.neewss",
+      "hype.alert7",
+      "marissalife.healt",
       "top.stories229",
-      "trend.alertts",
       "viral.report7",
-      "jozan'.tipss",
-      "marissalife.healt"
+      "trend.alertts",
+      "jozan'.tipss"
     ],
     "cuentasPorSubir": [
-      "hype.alert7",
-      "breaking.neewss"
+      "breaking.neewss",
+      "hype.alert7"
     ],
     "cuentasSubidas": []
   }

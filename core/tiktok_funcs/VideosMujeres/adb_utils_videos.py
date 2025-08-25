@@ -48,7 +48,7 @@ def run_adb(serial, *args, check=True):
     return subprocess.run(cmd, check=check)
 
 
-def forzar_indexado(serial, carpeta="DCIM/Camera"):
+def forzar_indexado(serial, carpeta):
     run_adb(serial, "shell", "am", "broadcast",
             "-a", "android.intent.action.MEDIA_SCANNER_SCAN_FILE",
             "-d", f"file:///sdcard/{carpeta}")

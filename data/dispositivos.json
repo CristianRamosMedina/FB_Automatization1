@@ -237,10 +237,11 @@
       "fresh.update85"
     ],
     "cuentasPorSubir": [
-      "news.flash98",
       "daily.scoop4"
     ],
-    "cuentasSubidas": []
+    "cuentasSubidas": [
+      "news.flash98"
+    ]
   },
   "RF8X20S0C7D": {
     "cuentas": [
@@ -540,10 +541,11 @@
       "viral.report7"
     ],
     "cuentasPorSubir": [
-      "breaking.neewss",
       "hype.alert7"
     ],
-    "cuentasSubidas": []
+    "cuentasSubidas": [
+      "breaking.neewss"
+    ]
   },
   "R8YY602XFGW": {
     "cuentas": [
