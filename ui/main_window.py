@@ -22,7 +22,7 @@ from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres.TiktokVideoScan import TitkokCuentasVideos
 from core.tiktok_funcs.VideosMujeres.cambiarcuentasVideo import cambiar_todas_las_cuentas_videos
 from ui.seleecion_cuentas_videos_dialog import  SeleccionCuentasDialogVideo
-from core.tiktok_funcs.VideosMujeres.pipeline import ejecutar_pipeline
+
 
 from core.config import hilos_activos
 # en ui/main_window.py (importa arriba)
@@ -292,8 +292,6 @@ class MainWindow(QWidget):
         btn_entrenar_sel = QPushButton("▶ Entrenar"); btn_entrenar_sel.setObjectName("ok")
         btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
 
-        btn_gestos_videos = QPushButton("🌀 Gestos Videos (seleccionados)"); btn_gestos_videos.setObjectName("accent")
-        btn_gestos_videos.clicked.connect(lambda: self.ejecutar_seleccionados("gestos", ejecutar_pipeline))
 
         btn_crear_cuentas = QPushButton("➕ Crear cuentas")
         btn_crear_cuentas.setObjectName("create")
@@ -310,7 +308,7 @@ class MainWindow(QWidget):
 
         # tamaños
         for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2,
-                  btn_entrenar_sel, btn_gestos_videos, btn_crear_cuentas,
+                  btn_entrenar_sel, btn_crear_cuentas,
                   btn_detener_sel, btn_silenciar_sel, btn_clear]:
             b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
             b.setMinimumHeight(34)
@@ -320,7 +318,7 @@ class MainWindow(QWidget):
             row1.addWidget(b)
         row1.addStretch(1)
 
-        for b in [btn_entrenar_sel, btn_gestos_videos, btn_crear_cuentas, btn_detener_sel, btn_silenciar_sel, btn_clear]:
+        for b in [btn_entrenar_sel, btn_crear_cuentas, btn_detener_sel, btn_silenciar_sel, btn_clear]:
             row2.addWidget(b)
         row2.addStretch(1)
 
