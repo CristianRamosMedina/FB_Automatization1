@@ -212,27 +212,13 @@ def gestos_videos(serial):
             time.sleep(1.2)
 
             long_tap("90%", "5.375%")
-            time.sleep(0.6)
-            coords = buscarTextoEnRegion(("1%", "73%", "100%", "100%"), "Post",umbral_similitud=0.9)
-            if coords:
-                tap(*coords)
-            else:
-                coords = buscarTextoEnRegion(("1%", "73%", "100%", "100%"), "Post",umbral_similitud=0.6)
-                if coords:
-                    tap(*coords)
-                else:
-                    coords = buscarTextoEnRegion(("1%", "73%", "100%", "100%"), "Post",umbral_similitud=0.5)
-                    if coords:
-                        tap(*coords)
-
-            time.sleep(30)
-
+          
             # ✅ Esperar que aparezca "posted"
             ok = _esperar_texto(
                 serial,
                 buscarTextoEnRegion,
                 "posted",
-                region=("0%", "0%", "100%", "100%"),
+                region=("0%", "0%", "100%", "30%"),
                 timeout=70,
                 umbral=0.6
             )
