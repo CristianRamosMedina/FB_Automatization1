@@ -383,25 +383,35 @@ class MainWindow(QWidget):
 
         root.addWidget(carru_section)
         
+        # ====== Sección de verificación de carpetas de videos ======
         row_videos = QHBoxLayout()
-        lbl_videos = QLabel("🎬 Carpeta de videos vacías:")
+        lbl_videos = QLabel("🎬 Carpetas de videos vacías:")
         lbl_videos.setStyleSheet("font-weight:600;")
 
-        self._lbl_pending_videos = QLabel("—")
-        self._lbl_pending_videos.setStyleSheet("color:#ffcc00;")
+        # Lista de carpetas vacías (en lugar de un QLabel)
+        from PyQt5.QtWidgets import QListWidget
+        self._list_videos_vacias = QListWidget()
+        self._list_videos_vacias.setFixedHeight(100)   # altura controlada
+        self._list_videos_vacias.setMinimumWidth(300)  # ancho mínimo para que no se corte
+        self._list_videos_vacias.setStyleSheet("""
+            QListWidget {
+                background-color: #1a1f29;
+                border: 1px solid #2a2f3a;
+                color: #ff4444;
+                font-weight: 600;
+                padding: 4px;
+            }
+        """)
 
         btn_check_videos = QPushButton("🔎 Verificar videos")
         btn_check_videos.setObjectName("warn")
         btn_check_videos.clicked.connect(self._update_videos_pendientes)
 
         row_videos.addWidget(lbl_videos)
-        row_videos.addWidget(self._lbl_pending_videos)
-        row_videos.addStretch(1)
+        row_videos.addWidget(self._list_videos_vacias, 1)  # la lista ocupa espacio flexible
         row_videos.addWidget(btn_check_videos)
 
         carru_layout.addLayout(row_videos)
-
-
         
         # ====== Checkbox "Marcar todos" ======
         marcar_todos_layout = QHBoxLayout()
@@ -595,16 +605,15 @@ class MainWindow(QWidget):
           self._lbl_pending_carru.setStyleSheet("color:#4caf50; font-weight:600;")  # verde OK
     
     def _update_videos_pendientes(self):
+        self._list_videos_vacias.clear()
+
         vacias = contar_videos_pendientes()
         if vacias:
-            resumen = ", ".join(vacias[:3])
-            if len(vacias) > 3:
-             resumen += " ..."
-            self._lbl_pending_videos.setText(f"⚠️ {len(vacias)} carpetas vacías → {resumen}")
-            self._lbl_pending_videos.setStyleSheet("color:#ff4444; font-weight:600;")
+            for carpeta in vacias:
+                self._list_videos_vacias.addItem(f"⚠️ {carpeta}")
         else:
-            self._lbl_pending_videos.setText("✅ Todas las carpetas tienen videos")
-            self._lbl_pending_videos.setStyleSheet("color:#4caf50; font-weight:600;")
+                self._list_videos_vacias.addItem("✅ Todas las carpetas tienen videos")
+
 
     # ====== Flujo Detectar → Dialogo → Cambiar (texto)
     def flujo_cuentas(self):
