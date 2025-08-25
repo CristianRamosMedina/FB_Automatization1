@@ -220,10 +220,13 @@ def cambiar_a_siguiente_cuenta(serial: str):
 
     print(f"🎯 [{serial}] Buscando próxima cuenta: {siguiente}")
 
-    x1 = parse_coord("19.72%", Width)
-    y1 = parse_coord("14.78%", Height)
-    x2 = parse_coord("87.87%", Width)
-    y2 = parse_coord("93.16%", Height)
+      
+    x1 = parse_coord("21.00%", Width)
+    y1 = parse_coord("18.88%", Height)
+    x2 = parse_coord("82.71%", Width)
+    y2 = parse_coord("93.88%", Height)
+
+
     region = (x1, y1, x2, y2)
 
     coords = buscarTextoEnRegion(region, siguiente, umbral_similitud=0.8)
