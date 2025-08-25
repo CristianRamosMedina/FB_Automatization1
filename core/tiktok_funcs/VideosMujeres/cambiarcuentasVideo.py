@@ -20,7 +20,7 @@ from core.tiktok_funcs.TiktokCuentaScan import (
     actualizar_estado_cuenta
 )
 from .gestos_videos import gestos_videos
-from .adb_utils_videos import cargar_videos
+from .adb_utils_videos import cargar_videos, limpiar_memoria
 
 from ...adb_utils import (
     get_screen_size, parse_coord, crear_funciones_con_serial
@@ -30,7 +30,7 @@ from ...config import hilos_activos  # ⬅️ mismo diccionario global
 
 # ==================== CONFIG GOOGLE DRIVE ====================
 # Usa tu service account JSON (ruta relativa o absoluta)
-SERVICE_ACCOUNT_FILE = "credentials.json"
+SERVICE_ACCOUNT_FILE = "credenciales.json"
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 # Carpeta única y compartida para TODAS las cuentas:
@@ -62,7 +62,7 @@ def _sleep(serial: str, segundos: float):
 
 # ==================== rutas en el dispositivo ====================
 DEVICE_VIDEOS_DIR   = "/sdcard/DCIM/Video"
-DEVICE_IMAGENES_DIR = "/sdcard/DCIM/Imagenes"
+DEVICE_IMAGENES_DIR = "/sdcard/DCIM/Camera"
 
 ADB_PATH = "adb"  # o importa tu ADB_PATH si lo tienes centralizado
 
@@ -276,7 +276,7 @@ def descarga(serial: str, cuentaactual: str, max_imagenes: int | None = None) ->
             if not carpeta_path or not os.path.exists(carpeta_path):
                 print(f"❌ [{serial}] Carpeta local para {cuentaactual} no encontrada.")
                 return False
-
+            limpiar_memoria(serial)
             # 1) elegir UN video y subirlo a DCIM/Video
             videos = listar_videos(carpeta_path)
             if not videos:

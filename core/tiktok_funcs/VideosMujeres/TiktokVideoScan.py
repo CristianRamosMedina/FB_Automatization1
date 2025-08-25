@@ -1,7 +1,8 @@
 import threading, subprocess, os, json, io, time
-from ..utils import switchAccount,cargar_dispositivos
+from ..utils import switchAccount
+from .adb_utils_videos import cargar_videos, guardar_videos
 from core.tiktok_funcs.utils import ejecteg, cerrary_salir, get_screen_size
-from core.adb_utils import parse_coord  , crear_service_drive  , modificar_fechas_en_orden, procesar_celular, guardar_dispositivos                
+from core.adb_utils import parse_coord  , crear_service_drive  , modificar_fechas_en_orden, procesar_celular               
 from core.paths import ADB_PATH, TESSERACT_PATH 
 from ...config import hilos_activos          
 import pytesseract
@@ -439,7 +440,7 @@ def descargar_carpeta_completa(folder_id, serial):
         return False
 
 def descarga(serial, cuentaactual):
-    data = cargar_dispositivos()
+    data = cargar_videos()
     if serial not in data:
         print(f"❌ Serial {serial} no encontrado en el JSON.")
         return None
@@ -462,7 +463,7 @@ def descarga(serial, cuentaactual):
                 return None
 
 def actualizar_estado_cuenta(serial, cuenta_actual):
-    dispositivos = cargar_dispositivos()
+    dispositivos = cargar_videos()
     if serial not in dispositivos:
         print(f"❌ Serial {serial} no encontrado.")
         return None
@@ -481,7 +482,7 @@ def actualizar_estado_cuenta(serial, cuenta_actual):
 
     dispositivos[serial]["cuentasPorSubir"] = por_subir
     dispositivos[serial]["cuentasSubidas"] = subidas
-    guardar_dispositivos(dispositivos)
+    guardar_videos(dispositivos)
 
     if por_subir:
         return por_subir[0]  # próxima cuenta a subir
