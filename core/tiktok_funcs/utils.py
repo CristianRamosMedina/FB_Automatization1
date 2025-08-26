@@ -41,6 +41,11 @@ def AbrirJsonCarruseles():
         with open("data/carrusel.json", "r", encoding="utf-8") as f:
             return json.load(f)
 
+def cargar_videos():
+    if os.path.exists("data/videos.json"):
+        with open("data/videos.json", "r") as f:
+            return json.load(f)
+
 
       
 

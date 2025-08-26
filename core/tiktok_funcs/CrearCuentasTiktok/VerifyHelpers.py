@@ -104,80 +104,154 @@ def buscar_codigo_de_cuenta_hija(
     user,
     app_password,
     cuenta_hija,
-    remitentes=("noreply@account.tiktok.com", "register@account.tiktok.com") 
+    remitentes=("noreply@account.tiktok.com", "register@account.tiktok.com")
 ):
+    """
+    Busca un código de verificación (5-6 dígitos) enviado hoy (UTC) y con <= 20 min de antigüedad
+    para la cuenta hija indicada (en el campo 'To'), desde cualquiera de los remitentes dados.
+    Prioriza Gmail X-GM-RAW; si no está disponible, usa IMAP puro con OR anidado válido.
+
+    Retorna el código como str si lo encuentra; en caso contrario, None.
+    """
     print(f"📬 Buscando código para: {cuenta_hija}")
 
-    mail = imaplib.IMAP4_SSL("imap.gmail.com")
-    mail.login(user, app_password)
-    mail.select("inbox")
+    mail = None
+    try:
+        mail = imaplib.IMAP4_SSL("imap.gmail.com")
+        mail.login(user, app_password)
+        mail.select("inbox")
 
-    # 🔎 Construir query para varios remitentes (usando OR en IMAP)
-    remitentes_query = " OR ".join([f'(FROM "{r}")' for r in remitentes])
-    result, data = mail.search(None, remitentes_query)
-    ids = data[0].split()[::-1]  # Correos más recientes primero
-
-    now_utc = datetime.now(timezone.utc)
-    hoy_utc = now_utc.date()
-
-    for i in ids:
-        res, msg_data = mail.fetch(i, "(RFC822)")
-        raw_email = msg_data[0][1]
-        msg = email.message_from_bytes(raw_email)
-
-        to = msg.get("To", "").lower()
-        subject = msg.get("Subject", "")
-        date_str = msg.get("Date", "")
-        from_ = msg.get("From", "")
-
-        if cuenta_hija.lower() not in to:
-            continue
-
-        # Parsear fecha
+        # ---------- Búsqueda robusta multi-remitente ----------
+        ids = []
         try:
-            msg_datetime = parsedate_to_datetime(date_str)
-            if msg_datetime.tzinfo is None:
-                msg_datetime = msg_datetime.replace(tzinfo=timezone.utc)
+            # 1) Gmail: X-GM-RAW
+            gm_from = " OR ".join([f'from:{r}' for r in remitentes]) if remitentes else ''
+            # to: filtra por destinatario; si la cuenta trae alias/plus addressing, puedes aflojar este filtro
+            gm_query = f'({gm_from}) to:{cuenta_hija}'.strip()
+            result, data = mail.search(None, 'X-GM-RAW', gm_query)
+            if result == "OK" and data and data[0]:
+                ids = data[0].split()[::-1]  # más recientes primero
             else:
-                msg_datetime = msg_datetime.astimezone(timezone.utc)
-        except Exception as e:
-            print(f"⚠️ Error al interpretar la fecha: {e}")
-            continue
+                raise RuntimeError("X-GM-RAW sin resultados")
+        except Exception:
+            # 2) Fallback IMAP: OR anidado binario correcto
+            terms = [f'(FROM "{r}")' for r in remitentes] or ['(FROM "")']
+            or_chain = terms[0]
+            for t in terms[1:]:
+                or_chain = f'(OR {or_chain} {t})'
+            # Filtramos también por destinatario
+            query = f'({or_chain} TO "{cuenta_hija}")'
+            result, data = mail.search(None, query)
+            if result != "OK":
+                print(f"💥 SEARCH IMAP falló: {result} {data}")
+                return None
+            ids = data[0].split()[::-1] if data and data[0] else []
 
-        # Solo de hoy
-        if msg_datetime.date() != hoy_utc:
-            print(f"⏳ Correo descartado: no es de hoy ({msg_datetime.date()})")
-            continue
+        if not ids:
+            print("❌ No hay coincidencias para remitentes/destino.")
+            return None
 
-        # No más viejo de 20 minutos
-        if (now_utc - msg_datetime) > timedelta(minutes=20):
-            print(f"⏰ Correo descartado: más de 20 minutos de antigüedad ({msg_datetime})")
-            continue
+        now_utc = datetime.now(timezone.utc)
+        hoy_utc = now_utc.date()
 
-        # Leer contenido
-        body = ""
-        if msg.is_multipart():
-            for part in msg.walk():
-                if part.get_content_type() == "text/plain":
-                    body = part.get_payload(decode=True).decode(errors="ignore")
-                    break
-        else:
-            body = msg.get_payload(decode=True).decode(errors="ignore")
+        for i in ids:
+            res, msg_data = mail.fetch(i, "(RFC822)")
+            if res != "OK" or not msg_data or not msg_data[0]:
+                continue
 
-        # Buscar código (5 o 6 dígitos)
-        match = re.search(r"\b(\d{5,6})\b", subject + " " + body)
-        if match:
-            codigo = match.group(1)
-            print("✅ Código encontrado:")
-            print(f"📧 Para: {to}")
-            print(f"🧾 Asunto: {subject}")
-            print(f"📅 Fecha: {msg_datetime} (UTC)")
-            print(f"🔑 Código: {codigo}")
-            return codigo
+            raw_email = msg_data[0][1]
+            msg = email.message_from_bytes(raw_email)
 
-    print("❌ No se encontró código reciente válido para esa cuenta hija.")
-    return None
+            to = (msg.get("To") or "").lower()
+            subject = msg.get("Subject") or ""
+            date_str = msg.get("Date") or ""
+            from_ = msg.get("From") or ""
 
+            # Si el 'To' no contiene la cuenta hija, saltar (reduce falsos positivos)
+            if cuenta_hija.lower() not in to:
+                continue
+
+            # Parseo de fecha a UTC
+            try:
+                msg_datetime = parsedate_to_datetime(date_str)
+                if msg_datetime.tzinfo is None:
+                    msg_datetime = msg_datetime.replace(tzinfo=timezone.utc)
+                else:
+                    msg_datetime = msg_datetime.astimezone(timezone.utc)
+            except Exception as e:
+                print(f"⚠️ Error al interpretar la fecha: {e}")
+                continue
+
+            # Solo correos de HOY (UTC)
+            if msg_datetime.date() != hoy_utc:
+                # print(f"⏳ Correo descartado: no es de hoy ({msg_datetime.date()})")
+                continue
+
+            # No más viejo de 20 minutos
+            if (now_utc - msg_datetime) > timedelta(minutes=20):
+                # print(f"⏰ Correo descartado: >20 min ({msg_datetime})")
+                continue
+
+            # Extraer cuerpo texteable
+            body = ""
+            if msg.is_multipart():
+                for part in msg.walk():
+                    ctype = part.get_content_type()
+                    if ctype == "text/plain":
+                        try:
+                            body = part.get_payload(decode=True).decode(part.get_content_charset() or "utf-8", errors="ignore")
+                            break
+                        except Exception:
+                            body = part.get_payload(decode=True).decode(errors="ignore")
+                            break
+                if not body:
+                    # Si no hubo text/plain, intentamos text/html y quitamos tags rápido
+                    for part in msg.walk():
+                        if part.get_content_type() == "text/html":
+                            try:
+                                html = part.get_payload(decode=True).decode(part.get_content_charset() or "utf-8", errors="ignore")
+                            except Exception:
+                                html = part.get_payload(decode=True).decode(errors="ignore")
+                            body = re.sub(r"<[^>]+>", " ", html)
+                            break
+            else:
+                try:
+                    body = msg.get_payload(decode=True).decode(msg.get_content_charset() or "utf-8", errors="ignore")
+                except Exception:
+                    body = (msg.get_payload(decode=True) or b"").decode(errors="ignore")
+
+            # Buscar código (5 o 6 dígitos)
+            texto = f"{subject} {body}"
+            match = re.search(r"\b(\d{5,6})\b", texto)
+            if match:
+                codigo = match.group(1)
+                print("✅ Código encontrado:")
+                print(f"📧 Para: {to}")
+                print(f"👤 De: {from_}")
+                print(f"🧾 Asunto: {subject}")
+                print(f"📅 Fecha: {msg_datetime} (UTC)")
+                print(f"🔑 Código: {codigo}")
+                return codigo
+
+        print("❌ No se encontró código reciente válido para esa cuenta hija.")
+        return None
+
+    except imaplib.IMAP4.error as e:
+        print(f"💥 Error IMAP: {e}")
+        return None
+    except Exception as e:
+        print(f"💥 Error general: {e}")
+        return None
+    finally:
+        try:
+            if mail is not None:
+                try:
+                    mail.close()
+                except Exception:
+                    pass
+                mail.logout()
+        except Exception:
+            pass
 
 def buscar_y_verificar_link(serial ,user, app_password, cuenta_hija, remitente_filtro="noreply@account.tiktok.com"):
     print(f"📬 Buscando enlace de verificación para: {cuenta_hija}")
