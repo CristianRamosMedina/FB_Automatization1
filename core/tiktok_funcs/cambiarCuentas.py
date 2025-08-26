@@ -228,8 +228,8 @@ def cambiar_a_siguiente_cuenta(serial: str):
 
 
     region = (x1, y1, x2, y2)
-
-    coords = buscarTextoEnRegion(region, siguiente, umbral_similitud=0.8)
+    #Cuando hay problema de deteccion de cuenta de deteccion aumentar el umbral, bajarlo solo en problemas de ll,lli
+    coords = buscarTextoEnRegion(region, siguiente, umbral_similitud=0.9)
     if should_stop(serial):
         return None
 
