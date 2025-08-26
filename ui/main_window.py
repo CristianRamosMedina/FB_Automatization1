@@ -21,8 +21,7 @@ from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
 from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres.TiktokVideoScan import TitkokCuentasVideos
 from core.tiktok_funcs.VideosMujeres.cambiarcuentasVideo import cambiar_todas_las_cuentas_videos
-from ui.seleecion_cuentas_videos_dialog import  SeleccionCuentasDialogVideo
-
+from ui.seleecion_cuentas_videos_dialog import SeleccionCuentasDialogVideo
 
 from core.config import hilos_activos
 # en ui/main_window.py (importa arriba)
@@ -31,17 +30,16 @@ from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
     crear_cuenta_para_serial,
 )
 
-# 🚀 Módulos de carruseles/unpack (se intentará usar .main() si existe)
+# 🚀 Módulos de carruseles/unpack
 from core.tiktok_funcs.CarruselesCrearImagenes import carruseles, unpack
-
 from core.tiktok_funcs.verificacion.carruseles_pendientes import chequear_carruseles_pendientes
 from core.tiktok_funcs.verificacion.videos_pendites import contar_videos_pendientes
 
 
 # =================== Workers en QThread ===================
 class ScanWorker(QObject):
-    finished = pyqtSignal(str)           # serial
-    failed  = pyqtSignal(str, str)       # serial, error
+    finished = pyqtSignal(str)
+    failed = pyqtSignal(str, str)
 
     def __init__(self, serial):
         super().__init__()
@@ -62,7 +60,7 @@ class ScanWorker(QObject):
 
 class ChangeWorker(QObject):
     finished = pyqtSignal(str)
-    failed  = pyqtSignal(str, str)
+    failed = pyqtSignal(str, str)
 
     def __init__(self, serial):
         super().__init__()
@@ -83,8 +81,8 @@ class ChangeWorker(QObject):
 
 # ====== Workers VIDEO ======
 class ScanWorkerVideo(QObject):
-    finished = pyqtSignal(str)           # serial
-    failed  = pyqtSignal(str, str)       # serial, error
+    finished = pyqtSignal(str)
+    failed = pyqtSignal(str, str)
 
     def __init__(self, serial):
         super().__init__()
@@ -105,7 +103,7 @@ class ScanWorkerVideo(QObject):
 
 class ChangeWorkerVideo(QObject):
     finished = pyqtSignal(str)
-    failed  = pyqtSignal(str, str)
+    failed = pyqtSignal(str, str)
 
     def __init__(self, serial):
         super().__init__()
@@ -125,9 +123,8 @@ class ChangeWorkerVideo(QObject):
 
 
 class GenericWorker(QObject):
-    """Worker genérico para funciones que reciben solo (serial)."""
     finished = pyqtSignal(str)
-    failed  = pyqtSignal(str, str)
+    failed = pyqtSignal(str, str)
 
     def __init__(self, serial, func):
         super().__init__()
@@ -147,14 +144,13 @@ class GenericWorker(QObject):
             hilos_activos[self.serial] = False
 
 
-# =================== Worker sin argumentos/serial ===================
 class NoArgWorker(QObject):
     finished = pyqtSignal()
-    failed   = pyqtSignal(str)
+    failed = pyqtSignal(str)
 
     def __init__(self, func):
         super().__init__()
-        self.func = func  # callable sin args
+        self.func = func
 
     def run(self):
         try:
@@ -175,7 +171,6 @@ class MainWindow(QWidget):
         self.setMaximumSize(2000, 1200)
         self.setWindowTitle("Control TikTok - Multi Dispositivo")
 
-        # ====== Estilos base (oscuro) ======
         self.setStyleSheet("""
             QWidget { background-color: #0f1115; color: #e8eaed; font-size: 13px; }
             QCheckBox { font-size: 13px; }
@@ -194,7 +189,6 @@ class MainWindow(QWidget):
             QPushButton#accent:hover { background-color: #244069; }
             QPushButton#create { background-color: #3b2566; border-color:#53358f; }
             QPushButton#create:hover { background-color: #452c78; }
-
             QFrame#Toolbar {
                 background-color: #121620; border: 1px solid #242a36; border-radius: 12px;
             }
@@ -203,35 +197,31 @@ class MainWindow(QWidget):
             }
         """)
 
-        # ====== Estado ======
         self.seriales = obtener_seriales()
-        self.checkboxes = {}           # serial -> QCheckBox
-        self.estado_dispositivos = {}  # serial -> accion actual (str|None)
-        self.iconos_dispositivos = {}  # serial -> QLabel
-        self.status_buttons = {}       # serial -> QFrame (dot)
-        self._animations = {}          # serial -> (effect, anim)
+        self.checkboxes = {}
+        self.estado_dispositivos = {}
+        self.iconos_dispositivos = {}
+        self.status_buttons = {}
+        self._animations = {}
 
-        # QThread references
-        self._scan_threads   = {}
-        self._scan_workers   = {}
+        self._scan_threads = {}
+        self._scan_workers = {}
         self._change_threads = {}
         self._change_workers = {}
         self._generic_threads = {}
         self._generic_workers = {}
-        self._pending_scans  = set()
+        self._pending_scans = set()
         self._pending_changes = set()
-        self._last_scanned   = set()
+        self._last_scanned = set()
 
-        # VIDEO refs
-        self._scan_threads_v   = {}
-        self._scan_workers_v   = {}
+        self._scan_threads_v = {}
+        self._scan_workers_v = {}
         self._change_threads_v = {}
         self._change_workers_v = {}
-        self._pending_scans_v  = set()
-        self._pending_changes_v= set()
-        self._last_scanned_v   = set()
+        self._pending_scans_v = set()
+        self._pending_changes_v = set()
+        self._last_scanned_v = set()
 
-        # Iconos opcionales
         self.iconos = {
             "entrenar": QPixmap("icons/entrenar.png").scaled(16, 16),
             "gestos": QPixmap("icons/gestos.png").scaled(16, 16),
@@ -242,7 +232,6 @@ class MainWindow(QWidget):
             None: QPixmap()
         }
 
-        # Paleta de color por acción (para dots)
         self.color_accion = {
             "entrenar": "#4caf50",
             "gestos": "#ff9800",
@@ -253,70 +242,46 @@ class MainWindow(QWidget):
             None: "#606060"
         }
 
-        # ====== Layout raíz ======
         root = QVBoxLayout(self)
         root.setContentsMargins(12, 12, 12, 12)
         root.setSpacing(12)
 
-        # ====== Toolbar en DOS FILAS ======
+        # ====== Toolbar ======
         toolbar = QFrame()
         toolbar.setObjectName("Toolbar")
         tbv = QVBoxLayout(toolbar)
         tbv.setContentsMargins(10, 10, 10, 10)
         tbv.setSpacing(8)
 
-        row1 = QHBoxLayout(); row1.setSpacing(8)
-        row2 = QHBoxLayout(); row2.setSpacing(8)
+        row1 = QHBoxLayout()
+        row2 = QHBoxLayout()
 
-        # --- Botones ---
         btn_init = QPushButton("📱 Inicializar SCRCPY"); btn_init.setObjectName("warn")
         btn_init.clicked.connect(lambda: abrir_scrcpy(self.seriales))
-
         btn_close = QPushButton("❌ Cerrar SCRCPY"); btn_close.setObjectName("danger")
         btn_close.clicked.connect(cerrar_scrcpy)
-
         btn_gestos_video = QPushButton("🔎 Subir Carruseles"); btn_gestos_video.setObjectName("accent")
         btn_gestos_video.clicked.connect(self.flujo_cuentas)
-
         btn_cambiar_cuentas = QPushButton("🔄 Cambiar cuentas"); btn_cambiar_cuentas.setObjectName("accent")
         btn_cambiar_cuentas.clicked.connect(
             lambda: self.ejecutar_seleccionados("cambiar_cuentas", cambiar_todas_las_cuentas)
         )
-
-        # 👉 Nuevo botón para el flujo basado en SeleccionCuentasDialogVideo
-        btn_gestos_video2 = QPushButton("🎬 Subir Videos de Mujeres")
-        btn_gestos_video2.setObjectName("accent")
+        btn_gestos_video2 = QPushButton("🎬 Subir Videos de Mujeres"); btn_gestos_video2.setObjectName("accent")
         btn_gestos_video2.clicked.connect(self.flujo_cuentas_video)
 
-        # Fila 2
-        btn_entrenar_sel = QPushButton("▶ Entrenar"); btn_entrenar_sel.setObjectName("ok")
-        btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
-
-
-        btn_crear_cuentas = QPushButton("➕ Crear cuentas")
-        btn_crear_cuentas.setObjectName("create")
-        btn_crear_cuentas.clicked.connect(self.crear_cuentas_seleccionados)
-
-        btn_detener_sel = QPushButton("⏹ Detener "); btn_detener_sel.setObjectName("danger")
-        btn_detener_sel.clicked.connect(self.detener_seleccionados)
-
-        btn_silenciar_sel = QPushButton("🔇 Silenciar")
-        btn_silenciar_sel.clicked.connect(lambda: self.ejecutar_seleccionados(None, silenciar_dispositivo))
-
-        btn_clear = QPushButton("🧹 Limpiar selección")
-        btn_clear.clicked.connect(self.limpiar_checkboxes)
-
-        # tamaños
-        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2,
-                  btn_entrenar_sel, btn_crear_cuentas,
-                  btn_detener_sel, btn_silenciar_sel, btn_clear]:
-            b.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-            b.setMinimumHeight(34)
-
-        # Distribución filas
         for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2]:
             row1.addWidget(b)
         row1.addStretch(1)
+
+        btn_entrenar_sel = QPushButton("▶ Entrenar"); btn_entrenar_sel.setObjectName("ok")
+        btn_entrenar_sel.clicked.connect(lambda: self.ejecutar_seleccionados("entrenar", entrenar))
+        btn_crear_cuentas = QPushButton("➕ Crear cuentas"); btn_crear_cuentas.setObjectName("create")
+        btn_crear_cuentas.clicked.connect(self.crear_cuentas_seleccionados)
+        btn_detener_sel = QPushButton("⏹ Detener"); btn_detener_sel.setObjectName("danger")
+        btn_detener_sel.clicked.connect(self.detener_seleccionados)
+        btn_silenciar_sel = QPushButton("🔇 Silenciar")
+        btn_silenciar_sel.clicked.connect(lambda: self.ejecutar_seleccionados(None, silenciar_dispositivo))
+        btn_clear = QPushButton("🧹 Limpiar selección"); btn_clear.clicked.connect(self.limpiar_checkboxes)
 
         for b in [btn_entrenar_sel, btn_crear_cuentas, btn_detener_sel, btn_silenciar_sel, btn_clear]:
             row2.addWidget(b)
@@ -326,59 +291,39 @@ class MainWindow(QWidget):
         tbv.addLayout(row2)
         root.addWidget(toolbar)
 
-       
-        
-       # ====== Sección: Creación de carruseles ======
-        carru_section = QFrame()
-        carru_section.setObjectName("Toolbar")
-        carru_layout = QVBoxLayout(carru_section)   # 👈 ahora vertical
+        # ====== Sección Carruseles ======
+        carru_section = QFrame(); carru_section.setObjectName("Toolbar")
+        carru_layout = QVBoxLayout(carru_section)
         carru_layout.setContentsMargins(10, 10, 10, 10)
-        carru_layout.setSpacing(8)
 
-        # --- Fila 1: creación normal ---
         row1 = QHBoxLayout()
-        lbl_carru = QLabel("🖼️  Creación de carruseles")
-        lbl_carru.setStyleSheet("font-weight:600;")
+        lbl_carru = QLabel("🖼️  Creación de carruseles"); lbl_carru.setStyleSheet("font-weight:600;")
 
-        btn_crear_carruseles = QPushButton("🧩 Crear carruseles")
-        btn_crear_carruseles.setObjectName("create")
-        btn_crear_carruseles.clicked.connect(self._run_carruseles_async)
+        self._btn_crear_carruseles = QPushButton("🧩 Crear carruseles")
+        self._btn_crear_carruseles.setObjectName("create")
+        self._btn_crear_carruseles.clicked.connect(self._run_carruseles_async)
 
-        btn_unpack = QPushButton("📦 Unpack")
-        btn_unpack.setObjectName("create")
-        btn_unpack.clicked.connect(self._run_unpack_async)
+        self._btn_unpack = QPushButton("📦 Unpack")
+        self._btn_unpack.setObjectName("create")
+        self._btn_unpack.clicked.connect(self._run_unpack_async)
 
-        lbl_carru_status = QLabel("—")
-        lbl_carru_status.setStyleSheet("color:#a8b3cf;")
-        self._lbl_carru_status = lbl_carru_status
+        self._lbl_carru_status = QLabel("—"); self._lbl_carru_status.setStyleSheet("color:#a8b3cf;")
 
-        row1.addWidget(lbl_carru)
-        row1.addStretch(1)
-        row1.addWidget(btn_crear_carruseles)
-        row1.addWidget(btn_unpack)
-        row1.addWidget(lbl_carru_status)
+        row1.addWidget(lbl_carru); row1.addStretch(1)
+        row1.addWidget(self._btn_crear_carruseles)
+        row1.addWidget(self._btn_unpack)
+        row1.addWidget(self._lbl_carru_status)
 
-        # --- Fila 2: pendientes dentro de la misma sección ---
         row2 = QHBoxLayout()
-        lbl_pending = QLabel("📂 Carruseles pendientes:")
-        lbl_pending.setStyleSheet("font-weight:600;")
-
-        self._lbl_pending_carru = QLabel("—")
-        self._lbl_pending_carru.setStyleSheet("color:#ffcc00;")  # amarillo inicial
-
-        btn_check_pending = QPushButton("🔎 Verificar carruseles")
-        btn_check_pending.setObjectName("warn")
+        lbl_pending = QLabel("📂 Carruseles pendientes:"); lbl_pending.setStyleSheet("font-weight:600;")
+        self._lbl_pending_carru = QLabel("—"); self._lbl_pending_carru.setStyleSheet("color:#ffcc00;")
+        btn_check_pending = QPushButton("🔎 Verificar carruseles"); btn_check_pending.setObjectName("warn")
         btn_check_pending.clicked.connect(self._update_carruseles_pendientes)
 
-        row2.addWidget(lbl_pending)
-        row2.addWidget(self._lbl_pending_carru)
-        row2.addStretch(1)
-        row2.addWidget(btn_check_pending)
+        row2.addWidget(lbl_pending); row2.addWidget(self._lbl_pending_carru)
+        row2.addStretch(1); row2.addWidget(btn_check_pending)
 
-        # Agregar ambas filas al layout vertical
-        carru_layout.addLayout(row1)
-        carru_layout.addLayout(row2)
-
+        carru_layout.addLayout(row1); carru_layout.addLayout(row2)
         root.addWidget(carru_section)
         
         # ====== Sección de verificación de carpetas de videos ======
