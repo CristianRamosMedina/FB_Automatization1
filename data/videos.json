@@ -2,14 +2,9 @@
   "R8YY602WSYX": {
     "cuentas": [
       {
-        "cuenta": "lexih.tipss",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Chinese Woman",
-        "carpeta_nombre": "Chinese Woman"
-      },
-      {
-        "cuenta": "daily.scoop4",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian 2",
-        "carpeta_nombre": "Asian 2"
+        "cuenta": "freshi.update",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde 2",
+        "carpeta_nombre": "Blonde 2"
       },
       {
         "cuenta": "news.flash98",
@@ -17,46 +12,70 @@
         "carpeta_nombre": "Argentinian Woman"
       },
       {
-        "cuenta": "pulse.cast1",
+        "cuenta": "daily.scoopi",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian 2",
+        "carpeta_nombre": "Asian 2"
+      },
+      {
+        "cuenta": "pulse.casti",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
         "carpeta_nombre": "Bangladeshi Woman"
       },
       {
-        "cuenta": "fresh.update85",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Brazilian Woman",
-        "carpeta_nombre": "Brazilian Woman"
+        "cuenta": "lexih.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Chinese Woman",
+        "carpeta_nombre": "Chinese Woman"
       },
       {
-        "cuenta": "zuriii.health",
+        "cuenta": "jazzhy.health",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
         "carpeta_nombre": "Canadian Woman 2"
       },
       {
-        "cuenta": "jazzhy.health",
+        "cuenta": "zuriii.health",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Colombian Woman",
         "carpeta_nombre": "Colombian Woman"
       }
     ],
     "cuentasDetectadas": [
-      "lexih.tipss",
-      "daily.scoop4",
+      "freshi.update",
       "news.flash98",
-      "pulse.cast1",
-      "fresh.update85",
-      "zuriii.health",
-      "jazzhy.health"
+      "daily.scoopi",
+      "pulse.casti",
+      "lexih.tipss",
+      "jazzhy.health",
+      "zuriii.health"
     ],
     "cuentasPorSubir": [],
     "cuentasSubidas": [
-      "fresh.update85"
+      "freshi.update",
+      "news.flash98",
+      "daily.scoopi",
+      "pulse.casti",
+      "lexih.tipss"
     ]
   },
   "R8YY602XA3R": {
     "cuentas": [
       {
-        "cuenta": "buzz.frame1",
+        "cuenta": "marissalife.healt",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman",
+        "carpeta_nombre": "Canadian Woman"
+      },
+      {
+        "cuenta": "buzzi.frame",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde",
         "carpeta_nombre": "Blonde"
+      },
+      {
+        "cuenta": "virali.report",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+        "carpeta_nombre": "African"
+      },
+      {
+        "cuenta": "hype.alerti",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
+        "carpeta_nombre": "Australian Woman"
       },
       {
         "cuenta": "breaking.neewss",
@@ -64,53 +83,210 @@
         "carpeta_nombre": " Caucasian"
       },
       {
-        "cuenta": "hype.alert7",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
-        "carpeta_nombre": "Australian Woman"
+        "cuenta": "trend.alertts",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African 2",
+        "carpeta_nombre": "African 2"
       },
       {
-        "cuenta": "jozan'.tipss",
+        "cuenta": "top.storiesi",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Brazilian Woman",
         "carpeta_nombre": "Brazilian Woman"
       },
       {
-        "cuenta": "marissalife.healt",
+        "cuenta": "jozan'.tipss",
         "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
         "carpeta_nombre": "Canadian Woman 2"
-      },
-      {
-        "cuenta": "top.stories229",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Colombian Woman",
-        "carpeta_nombre": "Colombian Woman"
-      },
-      {
-        "cuenta": "trend.alertts",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Dutch Woman",
-        "carpeta_nombre": "Dutch Woman"
-      },
-      {
-        "cuenta": "viral.report7",
-        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Egyptian Woman",
-        "carpeta_nombre": "Egyptian Woman"
       }
     ],
     "cuentasDetectadas": [
-      "buzz.frame1",
+      "marissalife.healt",
+      "buzzi.frame",
+      "virali.report",
+      "hype.alerti",
       "breaking.neewss",
-      "hype.alert7",
-      "jozan'.tipss",
-      "marissalife.healt",
-      "top.stories229",
       "trend.alertts",
-      "viral.report7"
-    ],
-    "cuentasPorSubir": [
-      "marissalife.healt",
-      "top.stories229",
-      "viral.report7"
-    ],
-    "cuentasSubidas": [
+      "top.storiesi",
       "jozan'.tipss"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "top.storiesi",
+      "marissalife.healt",
+      "buzzi.frame",
+      "virali.report",
+      "hype.alerti",
+      "breaking.neewss",
+      "trend.alertts"
     ]
+  },
+  "R8YY602XDEX": {
+    "cuentas": [
+      {
+        "cuenta": "yasmineskin.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\ Caucasian",
+        "carpeta_nombre": " Caucasian"
+      },
+      {
+        "cuenta": "kiyav1.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+        "carpeta_nombre": "African"
+      },
+      {
+        "cuenta": "aral9.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African 2",
+        "carpeta_nombre": "African 2"
+      },
+      {
+        "cuenta": "nora6x.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
+        "carpeta_nombre": "Argentinian Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "yasmineskin.tips",
+      "kiyav1.health",
+      "aral9.healthh",
+      "nora6x.tips"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "R8YY602XXFH": {
+    "cuentas": [
+      {
+        "cuenta": "ariaae.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\ Caucasian",
+        "carpeta_nombre": " Caucasian"
+      },
+      {
+        "cuenta": "gailli.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+        "carpeta_nombre": "African"
+      }
+    ],
+    "cuentasDetectadas": [
+      "ariaae.tips",
+      "gailli.health"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "R8YY602XDAW": {
+    "cuentas": [
+      {
+        "cuenta": "aralv.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African 2",
+        "carpeta_nombre": "African 2"
+      },
+      {
+        "cuenta": "ivy2.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
+        "carpeta_nombre": "Argentinian Woman"
+      },
+      {
+        "cuenta": "vivii.health3",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian",
+        "carpeta_nombre": "Asian"
+      }
+    ],
+    "cuentasDetectadas": [
+      "aralv.healthh",
+      "ivy2.health",
+      "vivii.health3"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "R8YY602XFGW": {
+    "cuentas": [
+      {
+        "cuenta": "liaa.tips4",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\ Caucasian",
+        "carpeta_nombre": " Caucasian"
+      },
+      {
+        "cuenta": "kiyah.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+        "carpeta_nombre": "African"
+      },
+      {
+        "cuenta": "juneyi.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African 2",
+        "carpeta_nombre": "African 2"
+      },
+      {
+        "cuenta": "rixna.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
+        "carpeta_nombre": "Argentinian Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "liaa.tips4",
+      "kiyah.tips",
+      "juneyi.healthh",
+      "rixna.health"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "R8YY602XGED": {
+    "cuentas": [
+      {
+        "cuenta": "Zaraia.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian",
+        "carpeta_nombre": "Asian"
+      },
+      {
+        "cuenta": "skyeq.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Asian 2",
+        "carpeta_nombre": "Asian 2"
+      },
+      {
+        "cuenta": "lizsay.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
+        "carpeta_nombre": "Australian Woman"
+      },
+      {
+        "cuenta": "norii.healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Bangladeshi Woman",
+        "carpeta_nombre": "Bangladeshi Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "Zaraia.tipss",
+      "skyeq.health",
+      "lizsay.tipss",
+      "norii.healthh"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "RF8X20ESFGW": {
+    "cuentas": [
+      {
+        "cuenta": "anthonygreenmitj85",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Causian",
+        "carpeta_nombre": "Causian"
+      }
+    ],
+    "cuentasDetectadas": [
+      "anthonygreenmitj85"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
+  },
+  "RF8X20S0C7D": {
+    "cuentas": [
+      {
+        "cuenta": "daniellecare,healthh",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Chinese Woman",
+        "carpeta_nombre": "Chinese Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "daniellecare,healthh"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": []
   }
 }

@@ -13,7 +13,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True  # tolerar encabezados/archivos raros
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
-
+from core.paths import SERVICE_ACCOUNT_FILE
 from ..utils import AbrirJsonCarruseles
 
 # ================= Config =================
@@ -23,7 +23,7 @@ ruta_documentos = os.path.expanduser("~/Documents")
 base_salida = os.path.join(ruta_documentos, "Carrusel", "ImagenesCrudas", "Carrusel")
 base_usadas = os.path.join(ruta_documentos, "Carrusel", "ImagenesCrudas", "ImagenCrudaUsada")
 
-SERVICE_ACCOUNT_FILE = "data/credenciales.json"
+
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 carpetas_descargadas = set()

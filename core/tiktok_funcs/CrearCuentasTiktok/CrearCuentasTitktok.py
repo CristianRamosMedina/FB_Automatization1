@@ -11,6 +11,7 @@ from .fechito import fechito
 from .puzzleSolver import puzzle
 from ..entrenar import entrenar
 from .VerifyHelpers import esperar_nickname_o_verificar, buscar_y_verificar_link
+from core.paths import CORREOS_FILE, SERVICE_ACCOUNT_FILE
 
 # ---------------- Rutas robustas ----------------
 def _find_data_dir(start_file: Path) -> Path:
@@ -23,16 +24,15 @@ def _find_data_dir(start_file: Path) -> Path:
     return p.parents[3] / "data"
 
 DATA_DIR     = _find_data_dir(Path(__file__))
-CRED_PATH    = DATA_DIR / "credenciales.json"
-CORREOS_PATH = DATA_DIR / "correos.json"
 
-if not CRED_PATH.exists():
-    raise FileNotFoundError(f"No se encontró credenciales.json en: {CRED_PATH}")
-if not CORREOS_PATH.exists():
-    raise FileNotFoundError(f"No se encontró correos.json en: {CORREOS_PATH}")
+
+if not SERVICE_ACCOUNT_FILE.exists():
+    raise FileNotFoundError(f"No se encontró credenciales.json en: {SERVICE_ACCOUNT_FILE}")
+if not CORREOS_FILE.exists():
+    raise FileNotFoundError(f"No se encontró correos.json en: {CORREOS_FILE}")
 
 # ---------------- Google Sheets ----------------
-_gc = gspread.service_account(filename=str(CRED_PATH))
+_gc = gspread.service_account(filename=str(SERVICE_ACCOUNT_FILE))
 _sheet = _gc.open("Cuentas").sheet1
 if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
     _sheet.insert_row(
@@ -45,7 +45,7 @@ if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
 _cuentas_por_serial: dict[str, dict] = {}
 
 # ---------------- Lock de asignación ----------------
-_LOCK_PATH = (CORREOS_PATH.parent / "correos.json.lock")
+_LOCK_PATH = (CORREOS_FILE.parent / "correos.json.lock")
 
 def _acquire_lock(timeout: float = 10.0, poll: float = 0.05):
     start = time.time()
@@ -76,7 +76,7 @@ def _usados_globales(data: dict, app: str):
     return correos_usados, apodos_usados
 
 # ---------------- Asignación atómica ----------------
-def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_PATH, app: str = "Tiktok"):
+def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_FILE, app: str = "Tiktok"):
     """
     Asigna a un serial un correo y un apodo que:
     - Estén en la lista de disponibles.

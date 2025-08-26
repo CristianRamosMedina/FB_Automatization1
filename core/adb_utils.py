@@ -11,17 +11,18 @@ from PIL import Image
 import io
 from .config import pytesseract
 import difflib
+from core.paths import DISPOSITIVOS_FILE, SERVICE_ACCOUNT_FILE
+
 # ------------------- FUNCIONES BASE ADB -------------------
 
-DISPOSITIVOS_JSON = "data/dispositivos.json"
-CREDENTIALS_FILE = "credenciales.json"
+
 
 def crear_service_drive():
     """Crea el servicio de Google Drive"""
     try:
         SCOPES = ['https://www.googleapis.com/auth/drive']
         credentials = service_account.Credentials.from_service_account_file(
-            CREDENTIALS_FILE, scopes=SCOPES
+            SERVICE_ACCOUNT_FILE, scopes=SCOPES
         )
 
         service = build('drive', 'v3', credentials=credentials)

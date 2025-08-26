@@ -8,7 +8,7 @@ from ...config import hilos_activos
 import pytesseract
 from PIL import Image
 from PIL import UnidentifiedImageError
-
+from core.paths import ASIGNACIONES_VIDEO
 # Configuración pytesseract 
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
@@ -120,13 +120,13 @@ def listar_carpetas_locales_ordenadas():
 
 lock = threading.Lock()
 
-ASIGNACIONES_FILE = "data/asignacionesVideo.json"
+
 
 def cargar_asignaciones():
-    if not os.path.exists(ASIGNACIONES_FILE):
+    if not os.path.exists(ASIGNACIONES_VIDEO):
         print("⚠️ No se encontró asignaciones.json, usando vacío.")
         return {}
-    with open(ASIGNACIONES_FILE, "r", encoding="utf-8") as f:
+    with open(ASIGNACIONES_VIDEO, "r", encoding="utf-8") as f:
         return json.load(f)
 
 asignaciones_fijas = cargar_asignaciones()

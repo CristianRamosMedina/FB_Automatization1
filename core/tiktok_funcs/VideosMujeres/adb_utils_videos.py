@@ -2,7 +2,7 @@ import os, subprocess, io,json
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
-
+from core.paths import SERVICE_ACCOUNT_FILE, VIDEOS_FILE
 
 # ============================
 # Configuración
@@ -12,8 +12,7 @@ DEVICE_VIDEOS_DIR = "/sdcard/DCIM/Video"
 DEVICE_CAMERA_DIR = "/sdcard/DCIM/Camera"
 
 # Archivos locales
-SERVICE_ACCOUNT_FILE = os.path.join("data", "credenciales.json")
-VIDEOS_FILE = os.path.join("data", "videos.json")
+
 
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
@@ -30,14 +29,14 @@ os.makedirs(TEMP_STICKERS_DIR, exist_ok=True)
 # ============================
 
 def cargar_videos():
-    if os.path.exists("data/videos.json"):
-        with open("data/videos.json", "r") as f:
+    if os.path.exists(VIDEOS_FILE):
+        with open(VIDEOS_FILE, "r") as f:
             return json.load(f)
     return {}
 
 
 def guardar_videos(dispositivos):
-    with open("data/videos.json", "w", encoding="utf-8") as f:
+    with open(VIDEOS_FILE, "w", encoding="utf-8") as f:
         json.dump(dispositivos, f, indent=2, ensure_ascii=False)
 
   

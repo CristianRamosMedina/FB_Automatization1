@@ -7,6 +7,7 @@ from ..config import hilos_activos
 import pytesseract
 from PIL import Image
 from PIL import UnidentifiedImageError
+from core.paths import ASIGNACIONES_FILE
 
 # Configuración pytesseract
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
@@ -119,7 +120,7 @@ def listar_carpetas_locales_ordenadas():
 
 lock = threading.Lock()
 
-ASIGNACIONES_FILE = "data/asignaciones.json"
+
 
 def cargar_asignaciones():
     if not os.path.exists(ASIGNACIONES_FILE):
@@ -346,7 +347,7 @@ def detectar_usuarios_en_pantalla(serial):
     x1 = parse_coord("21.00%", Width)
     y1 = parse_coord("18.88%", Heigth)
     x2 = parse_coord("82.71%", Width)
-    y2 = parse_coord("100%", Heigth)
+    y2 = parse_coord("94%", Heigth) # el rango de pantalla en Y donde busca los usuarios
 
     img = Image.open(io.BytesIO(imagen_bytes))
     img = img.crop((x1, y1, x2, y2))

@@ -8,8 +8,7 @@ import pytesseract
 
 from core.adb_utils import get_screen_size as adb_get_screen_size, parse_coord, crear_funciones_con_serial
 from core.config import hilos_activos                    # ✅ una sola fuente de verdad
-from core.paths import ADB_PATH, SCRCPY_PATH, TESSERACT_PATH  # SCRCPY_PATH por si lo usas en otros helpers
-
+from core.paths import CARRUSEL_FILE,DISPOSITIVOS_FILE,VIDEOS_FILE,TESSERACT_PATH
 # Configuración pytesseract
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
@@ -32,18 +31,18 @@ def should_stop(serial: str) -> bool:
     return False
 
 def cargar_dispositivos():
-    if os.path.exists("data/dispositivos.json"):
-        with open("data/dispositivos.json", "r") as f:
+    if os.path.exists(DISPOSITIVOS_FILE):
+        with open(DISPOSITIVOS_FILE, "r") as f:
             return json.load(f)
     return {}
 def AbrirJsonCarruseles():
-    if os.path.exists("data/carrusel.json"):
-        with open("data/carrusel.json", "r", encoding="utf-8") as f:
+    if os.path.exists(CARRUSEL_FILE):
+        with open(CARRUSEL_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
 
 def cargar_videos():
-    if os.path.exists("data/videos.json"):
-        with open("data/videos.json", "r") as f:
+    if os.path.exists(VIDEOS_FILE):
+        with open(VIDEOS_FILE, "r") as f:
             return json.load(f)
 
 

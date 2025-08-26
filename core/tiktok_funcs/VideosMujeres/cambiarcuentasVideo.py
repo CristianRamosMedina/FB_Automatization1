@@ -25,8 +25,8 @@ from .adb_utils_videos import cargar_videos, limpiar_memoria,forzar_indexado
 from ...adb_utils import (
     get_screen_size, parse_coord, crear_funciones_con_serial
 )
-from ...config import hilos_activos, ADB_PATH , SERVICE_ACCOUNT_FILE # ⬅️ mismo diccionario global
-
+from ...config import hilos_activos, ADB_PATH  # ⬅️ mismo diccionario global
+from core.paths import SERVICE_ACCOUNT_FILE
 
 # ==================== CONFIG GOOGLE DRIVE ====================
 # Usa tu service account JSON (ruta relativa o absoluta)
