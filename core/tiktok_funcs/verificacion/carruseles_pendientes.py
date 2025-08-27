@@ -6,29 +6,28 @@ BASE_CARRUSEL_PATH = os.path.join(
     "Carrusel", "ImagenesCrudas", "Carrusel"
 )
 
-NUM_CARPETAS = 37
 GRUPO = "GRUPO150"
 
 def chequear_carruseles_pendientes():
     """
-    Cuenta cuántas de las carpetas 1..37 + GRUPO150 existen en BASE_CARRUSEL_PATH.
-    Devuelve un entero (0..38).
+    Detecta:
+      - cuántas carpetas con nombre numérico existen
+      - si la carpeta GRUPO150 existe
     """
     if not os.path.exists(BASE_CARRUSEL_PATH):
-        print(f"⚠️ Carpeta base {BASE_CARRUSEL_PATH} no existe.")
-        return 0
+        return {"numericas": 0, "grupo150": False}
 
-    pendientes = 0
+    # contar carpetas con nombre numérico
+    num_presentes = [
+        nombre for nombre in os.listdir(BASE_CARRUSEL_PATH)
+        if os.path.isdir(os.path.join(BASE_CARRUSEL_PATH, nombre))
+        and nombre.isdigit()
+    ]
 
-    # Revisar carpetas 1 a 37
-    for i in range(1, NUM_CARPETAS + 1):
-        carpeta = os.path.join(BASE_CARRUSEL_PATH, str(i))
-        if os.path.exists(carpeta):
-            pendientes += 1
+    # verificar GRUPO150
+    grupo150 = os.path.exists(os.path.join(BASE_CARRUSEL_PATH, GRUPO))
 
-    # Revisar GRUPO150
-    grupo_path = os.path.join(BASE_CARRUSEL_PATH, GRUPO)
-    if os.path.exists(grupo_path):
-        pendientes += 1
-
-    return pendientes
+    return {
+        "numericas": len(num_presentes),
+        "grupo150": grupo150
+    }

@@ -12,6 +12,10 @@ from .puzzleSolver import puzzle
 from ..entrenar import entrenar
 from .VerifyHelpers import esperar_nickname_o_verificar, buscar_y_verificar_link
 from core.paths import CORREOS_FILE, SERVICE_ACCOUNT_FILE
+import random
+import string
+from core.asignaciones_utils import asignar_carpeta_a_apodo
+
 
 # ---------------- Rutas robustas ----------------
 def _find_data_dir(start_file: Path) -> Path:
@@ -45,7 +49,50 @@ if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
 _cuentas_por_serial: dict[str, dict] = {}
 
 # ---------------- Lock de asignación ----------------
-_LOCK_PATH = (CORREOS_FILE.parent / "correos.json.lock")
+_LOCK_PATH = Path(str(CORREOS_FILE) + ".lock")
+
+# ---------------- Generador de apodos ----------------
+
+def generar_apodo_infinito(usados: set[str]) -> str:
+    BASE_NAMES = [
+        "ava", "zoe", "mia", "ivy", "nora", "luna", "ruby", "ella", "sara",
+        "aria", "nova", "faye", "lexi", "rosa", "zara", "alma", "vivi", "lynn"
+    ]
+    MODIFIERS = ["fit", "fresh", "care", "glow", "skin", "vibe", "well", "style", "calm", "flow"]
+    SUFFIXES = [".tips", ".tipss", ".health", ".healthh"]
+
+    def variar_letras(base: str) -> str:
+        """Introduce pequeñas variaciones para extender combinaciones infinitamente."""
+        # Cambia aleatoriamente una letra por otra del alfabeto
+        pos = random.randrange(len(base))
+        letra = random.choice(string.ascii_lowercase)
+        return base[:pos] + letra + base[pos+1:]
+
+    while True:
+        choice = random.random()
+        if choice < 0.5:
+            base = random.choice(BASE_NAMES) + random.choice(MODIFIERS)
+        elif choice < 0.8:
+            base = random.choice(BASE_NAMES) + random.choice(BASE_NAMES)
+        else:
+            base = random.choice(BASE_NAMES)
+
+        # Si ya hay demasiados usados, mete variaciones infinitas
+        if len(usados) > 1500 and random.random() < 0.5:
+            base = variar_letras(base)
+
+        sufijo = random.choice(SUFFIXES)
+        candidato = base + sufijo
+
+        # Reglas
+        if len(candidato) > 15:
+            continue
+        if "ll" in candidato:
+            continue
+        if candidato in usados:
+            continue
+
+        return candidato
 
 def _acquire_lock(timeout: float = 10.0, poll: float = 0.05):
     start = time.time()
@@ -79,8 +126,9 @@ def _usados_globales(data: dict, app: str):
 def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_FILE, app: str = "Tiktok"):
     """
     Asigna a un serial un correo y un apodo que:
-    - Estén en la lista de disponibles.
-    - No hayan sido usados en ningún otro serial.
+    - Estén en la lista de disponibles en correos.json
+    - No hayan sido usados en ningún otro serial
+    Si no hay correos disponibles, devuelve (None, None) sin generar más.
     """
     path_json = Path(path_json)
     _acquire_lock()
@@ -98,18 +146,22 @@ def asignar_correo_y_apodo_a_serial(serial: str, path_json: Path = CORREOS_FILE,
         # 🔎 recolectar usados en TODO el archivo (todos los seriales)
         correos_usados, apodos_usados = _usados_globales(data, app)
 
-        # buscar el primer correo/apodo disponible que no haya sido usado
+        # correo: debe existir en el JSON
         correo = next((c for c in data["correos_disponibles"] if c not in correos_usados), None)
-        apodo  = next((a for a in data["apodos_disponibles"]  if a not in apodos_usados), None)
-
-        if not correo or not apodo:
-            print("❌ No hay correo/apodo disponible que no esté usado.")
+        if not correo:
+            print("❌ No hay correos disponibles en correos.json")
             return None, None
 
-        # ✅ registrar en el serial (pero NO quitarlos del pool)
+        # apodo: primero busca en JSON, si no hay → genera uno nuevo dinámicamente
+        apodo = next((a for a in data["apodos_disponibles"] if a not in apodos_usados), None)
+        if not apodo:
+            apodo = generar_apodo_infinito(apodos_usados)
+            asignar_carpeta_a_apodo(apodo)
+
+        # registrar
         data[app][serial]["cuentas"].append({"correo": correo, "apodo": apodo})
 
-        # guardar cambios
+        # guardar cambios seguros
         tmp = path_json.with_suffix(".tmp")
         with open(tmp, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)

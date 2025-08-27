@@ -10,15 +10,14 @@ VIDEO_EXTS = (".mp4", ".mov", ".mkv", ".webm", ".avi", ".m4v")
 
 def contar_videos_pendientes():
     """
-    Revisa todas las carpetas dentro de BASE_VIDEOS_PATH y
-    devuelve una lista con los nombres de las carpetas que
-    no tienen ningún archivo de video.
+    Revisa todas las carpetas dentro de BASE_VIDEOS_PATH.
+    Devuelve un dict con {carpeta: cantidad_de_videos}.
     """
+    resultado = {}
+
     if not os.path.exists(BASE_VIDEOS_PATH):
         print(f"⚠️ Carpeta base {BASE_VIDEOS_PATH} no existe.")
-        return []
-
-    vacias = []
+        return resultado
 
     for nombre in os.listdir(BASE_VIDEOS_PATH):
         carpeta = os.path.join(BASE_VIDEOS_PATH, nombre)
@@ -27,13 +26,20 @@ def contar_videos_pendientes():
         if nombre.lower() == "videosusados":
             continue  # ignorar carpeta usada
 
-        # buscar si hay al menos 1 video
-        tiene_video = any(
-            f.lower().endswith(VIDEO_EXTS)
-            for f in os.listdir(carpeta)
-        )
+        try:
+            archivos = os.listdir(carpeta)
+        except Exception as e:
+            print(f"⚠️ No se pudo leer {carpeta}: {e}")
+            resultado[nombre] = -1  # error al leer
+            continue
 
-        if not tiene_video:
-            vacias.append(nombre)
+        # Filtrar solo videos válidos
+        videos = [
+            f for f in archivos
+            if os.path.isfile(os.path.join(carpeta, f))
+            and f.lower().endswith(VIDEO_EXTS)
+        ]
 
-    return vacias
+        resultado[nombre] = len(videos)
+
+    return resultado

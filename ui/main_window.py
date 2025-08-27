@@ -540,22 +540,39 @@ class MainWindow(QWidget):
      # ====== Actualización de carruseles pendientes ======
     def _update_carruseles_pendientes(self):
         pendientes = chequear_carruseles_pendientes()
-        if pendientes > 0:
-          self._lbl_pending_carru.setText(f"⚠️{pendientes} Carruseles pendientes por subir")
-          self._lbl_pending_carru.setStyleSheet("color:#ff4444; font-weight:600;")  # rojo alerta
+        numericas = pendientes["numericas"]
+        grupo150 = pendientes["grupo150"]
+
+        if numericas == 0 or not grupo150:
+            msg = f"⚠️ {numericas} carruseles detectados"
+            if not grupo150:
+                msg += " + falta GRUPO150"
+            self._lbl_pending_carru.setText(msg)
+            self._lbl_pending_carru.setStyleSheet("color:#ff4444; font-weight:600;")
         else:
-          self._lbl_pending_carru.setText("✅ Ninguno carrusel por subir")
-          self._lbl_pending_carru.setStyleSheet("color:#4caf50; font-weight:600;")  # verde OK
+            msg = f"✅ {numericas} carruseles listos"
+            if grupo150:
+                msg += " + GRUPO150 presente"
+            self._lbl_pending_carru.setText(msg)
+            self._lbl_pending_carru.setStyleSheet("color:#4caf50; font-weight:600;")
+
     
     def _update_videos_pendientes(self):
         self._list_videos_vacias.clear()
 
-        vacias = contar_videos_pendientes()
+        estado = contar_videos_pendientes()  # 👈 en vez de contar_videos_pendientes()
+        if not estado:
+            self._list_videos_vacias.addItem("⚠️ No se encontró la carpeta base de videos")
+            return
+
+        vacias = [c for c, n in estado.items() if n == 0]
+
         if vacias:
             for carpeta in vacias:
-                self._list_videos_vacias.addItem(f"⚠️ {carpeta}")
+                self._list_videos_vacias.addItem(f"⚠️ {carpeta} (VACÍA)")
         else:
-                self._list_videos_vacias.addItem("✅ Todas las carpetas tienen videos")
+            self._list_videos_vacias.addItem("✅ Todas las carpetas tienen videos")
+
 
 
     # ====== Flujo Detectar → Dialogo → Cambiar (texto)
