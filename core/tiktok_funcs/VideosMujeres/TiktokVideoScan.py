@@ -2,35 +2,35 @@ import threading, subprocess, os, json, io, time
 from ..utils import switchAccount
 from .adb_utils_videos import cargar_videos, guardar_videos
 from core.tiktok_funcs.utils import ejecteg, cerrary_salir, get_screen_size
-from core.adb_utils import parse_coord  , crear_service_drive  , modificar_fechas_en_orden, procesar_celular               
-from core.paths import ADB_PATH, TESSERACT_PATH 
-from ...config import hilos_activos          
+from core.adb_utils import parse_coord, crear_service_drive, modificar_fechas_en_orden, procesar_celular
+from core.paths import ADB_PATH, TESSERACT_PATH, ASIGNACIONES_VIDEO
+from ...config import hilos_activos
 import pytesseract
 from PIL import Image
 from PIL import UnidentifiedImageError
-from core.paths import ASIGNACIONES_VIDEO
-# Configuración pytesseract 
+
+# ===================== Configuración pytesseract =====================
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 
+# ===================== Paths base locales (para listar carpetas) =====================
 BASE_PATH = os.path.join(
     os.path.expanduser("~/Documents"),
     "Carrusel", "ImagenesCrudas", "Videos"
 )
 
-# -------------------- Helpers de parada --------------------
+# ===================== Helpers STOP cooperativo =====================
 def stop_requested(serial) -> bool:
     return not hilos_activos.get(serial, False)
 
 def _sleep(serial: str, segundos: float):
     """Sleep cooperativo: permite salir rápido si se pidió stop."""
     fin = time.time() + max(0.0, segundos)
-    # slices de 0.1s para reaccionar; mantengo simple
     while time.time() < fin:
         if stop_requested(serial):
             return
         time.sleep(0.1)
 
-# -------------------- Flujo principal --------------------
+# ===================== Flujo principal de escaneo/assign =====================
 def TitkokCuentasVideos(serial, cooldown=2.0, cierre_cada=3):
     hilos_activos[serial] = True
     fallos = 0
@@ -105,29 +105,61 @@ def TitkokCuentasVideos(serial, cooldown=2.0, cierre_cada=3):
     hilos_activos[serial] = False
     return []
 
-# -------------------- Soporte: carpetas --------------------
+# ===================== Soporte: carpetas / asignaciones =====================
 def listar_carpetas_locales_ordenadas():
+    """Lista todas las carpetas dentro de BASE_PATH, ordenadas por nombre."""
+    if not os.path.isdir(BASE_PATH):
+        return []
     carpetas = []
     for nombre in os.listdir(BASE_PATH):
         ruta = os.path.join(BASE_PATH, nombre)
         if os.path.isdir(ruta):
-            carpetas.append({
-                "name": nombre,
-                "path": ruta
-            })
-    carpetas.sort(key=lambda c: c["name"])  # ordenar por nombre
+            carpetas.append({"name": nombre, "path": ruta})
+    carpetas.sort(key=lambda c: c["name"])
     return carpetas
+
+def _tiene_archivos(ruta, extensiones=None):
+    """True si la carpeta tiene al menos un archivo (filtra por extensión si se provee)."""
+    if not os.path.isdir(ruta):
+        return False
+    if extensiones:
+        exts = tuple(e.lower() for e in extensiones)
+        for entry in os.scandir(ruta):
+            if entry.is_file():
+                _, ext = os.path.splitext(entry.name)
+                if ext.lower() in exts:
+                    return True
+        return False
+    else:
+        return any(entry.is_file() for entry in os.scandir(ruta))
+
+def _carpeta_valida_videos(carpeta_path):
+    """Considera válida si tiene al menos 1 archivo de video común."""
+    exts_video = ('.mp4', '.mov', '.mkv', '.webm', '.avi', '.m4v')
+    return _tiene_archivos(carpeta_path, exts_video)
 
 lock = threading.Lock()
 
-
-
 def cargar_asignaciones():
+    """
+    Carga el JSON de asignaciones (ASIGNACIONES_VIDEO).
+    Soporta valores str (legacy) o list[str] (nuevo con fallbacks).
+    """
     if not os.path.exists(ASIGNACIONES_VIDEO):
         print("⚠️ No se encontró asignaciones.json, usando vacío.")
         return {}
     with open(ASIGNACIONES_VIDEO, "r", encoding="utf-8") as f:
-        return json.load(f)
+        raw = json.load(f)
+    norm = {}
+    for k, v in raw.items():
+        if isinstance(v, list):
+            norm[k.strip().lower()] = [str(x).strip() for x in v if str(x).strip()]
+        elif isinstance(v, str):
+            norm[k.strip().lower()] = [v.strip()]
+        else:
+            # valor inesperado; ignora o conviértelo a string
+            norm[k.strip().lower()] = [str(v).strip()]
+    return norm
 
 asignaciones_fijas = cargar_asignaciones()
 
@@ -140,8 +172,23 @@ def buscar_carpeta_por_nombre(nombre_objetivo):
             return carpeta
     return None
 
+def buscar_carpeta_opciones(lista_opciones):
+    """
+    Recorre una lista de nombres de carpetas en orden.
+    Devuelve la primera que exista y tenga contenido válido (al menos 1 video).
+    """
+    for nombre in lista_opciones:
+        carpeta = buscar_carpeta_por_nombre(nombre)
+        if carpeta:
+            if _carpeta_valida_videos(carpeta["path"]):
+                return carpeta
+            else:
+                print(f"⚠️ Carpeta '{nombre}' existe pero está vacía (sin videos). Probando siguiente...")
+        else:
+            print(f"⚠️ Carpeta '{nombre}' no encontrada. Probando siguiente...")
+    return None
 
-# -------------------- Escaneo de cuentas --------------------
+# ===================== OCR / Detección de cuentas =====================
 def escanear_cuentas_tiktok(serial):
     # Chequeo de stop antes de empezar
     if stop_requested(serial):
@@ -185,7 +232,7 @@ def escanear_cuentas_tiktok(serial):
         y2 = parse_coord("34.19%", Heigth)
         subprocess.run([ADB_PATH, "-s", serial, "shell", "input", "swipe",
                         str(x1), str(y1), str(x2), str(y2)])
-        _sleep(serial, 2)  # ⬅️ reemplaza time.sleep(2) para permitir stop
+        _sleep(serial, 2)  # permite stop
         scrolls += 1
 
     print(f"✅ Total de cuentas encontradas: {todas_cuentas}")
@@ -193,7 +240,7 @@ def escanear_cuentas_tiktok(serial):
     if stop_requested(serial):
         return {"asignadas": [], "total_detectadas": set(), "motivo_fin": "detenido"}
 
-    # Si no se detectó ninguna cuenta en este escaneo → no guardamos y señalamos para reintentar
+    # Si no se detectó ninguna cuenta → no guardamos y señalamos para reintentar
     if not todas_cuentas:
         print("❌ No se detectaron cuentas en este escaneo.")
         return {
@@ -203,45 +250,53 @@ def escanear_cuentas_tiktok(serial):
         }
 
     cuentas_con_carpetas = []
-    carpetas_reservadas = set(asignaciones_fijas.values())
-    carpetas_disponibles = listar_carpetas_locales_ordenadas()
 
+    # 🔒 Zona crítica: asignación
     with lock:
-        # Asignaciones fijas (puedes dejar como estaba)
+        # 1) Asignaciones fijas con fallbacks (lista de opciones)
         for cuenta in todas_cuentas:
             cuenta_norm = normalizar_nombre(cuenta)
             if cuenta_norm in asignaciones_fijas:
-                nombre_carpeta_fija = asignaciones_fijas[cuenta_norm]
-                carpeta_fija = buscar_carpeta_por_nombre(nombre_carpeta_fija)
-                if carpeta_fija:
+                opciones = asignaciones_fijas[cuenta_norm]  # ya normalizado a lista
+                carpeta_valida = buscar_carpeta_opciones(opciones)
+                if carpeta_valida:
                     cuentas_con_carpetas.append({
                         "cuenta": cuenta,
-                        "carpeta_path": carpeta_fija["path"],
-                        "carpeta_nombre": carpeta_fija["name"]
+                        "carpeta_path": carpeta_valida["path"],
+                        "carpeta_nombre": carpeta_valida["name"]
                     })
-                    print(f"📌 Cuenta fija: {cuenta} → {carpeta_fija['name']}")
+                    print(f"📌 Cuenta fija: {cuenta} → {carpeta_valida['name']}")
                 else:
-                    print(f"⚠️ Carpeta fija '{nombre_carpeta_fija}' para {cuenta} no encontrada.")
+                    print(f"⚠️ Ninguna opción válida encontrada para {cuenta}")
 
-        # Dinámicas: filtra contra la lista viva
-        carpetas_reservadas = set(asignaciones_fijas.values())
-        carpetas_disponibles_filtradas = [
-            c for c in carpetas_disponibles if c["name"] not in carpetas_reservadas
+        # Lista de nombres de carpetas ya tomadas por fijas
+        carpetas_usadas_fijas = set([c["carpeta_nombre"] for c in cuentas_con_carpetas])
+
+        # Construir set de carpetas reservadas de TODAS las opciones (para no asignar dinámicas allí)
+        carpetas_reservadas = set()
+        for opciones in asignaciones_fijas.values():
+            carpetas_reservadas.update(opciones)
+
+        # 2) Dinámicas: asignar carpetas libres (no reservadas, no usadas) a cuentas sin fija válida
+        carpetas_disponibles = [
+            c for c in listar_carpetas_locales_ordenadas()
+            if (c["name"] not in carpetas_reservadas) and (c["name"] not in carpetas_usadas_fijas) and _carpeta_valida_videos(c["path"])
         ]
 
         for cuenta in todas_cuentas:
-            cuenta_norm = normalizar_nombre(cuenta)
-            if cuenta_norm in asignaciones_fijas:
+            # si ya tiene fija válida, skip
+            if any(item["cuenta"] == cuenta for item in cuentas_con_carpetas):
                 continue
-            if carpeta_idx_global < len(carpetas_disponibles_filtradas):
-                carpeta = carpetas_disponibles_filtradas[carpeta_idx_global]
+
+            if carpeta_idx_global < len(carpetas_disponibles):
+                carpeta = carpetas_disponibles[carpeta_idx_global]
                 carpeta_idx_global += 1
                 cuentas_con_carpetas.append({
                     "cuenta": cuenta,
                     "carpeta_path": carpeta["path"],
                     "carpeta_nombre": carpeta["name"]
                 })
-                print(f"📦 Cuenta asignada: {cuenta} → {carpeta['name']}")
+                print(f"📦 Cuenta asignada (dinámica): {cuenta} → {carpeta['name']}")
             else:
                 print(f"⚠️ No hay más carpetas disponibles para asignar a {cuenta}.")
 
@@ -263,7 +318,7 @@ def escanear_cuentas_tiktok(serial):
         "motivo_fin": "ok"
     }
 
-# -------------------- Guardado / lectura --------------------
+# ===================== Guardado / lectura JSON resultado =====================
 def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/videos.json'):
     try:
         if os.path.exists(archivo):
@@ -272,7 +327,7 @@ def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/videos.json')
         else:
             data = {}
 
-        # 🟡 Lista de todas las cuentas sin carpeta_id
+        # 🟡 Lista de todas las cuentas detectadas
         cuentas_detectadas = [cuenta["cuenta"] for cuenta in cuentas_con_carpetas]
 
         # Guardar estructura completa
@@ -290,9 +345,7 @@ def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/videos.json')
     except Exception as e:
         print(f"❌ Error al guardar en JSON: {e}")
 
-
-
-# -------------------- Utilidades de cuentas --------------------
+# ===================== Utilidades de cuentas =====================
 def ultimacuenta(serial):
     # ✅ Import local para evitar circular import
     from core.tiktok_funcs.utils import ejecteg
@@ -335,7 +388,6 @@ def detectar_usuarios_en_pantalla(serial):
     resultado = subprocess.run(
         [ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"],
         capture_output=True
-        # (no se usa timeout para no tocar tu lógica de ADB)
     )
     imagen_bytes = resultado.stdout
     if not imagen_bytes:
@@ -343,7 +395,7 @@ def detectar_usuarios_en_pantalla(serial):
 
     if stop_requested(serial):
         return [], False
-    
+
     x1 = parse_coord("21.00%", Width)
     y1 = parse_coord("18.88%", Heigth)
     x2 = parse_coord("82.71%", Width)
@@ -387,7 +439,7 @@ def detectar_usuarios_en_pantalla(serial):
 
     return cuentas_ordenadas, hay_add_account
 
-# -------------------- Descarga y actualización --------------------
+# ===================== Descarga y actualización =====================
 def descargar_carpeta_completa(folder_id, serial):
     carpeta_destino = f"./imagenes_temp/{serial}"
     service = crear_service_drive()
@@ -449,7 +501,7 @@ def descarga(serial, cuentaactual):
 
     for cuenta in cuentas:
         if cuenta["cuenta"] == cuentaactual:
-            carpeta_id = cuenta["carpeta_id"]
+            carpeta_id = cuenta.get("carpeta_id")  # podría no existir si solo trabajas local
             print(f"📂 Carpeta ID encontrada: {carpeta_id}")
 
             carpeta_descargada = descargar_carpeta_completa(carpeta_id, serial)
