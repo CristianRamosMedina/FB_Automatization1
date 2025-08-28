@@ -128,7 +128,7 @@ def ejecutar_gestos(serial: str):
                 serial,
                 buscarTextoEnRegion,
                 "posted",
-                region=("0%", "0%", "100%", "100%"),
+                region=("0%", "0%", "100%", "30%"),
                 timeout=70,
                 umbral=0.6
             )

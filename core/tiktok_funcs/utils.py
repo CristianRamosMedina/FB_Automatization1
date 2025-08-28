@@ -46,7 +46,15 @@ def cargar_videos():
             return json.load(f)
 
 
-      
+def limpiar_json(archivo):
+   
+    
+    try:
+        with open(archivo, 'w', encoding='utf-8') as f:
+            json.dump({}, f, indent=2, ensure_ascii=False)
+        print(f"🧹 Archivo {archivo} limpiado con éxito.")
+    except Exception as e:
+        print(f"❌ Error al limpiar JSON: {e}")      
 
 # ------------------- Helpers ADB/UI -------------------
 def silenciar_dispositivo(serial: str):

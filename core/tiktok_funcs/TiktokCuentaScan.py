@@ -165,8 +165,15 @@ def escanear_cuentas_tiktok(serial):
         if stop_requested(serial):
             return {"asignadas": [], "total_detectadas": set(), "motivo_fin": "detenido"}
 
-        if hay_add and scrolls == 0:
-            print("🛑 'Add account' detectado al abrir el menú. No hay más cuentas para escanear.")
+        # ✅ Si ya hay 8 cuentas → no scrolleo ni busco Add account
+        if len(cuentas_actuales) >= 8:
+            print("🛑 Se detectaron 8 cuentas en pantalla. No se hará scroll adicional.")
+            todas_cuentas.update(cuentas_actuales)
+            break
+
+        # Solo si hay menos de 8 cuentas revisamos el Add account
+        if hay_add:
+            print("🛑 'Add account' detectado. No hay más cuentas para escanear.")
             todas_cuentas.update(cuentas_actuales)
             break
 
@@ -178,14 +185,14 @@ def escanear_cuentas_tiktok(serial):
             print("⛔ No hay nuevas cuentas, deteniendo scroll.")
             break
 
-        # Scroll
+        # Scroll si aún no se completaron 8 cuentas
         x1 = parse_coord("46.30%", Width)
         y1 = parse_coord("72.65%", Heigth)
         x2 = parse_coord("46.30%", Width)
         y2 = parse_coord("34.19%", Heigth)
         subprocess.run([ADB_PATH, "-s", serial, "shell", "input", "swipe",
                         str(x1), str(y1), str(x2), str(y2)])
-        _sleep(serial, 2)  # ⬅️ reemplaza time.sleep(2) para permitir stop
+        _sleep(serial, 2)
         scrolls += 1
 
     print(f"✅ Total de cuentas encontradas: {todas_cuentas}")
@@ -207,7 +214,7 @@ def escanear_cuentas_tiktok(serial):
     carpetas_disponibles = listar_carpetas_locales_ordenadas()
 
     with lock:
-        # Asignaciones fijas (puedes dejar como estaba)
+        # Asignaciones fijas
         for cuenta in todas_cuentas:
             cuenta_norm = normalizar_nombre(cuenta)
             if cuenta_norm in asignaciones_fijas:
@@ -264,33 +271,50 @@ def escanear_cuentas_tiktok(serial):
     }
 
 # -------------------- Guardado / lectura --------------------
+import os, json, threading
+json_lock = threading.Lock()
+
+
 def guardar_resultado2(serial, cuentas_con_carpetas, archivo='data/dispositivos.json'):
     try:
-        if os.path.exists(archivo):
-            with open(archivo, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        else:
+        with json_lock:  # evita que 2 threads escriban a la vez
             data = {}
 
-        # 🟡 Lista de todas las cuentas sin carpeta_id
-        cuentas_detectadas = [cuenta["cuenta"] for cuenta in cuentas_con_carpetas]
+            # Cargar si existe y es válido
+            if os.path.exists(archivo):
+                try:
+                    with open(archivo, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except json.JSONDecodeError:
+                    print(f"⚠️ Archivo {archivo} corrupto, se reiniciará limpio.")
+                    data = {}
 
-        # Guardar estructura completa
-        data[serial] = {
-            "cuentas": cuentas_con_carpetas,
-            "cuentasDetectadas": cuentas_detectadas,
-            "cuentasPorSubir": [],
-            "cuentasSubidas": []
-        }
+            # 🟡 Lista de todas las cuentas sin carpeta_id
+            cuentas_detectadas = [c["cuenta"] for c in cuentas_con_carpetas]
 
-        with open(archivo, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+            # Estructura por serial
+            data[serial] = {
+                "cuentas": cuentas_con_carpetas,
+                "cuentasDetectadas": cuentas_detectadas,
+                "cuentasPorSubir": [],
+                "cuentasSubidas": []
+            }
 
-        print(f"💾 Guardado para {serial}")
+            # 💾 Respaldo antes de sobrescribir
+            if os.path.exists(archivo):
+                os.replace(archivo, archivo + ".bak")
+
+            # Validación antes de guardar
+            json.loads(json.dumps(data))  
+
+            # Escribir en limpio
+            with open(archivo, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+
+            print(f"💾 Guardado para {serial} en {archivo}")
+
     except Exception as e:
         print(f"❌ Error al guardar en JSON: {e}")
-
-
 
 # -------------------- Utilidades de cuentas --------------------
 def ultimacuenta(serial):
@@ -335,7 +359,6 @@ def detectar_usuarios_en_pantalla(serial):
     resultado = subprocess.run(
         [ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"],
         capture_output=True
-        # (no se usa timeout para no tocar tu lógica de ADB)
     )
     imagen_bytes = resultado.stdout
     if not imagen_bytes:
@@ -343,11 +366,11 @@ def detectar_usuarios_en_pantalla(serial):
 
     if stop_requested(serial):
         return [], False
-    
+
     x1 = parse_coord("21.00%", Width)
     y1 = parse_coord("18.88%", Heigth)
-    x2 = parse_coord("82.71%", Width)
-    y2 = parse_coord("94%", Heigth) # el rango de pantalla en Y donde busca los usuarios
+    x2 = parse_coord("87.80%", Width)
+    y2 = parse_coord("94%", Heigth)
 
     img = Image.open(io.BytesIO(imagen_bytes))
     img = img.crop((x1, y1, x2, y2))
@@ -357,7 +380,7 @@ def detectar_usuarios_en_pantalla(serial):
 
     data = pytesseract.image_to_data(img, lang="eng", output_type=pytesseract.Output.DICT)
 
-    cuentas_con_pos = []  # Lista de (palabra, y)
+    cuentas_con_pos = []
     recolectando = False
 
     for i, palabra in enumerate(data["text"]):
@@ -379,9 +402,7 @@ def detectar_usuarios_en_pantalla(serial):
         if recolectando and lower not in ["account", "switch"]:
             cuentas_con_pos.append((palabra, y))
 
-    # Ordenar por coordenada Y
     cuentas_ordenadas = [nombre for nombre, _ in sorted(cuentas_con_pos, key=lambda x: x[1])]
-
     texto_completo = [t.lower() for t in data["text"] if t.strip()]
     hay_add_account = any("add" in t for t in texto_completo) and any("account" in t for t in texto_completo)
 

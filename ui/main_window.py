@@ -15,6 +15,8 @@ from PyQt5.QtGui import QPixmap
 
 # ✅ Importaciones locales
 from ui.seleccion_cuentas_dialog import SeleccionCuentasDialog
+from core.tiktok_funcs.utils import limpiar_json
+from core.paths import DISPOSITIVOS_FILE
 from core.scrcpy_manager import obtener_seriales, abrir_scrcpy, cerrar_scrcpy
 from core.tiktok_funcs import entrenar, detener_funcion, silenciar_dispositivo
 from core.tiktok_funcs.cambiarCuentas import cambiar_todas_las_cuentas
@@ -49,6 +51,7 @@ class ScanWorker(QObject):
         try:
             print(f"[ScanWorker] ▶ Iniciando escaneo en {self.serial}")
             hilos_activos[self.serial] = True
+            limpiar_json(DISPOSITIVOS_FILE)
             TitkokCuentas(self.serial)
             print(f"[ScanWorker] ✅ Escaneo finalizado en {self.serial}")
             self.finished.emit(self.serial)
