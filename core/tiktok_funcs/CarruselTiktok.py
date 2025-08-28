@@ -123,12 +123,13 @@ def ejecutar_gestos(serial: str):
             tap(*coords) if coords else long_tap("91.76%", "6.88%")
             print(f"🎉🍾 [{serial}] Publicando…")
 
+            time.sleep(0.6)
             # Esperar 'posted'
             ok = _esperar_texto(
                 serial,
                 buscarTextoEnRegion,
                 "posted",
-                region=("0%", "0%", "100%", "30%"),
+                region=("0%", "0%", "100%", "8.5%"),
                 timeout=70,
                 umbral=0.6
             )

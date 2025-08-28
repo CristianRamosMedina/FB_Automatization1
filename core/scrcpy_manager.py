@@ -82,71 +82,62 @@ def obtener_posicion_barra_tareas():
 # ==============================
 
 def abrir_scrcpy(seriales, porcentaje_ancho=0.70, margen_x=20, margen_y=40, origen_x=None, origen_y=None):
-
-    procesos_activos = [p.info['cmdline'] for p in psutil.process_iter(attrs=['cmdline'])]
     total = len(seriales)
+    print(f"Total de celulares {total}")
     if total == 0:
         print("❌ No hay dispositivos conectados.")
         return
 
-    # Área usable (excluye taskbar)
+    # Área usable (excluye barra de tareas)
     wa_left, wa_top, wa_right, wa_bottom, wa_w, wa_h = obtener_work_area()
 
-    # Ancho utilizable: porcentaje del work area
     area_max_ancho = int(wa_w * max(0.1, min(1.0, porcentaje_ancho)))
-    area_max_alto = wa_h  # aprovechamos todo el alto del work area
+    area_max_alto = wa_h
 
-    # Origen por defecto: esquina superior-izquierda del work area
     if origen_x is None:
-        origen_x = wa_left + 10  # pequeño padding visual
+        origen_x = wa_left + 10
     if origen_y is None:
         origen_y = wa_top + 45
 
-    # Calcular grid (columnas/filas) tipo mosaico cuadrado
+    # Grid cuadrado
     columnas = max(1, math.ceil(math.sqrt(total)))
     filas = max(1, math.ceil(total / columnas))
 
-    # Tamaño de cada ventana dentro del área reservada
     ancho_disp = max(200, (area_max_ancho - (columnas - 1) * margen_x) // columnas)
     alto_disp  = max(200, (area_max_alto  - (filas    - 1) * margen_y) // filas)
 
-    # Clamp para no exceder el work area
-    # (última columna/fila no debe salirse del borde derecho/abajo)
-    max_w = wa_right - origen_x - (columnas - 1) * (margen_x + 0)  # espacio disponible horizontal a partir del origen
-    max_h = wa_bottom - origen_y - (filas    - 1) * (margen_y + 0)  # espacio vertical disponible a partir del origen
+    max_w = wa_right - origen_x - (columnas - 1) * margen_x
+    max_h = wa_bottom - origen_y - (filas    - 1) * margen_y
     if columnas > 0:
         ancho_disp = min(ancho_disp, max_w // columnas)
     if filas > 0:
         alto_disp = min(alto_disp, max_h // filas)
 
-    # Seguridad: mínimo razonable
     ancho_disp = max(ancho_disp, 240)
-    alto_disp = max(alto_disp, 320)
+    alto_disp  = max(alto_disp, 320)
 
-    # Info útil
-    pos_taskbar = obtener_posicion_barra_tareas()
-    print(f"🖥️ WorkArea: {wa_left},{wa_top} → {wa_right},{wa_bottom}  ({wa_w}x{wa_h})  | Taskbar: {pos_taskbar}")
-    print(f"🧮 Grid: {filas} filas × {columnas} columnas | Cell: {ancho_disp}×{alto_disp}")
-    print(f"↘️ Origen layout: ({origen_x},{origen_y}) | Área ancho usado: {area_max_ancho}")
 
     for i, serial in enumerate(seriales):
-        ya_abierto = any(
-            (p and isinstance(p, list) and serial in ' '.join(p))
-            for p in procesos_activos if p and len(p) > 0 and p[0] and p[0].lower().endswith("scrcpy.exe")
-        )
-
         fila = i // columnas
         columna = i % columnas
         pos_x = origen_x + columna * (ancho_disp + margen_x)
         pos_y = origen_y + fila    * (alto_disp  + margen_y)
 
-        # Clamp por si acaso (no salirse del work area)
         pos_x = max(wa_left, min(pos_x, wa_right  - ancho_disp))
         pos_y = max(wa_top,  min(pos_y, wa_bottom - alto_disp))
 
+        # 🔎 Verificar si ya hay scrcpy abierto para este serial
+        procesos_activos = [p.info['cmdline'] for p in psutil.process_iter(attrs=['cmdline'])]
+        ya_abierto = any(
+            (p and isinstance(p, list) and serial in " ".join(p))
+            for p in procesos_activos if p and len(p) > 0 and p[0].lower().endswith("scrcpy.exe")
+        )
         if ya_abierto:
-            print(f"🔁 SCRCPY ya está abierto para {serial}.")
+            print(f"🔁 SCRCPY ya está abierto para {serial}, saltando.")
             continue
+
+        # Guardar snapshot de procesos antes de abrir
+        procesos_previos = procesos_activos[:]
 
         print(f"🪟 Abriendo SCRCPY para {serial} en ({pos_x},{pos_y}) tamaño {ancho_disp}×{alto_disp}")
         subprocess.Popen(
@@ -154,7 +145,7 @@ def abrir_scrcpy(seriales, porcentaje_ancho=0.70, margen_x=20, margen_y=40, orig
                 SCRCPY_PATH,
                 "-s", serial,
                 "--max-size", "720",
-                f"--window-title={serial}",        # Solo serial en título
+                f"--window-title={serial}",
                 "--window-width",  str(ancho_disp),
                 "--window-height", str(alto_disp),
                 "--window-x",      str(pos_x),
@@ -163,14 +154,23 @@ def abrir_scrcpy(seriales, porcentaje_ancho=0.70, margen_x=20, margen_y=40, orig
             creationflags=subprocess.CREATE_NO_WINDOW
         )
 
-        # Bloquear rotación del dispositivo (opcional)
+        # Esperar un poco y validar que realmente se abrió
+        time.sleep(1.2)
+        procesos_nuevos = [p.info['cmdline'] for p in psutil.process_iter(attrs=['cmdline'])]
+        opened = any(
+            (p and isinstance(p, list) and serial in " ".join(p))
+            for p in procesos_nuevos if p not in procesos_previos
+        )
+        if not opened:
+            print(f"⚠️ ERROR: scrcpy no se abrió para {serial}, saltando.")
+            continue
+
+        # Bloquear rotación (opcional)
         try:
             subprocess.run([ADB_PATH, "-s", serial, "shell", "settings", "put", "system", "accelerometer_rotation", "0"], check=False)
             subprocess.run([ADB_PATH, "-s", serial, "shell", "settings", "put", "system", "user_rotation", "0"], check=False)
         except Exception:
             pass
-
-        time.sleep(0.6)  # pequeño respiro para no saturar
 
 
 def cerrar_scrcpy():

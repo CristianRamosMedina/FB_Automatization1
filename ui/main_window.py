@@ -60,6 +60,20 @@ class ScanWorker(QObject):
         finally:
             pass
 
+class ScrcpyWorker(QObject):
+    finished = pyqtSignal()
+    failed = pyqtSignal(str)
+
+    def __init__(self, seriales):
+        super().__init__()
+        self.seriales = seriales
+
+    def run(self):
+        try:
+            abrir_scrcpy(self.seriales)
+            self.finished.emit()
+        except Exception as e:
+            self.failed.emit(str(e))
 
 class ChangeWorker(QObject):
     finished = pyqtSignal(str)
@@ -260,7 +274,8 @@ class MainWindow(QWidget):
         row2 = QHBoxLayout()
 
         btn_init = QPushButton("📱 Inicializar SCRCPY"); btn_init.setObjectName("warn")
-        btn_init.clicked.connect(lambda: abrir_scrcpy(self.seriales))
+        btn_init.clicked.connect(self._abrir_scrcpy_seleccionados)
+
         btn_close = QPushButton("❌ Cerrar SCRCPY"); btn_close.setObjectName("danger")
         btn_close.clicked.connect(cerrar_scrcpy)
         btn_gestos_video = QPushButton("🔎 Subir Carruseles"); btn_gestos_video.setObjectName("accent")
@@ -971,6 +986,30 @@ class MainWindow(QWidget):
             chk.setChecked(False)
         self.chk_marcar_todos.setChecked(False)
 
+#===========================ABRIR ========================#
+    def _abrir_scrcpy_seleccionados(self):
+        seleccionados = [s for s in self.seriales if self.is_selected(s)]
+        if not seleccionados:
+            seleccionados = self.seriales  # si no selecciona ninguno → abrir todos
+        print(f"🚀 Abriendo SCRCPY en {len(seleccionados)} dispositivos...")
+        self._start_scrcpy_worker(seleccionados)
+
+    def _start_scrcpy_worker(self, seriales):
+        th = QThread(self)
+        worker = ScrcpyWorker(seriales)
+        worker.moveToThread(th)
+
+        th.started.connect(worker.run)
+        worker.finished.connect(lambda: print("✅ SCRCPY inicializado."))
+        worker.failed.connect(lambda err: print(f"💥 Error abriendo SCRCPY: {err}"))
+
+        worker.finished.connect(th.quit)
+        worker.failed.connect(th.quit)
+        th.finished.connect(th.deleteLater)
+
+        self._scrcpy_thread = th
+        self._scrcpy_worker = worker
+        th.start()
 
 # ====== Ejecución directa ======
 if __name__ == "__main__":
