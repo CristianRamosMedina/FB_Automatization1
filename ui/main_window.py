@@ -177,6 +177,64 @@ class NoArgWorker(QObject):
             self.finished.emit()
         except Exception as e:
             self.failed.emit(str(e))
+class Toast(QFrame):
+    def __init__(self, parent, text, duration_ms=3800, action_text=None, action_cb=None):
+        super().__init__(parent)
+        self.setObjectName("Toast")
+        self.setStyleSheet("""
+            QFrame#Toast {
+                background-color: rgba(40, 44, 52, 220);
+                color: #e8eaed;
+                border-radius: 10px;
+                border: 1px solid #2a2f3a;
+            }
+            QLabel#ToastLabel { padding: 10px 14px; }
+            QPushButton#ToastAction {
+                border: 1px solid #2b4a7f; border-radius: 6px;
+                padding: 6px 10px; background-color: #1f3458; color: #e8eaed;
+            }
+            QPushButton#ToastAction:hover { background-color: #244069; }
+        """)
+        lay = QHBoxLayout(self)
+        lay.setContentsMargins(12, 10, 12, 10)
+        lay.setSpacing(10)
+        lbl = QLabel(text); lbl.setObjectName("ToastLabel")
+        lay.addWidget(lbl)
+
+        if action_text and action_cb:
+            btn = QPushButton(action_text); btn.setObjectName("ToastAction")
+            btn.clicked.connect(action_cb)
+            lay.addWidget(btn)
+
+        self._anim = QPropertyAnimation(self, b"windowOpacity", self)
+        self._anim.setDuration(300)
+
+        self._timer = QTimer(self)
+        self._timer.setSingleShot(True)
+        self._timer.timeout.connect(self.hide_with_fade)
+        self._timer.start(duration_ms)
+
+        # posicionar en esquina inferior derecha
+        self.adjustSize()
+        parent_rect = parent.rect()
+        margin = 16
+        w, h = self.width(), self.height()
+        self.setGeometry(parent_rect.right()-w-margin, parent_rect.bottom()-h-margin, w, h)
+        self.setWindowFlags(Qt.ToolTip | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+
+        self.show()
+        self.setWindowOpacity(0.0)
+        self._anim.setStartValue(0.0)
+        self._anim.setEndValue(1.0)
+        self._anim.start()
+
+    def hide_with_fade(self):
+        self._anim.stop()
+        self._anim.setStartValue(1.0)
+        self._anim.setEndValue(0.0)
+        self._anim.finished.connect(self.deleteLater)
+        self._anim.start()
 
 
 # =================== Ventana principal ===================
@@ -509,6 +567,9 @@ class MainWindow(QWidget):
         # re-habilitar
         self._btn_crear_carruseles.setEnabled(True)
         self._btn_unpack.setEnabled(True)
+        
+    def toast(self, text, action_text=None, action_cb=None, ms=3800):
+        Toast(self, text, duration_ms=ms, action_text=action_text, action_cb=action_cb)
 
     # ====== Lanzadores async con animación ======
     def _run_carruseles_async(self):
@@ -550,11 +611,31 @@ class MainWindow(QWidget):
     def _on_noarg_done(self, nombre):
         print(f"✅ {nombre} finalizado.")
         self._stop_busy(f"{nombre} listo", ok=True)
+        self.toast(f"✅ {nombre} listo", ms=2500)
 
     def _on_noarg_fail(self, nombre, err):
         print(f"💥 Error en {nombre}: {err}")
-        self._stop_busy(f"{nombre} con error", ok=False)
-        
+        msg = str(err)
+
+        # Coincide con el RuntimeError del backend cuando total_generadas == 0
+        if "No hay archivos para realizar carruseles" in msg:
+            self._stop_busy("No hay archivos para realizar carruseles, Ideogram necesario.", ok=False)
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(
+                self,
+                "Carruseles",
+                "No hay archivos para realizar carruseles. Ideogram necesario"
+            )
+
+            # al cerrar el QMessageBox se ejecuta esto
+            def abrir_ideogram():
+                subprocess.Popen(['cmd', '/c', 'start', 'https://ideogram.ai/batch'])
+
+            abrir_ideogram()   # 👈 aquí la llamamos directamente
+        else:
+            self._stop_busy(f"{nombre} con error", ok=False)
+            self.toast(f"💥 {nombre} falló: {msg}", ms=5000)
+
      # ====== Actualización de carruseles pendientes ======
     def _update_carruseles_pendientes(self):
         pendientes = chequear_carruseles_pendientes()

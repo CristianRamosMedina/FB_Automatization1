@@ -240,55 +240,49 @@ def asegurar_y_descargar(ruta_relativa, drive_id):
         print(f"Carpeta ya tiene contenido: {ruta_relativa}")
 
 # ============== Proceso core ===============
+# ============== Proceso core ===============
 def procesar_carpeta(carpeta):
     carpeta_num = carpeta["CarpetaNumero"]
-    path_sticker = carpeta["pathSticker"]    # relativo a Documentos
-    path_imagenes = carpeta["pathImagenes"]  # relativo a Documentos
+    path_sticker = carpeta["pathSticker"]
+    path_imagenes = carpeta["pathImagenes"]
 
-    # Asegurar stickers (no cambiamos tu lógica)
     asegurar_y_descargar(path_sticker, carpeta["driveIdSticker"])
     os.makedirs(os.path.join(ruta_documentos, path_imagenes), exist_ok=True)
 
-    # Rutas absolutas
     path_sticker_completo = os.path.join(ruta_documentos, path_sticker)
     path_imagenes_completo = os.path.join(ruta_documentos, path_imagenes)
 
-    # Buscar subcarpeta c*
     subcarpetas_c = [d for d in os.listdir(path_imagenes_completo)
                      if os.path.isdir(os.path.join(path_imagenes_completo, d)) and d.lower().startswith("c")]
 
     if not subcarpetas_c:
         print(f"[{carpeta_num}] ❌ No se encontró carpeta 'c*' en {path_imagenes_completo}")
-        return
+        return 0   # <- antes no devolvía nada
 
     carpeta_c = ordenar_natural(subcarpetas_c)[0]
     ruta_carpeta_imagenes = os.path.join(path_imagenes_completo, carpeta_c)
 
-    # Listar archivos candidatos
     stickers_arch = [f for f in os.listdir(path_sticker_completo) if f.lower().endswith(EXTS)]
     imagenes_arch = [f for f in os.listdir(ruta_carpeta_imagenes) if f.lower().endswith(EXTS)]
 
     if not stickers_arch:
         print(f"[{carpeta_num}] ❌ No hay stickers en {path_sticker_completo}")
-        return
+        return 0
     if not imagenes_arch:
         print(f"[{carpeta_num}] ❌ No hay imágenes en {ruta_carpeta_imagenes}")
-        return
+        return 0
 
-    # Indexar por número para asegurar match 1↔1, 2↔2, ...
     idx_stickers = indexar_por_numero(stickers_arch)
     idx_imagenes = indexar_por_numero(imagenes_arch)
 
     if not idx_stickers:
         print(f"[{carpeta_num}] ❌ Ningún sticker tiene número en el nombre.")
-        return
+        return 0
     if not idx_imagenes:
         print(f"[{carpeta_num}] ❌ Ninguna imagen tiene número en el nombre.")
-        return
+        return 0
 
-    # Preparar pares por números ordenados
     numeros = sorted(idx_stickers.keys())
-    # última imagen válida para backfill (la mayor numerada)
     ult_num_img = max(idx_imagenes.keys())
     ult_img = idx_imagenes[ult_num_img]
 
@@ -302,21 +296,18 @@ def procesar_carpeta(carpeta):
         if sticker_name and img_name:
             pares.append((sticker_name, img_name, n))
         elif sticker_name and not img_name:
-            # usar la última imagen para igualar cantidad
             pares.append((sticker_name, ult_img, n))
             faltantes_img.append(n)
         else:
-            # (no debería pasar porque iteramos sobre números de stickers)
             faltantes_sticker.append(n)
 
     ruta_salida = os.path.join(base_salida, carpeta_num)
     os.makedirs(ruta_salida, exist_ok=True)
 
-    # Evitar duplicados si ya existen salidas
     existentes = [f for f in os.listdir(ruta_salida) if f.lower().endswith(EXTS)]
     if existentes:
         print(f"[{carpeta_num}] ⏭️ Ya existen imágenes en salida, salto.")
-        return
+        return 0
 
     print(
         f"Procesando carpeta {carpeta_num} | Stickers: {len(idx_stickers)} | "
@@ -325,28 +316,23 @@ def procesar_carpeta(carpeta):
     if faltantes_img:
         print(f"[{carpeta_num}] ℹ️ No había imagen para: {faltantes_img}. Se usó la última imagen '{ult_img}' como relleno.")
 
-    # Pre-cargar/validar pool de stickers para esta carpeta de Diseño
     STICKERS.get_folder_pool(path_sticker_completo)
 
     generadas = 0
     for i, (nombre_sticker, nombre_imagen, n) in enumerate(pares, start=1):
         path_i = os.path.join(ruta_carpeta_imagenes, nombre_imagen)
         try:
-            # FONDO: desde disco con lectura robusta
             fondo = image_from_bytes_rgba(_read_bytes_strong(path_i))
 
-            # STICKER: desde pool por número; si falta n, usa el último disponible
             sticker_bytes = STICKERS.get_sticker_bytes_by_num(path_sticker_completo, n)
             if sticker_bytes is None:
                 fallback = STICKERS.get_last_sticker_bytes(path_sticker_completo)
                 if not fallback:
                     raise UnidentifiedImageError(f"no hay sticker disponible para n={n}")
                 sticker_bytes, last_n = fallback
-                # print(f"[{carpeta_num}] ℹ️ Falta sticker {n}, uso último ({last_n}).")
 
             sticker = image_from_bytes_rgba(sticker_bytes)
 
-            # Redimensionar sticker (tu tamaño base) y ajustar si supera el fondo
             sticker = sticker.resize((736, 1312), Image.LANCZOS)
             if sticker.size[0] > fondo.size[0] or sticker.size[1] > fondo.size[1]:
                 sticker = sticker.resize(fondo.size, Image.LANCZOS)
@@ -358,9 +344,7 @@ def procesar_carpeta(carpeta):
             print(f"[{carpeta_num}] Guardado {nombre_salida}  (match {n}: {nombre_sticker} + {nombre_imagen})")
         except Exception as e:
             print(f"[{carpeta_num}] Error combinando (match {n}): {nombre_sticker} + {nombre_imagen}: {e}")
-            # continuar con el siguiente par
 
-    # Mover carpeta usada solo si generamos algo
     if generadas > 0:
         try:
             origen_carpeta = ruta_carpeta_imagenes
@@ -375,16 +359,33 @@ def procesar_carpeta(carpeta):
     else:
         print(f"[{carpeta_num}] ⚠️ No se generó ninguna imagen; no se mueve la carpeta usada.")
 
+    return generadas  # <- NUEVO
+
+# ================ Main ====================
 # ================ Main ====================
 def main():
     os.makedirs(base_salida, exist_ok=True)
     os.makedirs(base_usadas, exist_ok=True)
 
+    generadas_total = 0
+    if not carpetas:
+        # también cubre el caso de JSON vacío
+        raise RuntimeError("⚠️ No hay archivos para realizar carruseles, Ideogram necesario.")
+
     max_workers = min(16, len(carpetas))
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(procesar_carpeta, carpeta) for carpeta in carpetas]
         for future in as_completed(futures):
-            future.result()
+            r = future.result()
+            if isinstance(r, int):
+                generadas_total += r
+
+    if generadas_total == 0:
+        # ← Este texto es el que capturaremos en la UI
+        raise RuntimeError("⚠️ No hay archivos para realizar carruseles, Ideogram necesario.")
+
+    print(f"✅ Carruseles generados en total: {generadas_total}")
+    return generadas_total
 
 if __name__ == "__main__":
     main()

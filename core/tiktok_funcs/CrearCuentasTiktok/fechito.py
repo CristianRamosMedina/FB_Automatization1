@@ -1,3 +1,4 @@
+#este codigo solo lo sabe dios y yo, y ya solo dios.
 import subprocess,io,time
 from PIL import Image
 from ..utils import get_screen_size,crear_funciones_con_serial,parse_coord
@@ -65,7 +66,7 @@ def fechito(serial):
     def swipe_anio_up(): swipe("76.57%", "69.61%", "64.10%")
     def swipe_anio_down(): swipe("76.57%", "64.10%", "69.61%")
 
-    # --- Lógica principal ---
+    # --- Lógica principal --- de la fecha de nacimiento 
     objetivo_mes = "April"
     objetivo_dia = 15
     objetivo_anio = 2006

@@ -1,3 +1,5 @@
+###AYUDA A VERIFICAR EL CAPTCHA DE DESLIZAR DE UN PUNTO A OTRO PUNTO
+
 import time,cv2,numpy as np,subprocess,io
 from ..utils import get_screen_size,parse_coord,crear_funciones_con_serial
 from PIL import Image

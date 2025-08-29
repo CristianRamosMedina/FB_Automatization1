@@ -46,9 +46,8 @@ def cargar_videos():
             return json.load(f)
 
 
+#envia el json y lo borra
 def limpiar_json(archivo):
-   
-    
     try:
         with open(archivo, 'w', encoding='utf-8') as f:
             json.dump({}, f, indent=2, ensure_ascii=False)

@@ -1,3 +1,120 @@
 {
-  
+  "R8YY602WSYX": {
+    "cuentas": [
+      {
+        "cuenta": "news.flash98",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Argentinian Woman",
+        "carpeta_nombre": "Argentinian Woman"
+      },
+      {
+        "cuenta": "zuriii.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\ Caucasian",
+        "carpeta_nombre": " Caucasian"
+      },
+      {
+        "cuenta": "freshi.update",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
+        "carpeta_nombre": "Canadian Woman 2"
+      },
+      {
+        "cuenta": "dawn4.tips",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Colombian Woman",
+        "carpeta_nombre": "Colombian Woman"
+      },
+      {
+        "cuenta": "jazzhy.health",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Dutch Woman",
+        "carpeta_nombre": "Dutch Woman"
+      },
+      {
+        "cuenta": "velvetdawn.tip",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Egyptian Woman",
+        "carpeta_nombre": "Egyptian Woman"
+      },
+      {
+        "cuenta": "lexih.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\French Woman",
+        "carpeta_nombre": "French Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "news.flash98",
+      "zuriii.health",
+      "freshi.update",
+      "dawn4.tips",
+      "jazzhy.health",
+      "velvetdawn.tip",
+      "lexih.tipss"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "news.flash98",
+      "zuriii.health",
+      "dawn4.tips",
+      "jazzhy.health",
+      "velvetdawn.tip",
+      "lexih.tipss"
+    ]
+  },
+  "R8YY602XA3R": {
+    "cuentas": [
+      {
+        "cuenta": "buzzi.frame",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Blonde",
+        "carpeta_nombre": "Blonde"
+      },
+      {
+        "cuenta": "virali.report",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\African",
+        "carpeta_nombre": "African"
+      },
+      {
+        "cuenta": "hype.alerti",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Australian Woman",
+        "carpeta_nombre": "Australian Woman"
+      },
+      {
+        "cuenta": "jozan.tipss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\ Caucasian",
+        "carpeta_nombre": " Caucasian"
+      },
+      {
+        "cuenta": "trend.alertts",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Canadian Woman 2",
+        "carpeta_nombre": "Canadian Woman 2"
+      },
+      {
+        "cuenta": "breaking.neewss",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Colombian Woman",
+        "carpeta_nombre": "Colombian Woman"
+      },
+      {
+        "cuenta": "top.storiesi",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Dutch Woman",
+        "carpeta_nombre": "Dutch Woman"
+      },
+      {
+        "cuenta": "marissalife.healt",
+        "carpeta_path": "C:\\Users\\Acer/Documents\\Carrusel\\ImagenesCrudas\\Videos\\Egyptian Woman",
+        "carpeta_nombre": "Egyptian Woman"
+      }
+    ],
+    "cuentasDetectadas": [
+      "buzzi.frame",
+      "virali.report",
+      "hype.alerti",
+      "jozan.tipss",
+      "trend.alertts",
+      "breaking.neewss",
+      "top.storiesi",
+      "marissalife.healt"
+    ],
+    "cuentasPorSubir": [],
+    "cuentasSubidas": [
+      "breaking.neewss",
+      "buzzi.frame",
+      "virali.report",
+      "hype.alerti"
+    ]
+  }
 }

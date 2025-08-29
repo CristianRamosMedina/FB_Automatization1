@@ -334,12 +334,11 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
             tap(*coords)
             inputcorreo(serial,correo)
    
-
     if _sleep_coop(serial,2):return
     puzzle(serial)
     
     
-    if _sleep_coop(serial, 4): return
+    if _sleep_coop(serial, 4): return #serial para detener 
     inputpassword(serial)
     # pass
     if _sleep_coop(serial, 2): return
@@ -371,7 +370,8 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     if _sleep_coop(serial, 3): return
     esperar_nickname_o_verificar(serial, correo, apodo)
     if should_stop(serial): return
-
+    
+    
     buscar_y_verificar_link(
         serial,
         user="previ4303@gmail.com",
@@ -387,3 +387,5 @@ def CrearTiktokCuenta(serial: str, correo: str, apodo: str):
     print("✅ Datos agregados a Google Sheets.")
     if should_stop(serial): return
     entrenar(serial)
+    
+    ####luego colocar aqui la verificacion de correo 
