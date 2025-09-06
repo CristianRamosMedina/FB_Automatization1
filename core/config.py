@@ -13,5 +13,9 @@ pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 # Diccionario para saber si un hilo está activo o detenido
 hilos_activos = {}
 
+MES_OBJETIVO = "September"
+DIA_INICIO = 1
+DIA_FIN = 30
+
 
 
