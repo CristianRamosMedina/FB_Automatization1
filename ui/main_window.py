@@ -24,6 +24,12 @@ from core.tiktok_funcs.TiktokCuentaScan import TitkokCuentas
 from core.tiktok_funcs.VideosMujeres.TiktokVideoScan import TitkokCuentasVideos
 from core.tiktok_funcs.VideosMujeres.cambiarcuentasVideo import cambiar_todas_las_cuentas_videos
 from ui.seleecion_cuentas_videos_dialog import SeleccionCuentasDialogVideo
+from core import config
+from ui.seleccion_fecha_dialog import SeleccionFechaDialog
+
+
+from core.tiktok_funcs.Analitics.analiticas import analiticas
+
 
 from core.config import hilos_activos
 # en ui/main_window.py (importa arriba)
@@ -36,6 +42,11 @@ from core.tiktok_funcs.CrearCuentasTiktok.CrearCuentasTitktok import (
 from core.tiktok_funcs.CarruselesCrearImagenes import carruseles, unpack
 from core.tiktok_funcs.verificacion.carruseles_pendientes import chequear_carruseles_pendientes
 from core.tiktok_funcs.verificacion.videos_pendites import contar_videos_pendientes
+
+# Variables para el rango de analíticas
+MES_OBJETIVO = "September"
+DIA_INICIO = 1
+DIA_FIN = 30
 
 
 # =================== Workers en QThread ===================
@@ -344,9 +355,15 @@ class MainWindow(QWidget):
         )
         btn_gestos_video2 = QPushButton("🎬 Subir Videos de Mujeres"); btn_gestos_video2.setObjectName("accent")
         btn_gestos_video2.clicked.connect(self.flujo_cuentas_video)
+        
+        btn_fecha = QPushButton("📅 Analíticas")
+        btn_fecha.setObjectName("accent")
+        btn_fecha.clicked.connect(self._abrir_dialogo_fecha)
 
-        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2]:
+        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2, btn_fecha]:
             row1.addWidget(b)
+
+
         row1.addStretch(1)
 
         btn_entrenar_sel = QPushButton("▶ Entrenar"); btn_entrenar_sel.setObjectName("ok")
@@ -516,6 +533,20 @@ class MainWindow(QWidget):
         self._ell_count = 0
 
     # ====== Lanzadores backend (sin bloquear UI) ======
+    def _abrir_dialogo_fecha(self):
+        dlg = SeleccionFechaDialog(self)
+        if dlg.exec_():
+            datos = dlg.get_datos()
+            config.MES_OBJETIVO = datos["mes"]
+            config.DIA_INICIO = datos["dia_inicio"]
+            config.DIA_FIN = datos["dia_fin"]
+            print(f"✅ Fecha seleccionada: {config.MES_OBJETIVO} {config.DIA_INICIO} - {config.DIA_FIN}")
+
+            # 🔥 Ejecutar analíticas en los dispositivos seleccionados
+            self.ejecutar_seleccionados("analiticas", analiticas)
+
+
+
     def _call_carruseles(self):
         """Intenta carruseles.main(); si no existe, fallback a ejecutar el script."""
         if hasattr(carruseles, "main"):
