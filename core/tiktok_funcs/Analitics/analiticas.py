@@ -7,10 +7,45 @@ from core import config
 import json
 
 def capturar_post_views(serial, archivo_json="data/analiticas.json"):
-    import json, io, subprocess
+    import json, io, subprocess, re
     from PIL import Image
     import pytesseract
     from ...paths import ADB_PATH
+
+    def parse_coord(value, size):
+        """Convierte '23%' -> píxel absoluto según size."""
+        if isinstance(value, str) and value.endswith("%"):
+            return int(float(value.strip("%")) / 100 * size)
+        return int(value)
+
+    def parse_num(txt):
+        """Convierte tokens tipo 25K / 2.4M / 3B en enteros."""
+        txt = txt.replace(",", "").replace(" ", "")
+        match = re.match(r"(\d+(?:\.\d+)?)([KMBkmb]?)", txt)
+        if not match:
+            return None
+        num, sufijo = match.groups()
+        try:
+            val = float(num)
+        except:
+            return None
+        sufijo = sufijo.upper()
+        if sufijo == "K":
+            val *= 1_000
+        elif sufijo == "M":
+            val *= 1_000_000
+        elif sufijo == "B":
+            val *= 1_000_000_000
+        return int(val)
+
+    def extraer_post_views(texto):
+        """Devuelve el primer número válido encontrado en el OCR."""
+        candidatos = re.split(r"[\s\n]+", texto)
+        for token in candidatos:
+            val = parse_num(token)
+            if val:
+                return val
+        return None
 
     # Captura de pantalla
     resultado = subprocess.run([ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"], capture_output=True)
@@ -20,27 +55,24 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
         return
 
     img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-
-    # Región más precisa: solo el número grande de Post views
     Width, Height = img.size
+
+    # Región Post views (ajustada en porcentajes)
+    region_post_percent = ("6.94%", "29.56%", "48.47%", "36.25%")
     region_post = (
-        int(0.10 * Width),  # x1
-        int(0.23 * Height), # y1 -> subir un poco
-        int(0.45 * Width),  # x2
-        int(0.29 * Height)  # y2 -> más ajustado arriba del incremento
+        parse_coord(region_post_percent[0], Width),
+        parse_coord(region_post_percent[1], Height),
+        parse_coord(region_post_percent[2], Width),
+        parse_coord(region_post_percent[3], Height)
     )
     img_crop = img.crop(region_post)
 
-    # OCR
-    config = "--psm 7 -c tessedit_char_whitelist=0123456789,"
+    # OCR: más flexible
+    config = "--psm 6"
     texto = pytesseract.image_to_string(img_crop, lang="eng", config=config).strip()
-    print("📝 Texto OCR Post views:", texto)
+    print("📝 Texto OCR Post views:", repr(texto))
 
-    # Extraer número
-    try:
-        numero = int(texto.replace(",", "").strip())
-    except:
-        numero = None
+    numero = extraer_post_views(texto)
 
     if numero is None:
         print("⚠️ No se pudo leer Post views.")
@@ -64,7 +96,7 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
     print(f"💾 Guardado en {archivo_json}")
-    
+
 
 def Reconocer_Mes(serial):
     """
