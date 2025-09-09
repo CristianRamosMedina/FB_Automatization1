@@ -8,9 +8,11 @@ import json
 
 def capturar_post_views(serial, archivo_json="data/analiticas.json"):
     import json, io, subprocess, re
+    from datetime import datetime
     from PIL import Image
     import pytesseract
     from ...paths import ADB_PATH
+    from core import config   # ⬅️ Para usar MES_OBJETIVO, DIA_INICIO, DIA_FIN
 
     def parse_coord(value, size):
         """Convierte '23%' -> píxel absoluto según size."""
@@ -48,7 +50,10 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
         return None
 
     # Captura de pantalla
-    resultado = subprocess.run([ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"], capture_output=True)
+    resultado = subprocess.run(
+        [ADB_PATH, "-s", serial, "exec-out", "screencap", "-p"],
+        capture_output=True
+    )
     img_bytes = resultado.stdout
     if not img_bytes:
         print("❌ No se pudo capturar pantalla.")
@@ -68,8 +73,8 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
     img_crop = img.crop(region_post)
 
     # OCR: más flexible
-    config = "--psm 6"
-    texto = pytesseract.image_to_string(img_crop, lang="eng", config=config).strip()
+    config_tess = "--psm 6"
+    texto = pytesseract.image_to_string(img_crop, lang="eng", config=config_tess).strip()
     print("📝 Texto OCR Post views:", repr(texto))
 
     numero = extraer_post_views(texto)
@@ -80,7 +85,11 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
 
     print(f"📊 Post views detectado: {numero}")
 
-    # Guardar en JSON
+    # Crear clave de rango de fechas dinámico
+    rango = f"{config.MES_OBJETIVO} {config.DIA_INICIO}-{config.DIA_FIN}"
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Guardar en JSON manteniendo histórico
     try:
         with open(archivo_json, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -90,12 +99,14 @@ def capturar_post_views(serial, archivo_json="data/analiticas.json"):
     if serial not in data:
         data[serial] = {}
 
-    data[serial]["post_views"] = numero
+    data[serial][rango] = {
+        "post_views": numero,
+    }
 
     with open(archivo_json, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
-    print(f"💾 Guardado en {archivo_json}")
+    print(f"💾 Guardado en {archivo_json} bajo rango '{rango}'")
 
 
 def Reconocer_Mes(serial):

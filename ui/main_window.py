@@ -26,6 +26,7 @@ from core.tiktok_funcs.VideosMujeres.cambiarcuentasVideo import cambiar_todas_la
 from ui.seleecion_cuentas_videos_dialog import SeleccionCuentasDialogVideo
 from core import config
 from ui.seleccion_fecha_dialog import SeleccionFechaDialog
+from core.tiktok_funcs.Analitics.analiticas_cuentas import capturar_vistas_por_cuenta
 
 
 from core.tiktok_funcs.Analitics.analiticas import analiticas
@@ -356,11 +357,15 @@ class MainWindow(QWidget):
         btn_gestos_video2 = QPushButton("🎬 Subir Videos de Mujeres"); btn_gestos_video2.setObjectName("accent")
         btn_gestos_video2.clicked.connect(self.flujo_cuentas_video)
         
-        btn_fecha = QPushButton("📅 Analíticas")
-        btn_fecha.setObjectName("accent")
-        btn_fecha.clicked.connect(self._abrir_dialogo_fecha)
+        btn_views = QPushButton("📊 Vistas por cuenta")
+        btn_views.setObjectName("accent")
+        btn_views.clicked.connect(
+            lambda: self.ejecutar_seleccionados("analiticas_cuentas", capturar_vistas_por_cuenta)
+        )
+        
 
-        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2, btn_fecha]:
+
+        for b in [btn_init, btn_close, btn_gestos_video, btn_cambiar_cuentas, btn_gestos_video2, btn_views]:
             row1.addWidget(b)
 
 
