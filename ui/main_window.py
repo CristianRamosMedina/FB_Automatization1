@@ -27,6 +27,7 @@ from ui.seleecion_cuentas_videos_dialog import SeleccionCuentasDialogVideo
 from core import config
 from ui.seleccion_fecha_dialog import SeleccionFechaDialog
 from core.tiktok_funcs.Analitics.analiticas_cuentas import capturar_vistas_por_cuenta
+from PyQt5.QtWidgets import QMessageBox
 
 
 from core.tiktok_funcs.Analitics.analiticas import analiticas
@@ -648,6 +649,7 @@ class MainWindow(QWidget):
         print(f"✅ {nombre} finalizado.")
         self._stop_busy(f"{nombre} listo", ok=True)
         self.toast(f"✅ {nombre} listo", ms=2500)
+        self.mostrar_mensaje_finalizado("Acción completada", nombre)
 
     def _on_noarg_fail(self, nombre, err):
         print(f"💥 Error en {nombre}: {err}")
@@ -714,7 +716,11 @@ class MainWindow(QWidget):
     def flujo_cuentas(self):
         seleccionados = [s for s in self.seriales if self.is_selected(s)]
         if not seleccionados:
-            print("⚠ No hay dispositivos seleccionados para escanear.")
+            QMessageBox.warning(
+                self,
+               "Dispositivos no seleccionados",
+               "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
             return
 
         print("🔍 Escaneando cuentas TikTok...")
@@ -746,44 +752,56 @@ class MainWindow(QWidget):
 
             th.start()
 
+
     # ====== Flujo Detectar → Dialogo → Cambiar (VIDEO)
     def flujo_cuentas_video(self):
         seleccionados = [s for s in self.seriales if self.is_selected(s)]
         if not seleccionados:
-            print("⚠ No hay dispositivos seleccionados para escanear (VIDEO).")
+            QMessageBox.warning(
+                self,
+                "Dispositivos no seleccionados",
+                "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
             return
 
-        print("🎬 Escaneando cuentas TikTok (VIDEO)...")
+        print("🔍 Escaneando cuentas TikTok...")
+        # Marcar estado visual
         for s in seleccionados:
-            self.estado_dispositivos[s] = "gestos_video"
-            self._set_estado_visual(s, "gestos_video")
+            self.estado_dispositivos[s] = "gestos"
+            self._set_estado_visual(s, "gestos")
             hilos_activos[s] = True
 
-        self._last_scanned_v   = set(seleccionados)
-        self._pending_scans_v  = set(seleccionados)
+        self._last_scanned = set(seleccionados)
+        self._pending_scans = set(seleccionados)
 
         for serial in seleccionados:
             th = QThread(self)
-            worker = ScanWorkerVideo(serial)
+            worker = ScanWorker(serial)
             worker.moveToThread(th)
 
             th.started.connect(worker.run)
-            worker.finished.connect(self._on_scan_finished_video)
-            worker.failed.connect(self._on_scan_failed_video)
+            worker.finished.connect(self._on_scan_finished)
+            worker.failed.connect(self._on_scan_failed)
 
+            # Limpieza y refs
             worker.finished.connect(th.quit)
             worker.failed.connect(th.quit)
             th.finished.connect(th.deleteLater)
 
-            self._scan_threads_v[serial] = th
-            self._scan_workers_v[serial] = worker
+            self._scan_threads[serial] = th
+            self._scan_workers[serial] = worker
 
             th.start()
+
 
     def crear_cuentas_seleccionados(self):
         seriales = [s for s in self.seriales if self.is_selected(s)]
         if not seriales:
-            print("⚠ No hay dispositivos seleccionados.")
+            QMessageBox.warning(
+                self,
+                "Dispositivos no seleccionados",
+                "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
             return
 
         # 1) reservar pares únicos para TODOS los seleccionados
@@ -794,6 +812,7 @@ class MainWindow(QWidget):
             self._start_generic_worker(s, "crear_cuenta", crear_cuenta_para_serial)
 
         self.limpiar_checkboxes_checkbox_global()
+
 
     def _on_scan_finished(self, serial):
         print(f"✅ Escaneo terminado en {serial}")
@@ -812,6 +831,7 @@ class MainWindow(QWidget):
                 for s in list(self.status_buttons.keys()):
                     self.estado_dispositivos[s] = None
                     self._set_estado_visual(s, None)
+            self.mostrar_mensaje_finalizado("Escaneo finalizado", "El escaneo de cuentas ha terminado")        
 
     def _on_scan_failed(self, serial, err):
         print(f"💥 Error escaneando {serial}: {err}")
@@ -955,6 +975,7 @@ class MainWindow(QWidget):
 
         if not self._pending_changes_v:
             print("✅ Proceso VIDEO completado en todos los dispositivos.")
+            self.mostrar_mensaje_finalizado("Cambio de cuentas", "El proceso de cambio terminó en todos los dispositivos")
 
     def _on_change_failed_video(self, serial, err):
         print(f"💥 Error cambiando cuentas (VIDEO) en {serial}: {err}")
@@ -1000,6 +1021,7 @@ class MainWindow(QWidget):
         self._set_estado_visual(serial, None)
         self._generic_workers.pop(serial, None)
         self._generic_threads.pop(serial, None)
+        self.mostrar_mensaje_finalizado("Acción finalizada", f"Acción en {serial}")
 
     def _on_generic_failed(self, serial, err):
         print(f"💥 Error en acción genérica {serial}: {err}")
@@ -1074,8 +1096,13 @@ class MainWindow(QWidget):
                 alguno = True
                 self._start_generic_worker(serial, accion, func)
         if not alguno:
-            print("⚠ No hay dispositivos seleccionados.")
+            QMessageBox.warning(
+                self,
+                "Dispositivos no seleccionados",
+                "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
         self.limpiar_checkboxes_checkbox_global()
+
 
     def detener_con_icono(self, serial):
         detener_funcion(serial)  # pone hilos_activos[serial] = False
@@ -1090,8 +1117,13 @@ class MainWindow(QWidget):
                 alguno = True
                 self.detener_con_icono(serial)
         if not alguno:
-            print("⚠ No hay dispositivos seleccionados.")
+            QMessageBox.warning(
+                self,
+                "Dispositivos no seleccionados",
+                "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
         self.limpiar_checkboxes_checkbox_global()
+
 
     def limpiar_checkboxes_checkbox_global(self):
         for chk in self.checkboxes.values():
@@ -1107,9 +1139,16 @@ class MainWindow(QWidget):
     def _abrir_scrcpy_seleccionados(self):
         seleccionados = [s for s in self.seriales if self.is_selected(s)]
         if not seleccionados:
-            seleccionados = self.seriales  # si no selecciona ninguno → abrir todos
+            QMessageBox.warning(
+                self,
+                "Dispositivos no seleccionados",
+                "⚠ No hay dispositivos seleccionados.\nPor favor, selecciona al menos uno."
+            )
+            return
+
         print(f"🚀 Abriendo SCRCPY en {len(seleccionados)} dispositivos...")
         self._start_scrcpy_worker(seleccionados)
+
 
     def _start_scrcpy_worker(self, seriales):
         th = QThread(self)
@@ -1127,6 +1166,14 @@ class MainWindow(QWidget):
         self._scrcpy_thread = th
         self._scrcpy_worker = worker
         th.start()
+     
+    def mostrar_mensaje_finalizado(self, titulo, texto):
+        QMessageBox.information(
+            self,
+            titulo,
+            f"✅ {texto} terminado correctamente."
+        )
+    
 
 # ====== Ejecución directa ======
 if __name__ == "__main__":
