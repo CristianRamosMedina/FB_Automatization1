@@ -258,6 +258,8 @@ class MainWindow(QWidget):
         self.setMinimumSize(900, 600)
         self.setMaximumSize(2000, 1200)
         self.setWindowTitle("Control TikTok - Multi Dispositivo")
+        
+        
 
         self.setStyleSheet("""
             QWidget { background-color: #0f1115; color: #e8eaed; font-size: 13px; }
@@ -331,8 +333,28 @@ class MainWindow(QWidget):
         }
 
         root = QVBoxLayout(self)
+        
+        # ====== Contador de dispositivos ======
+        contador_layout = QHBoxLayout()
+        contador_layout.addStretch(1)
+
+        self.lbl_total_dispositivos = QLabel(f"📱 Dispositivos conectados: {len(self.seriales)}")
+        self.lbl_total_dispositivos.setStyleSheet("font-weight:600; color:#4caf50; font-size:18px;")
+        contador_layout.addWidget(self.lbl_total_dispositivos)
+
+        contador_layout.addStretch(1)
+        root.addLayout(contador_layout)
+
+        # 🔄 Refrescar cada 5 segundos
+        self.timer_actualizar = QTimer(self)
+        self.timer_actualizar.timeout.connect(self._actualizar_conteo_dispositivos)
+        self.timer_actualizar.start(5000)
+
+
         root.setContentsMargins(12, 12, 12, 12)
         root.setSpacing(12)
+        
+        
 
         # ====== Toolbar ======
         toolbar = QFrame()
@@ -343,6 +365,8 @@ class MainWindow(QWidget):
 
         row1 = QHBoxLayout()
         row2 = QHBoxLayout()
+        
+        
 
         btn_init = QPushButton("📱 Inicializar SCRCPY"); btn_init.setObjectName("warn")
         btn_init.clicked.connect(self._abrir_scrcpy_seleccionados)
@@ -537,6 +561,11 @@ class MainWindow(QWidget):
         self._ell_timer = None
         self._ell_base_text = ""
         self._ell_count = 0
+
+    #ACTUALIZAR CONTADOR DE DISPOSITIVOS
+    def _actualizar_conteo_dispositivos(self):
+        self.seriales = obtener_seriales()
+        self.lbl_total_dispositivos.setText(f"📱 Dispositivos conectados: {len(self.seriales)}")
 
     # ====== Lanzadores backend (sin bloquear UI) ======
     def _abrir_dialogo_fecha(self):
@@ -844,6 +873,20 @@ class MainWindow(QWidget):
         if not self._pending_scans:
             print("⚠ Escaneo finalizado con errores.")
 
+
+    # ✅ Método para actualizar el contador
+    def _actualizar_conteo_dispositivos(self):
+        self.seriales = obtener_seriales()
+        self.lbl_total_dispositivos.setText(f"📱 Dispositivos conectados: {len(self.seriales)}")
+
+    # ✅ Popup genérico de finalización
+    def mostrar_mensaje_finalizado(self, titulo, texto):
+        QMessageBox.information(
+            self,
+            titulo,
+            f"✅ {texto} terminado correctamente."
+        )
+        
     # ====== Callbacks VIDEO ======
     def _on_scan_finished_video(self, serial):
         print(f"✅ Escaneo VIDEO terminado en {serial}")
