@@ -535,10 +535,6 @@ class MainWindow(QWidget):
             cel_widget.setLayout(cel_layout)
             cel_widget.setStyleSheet("QFrame { background: #0f1115; }")
 
-            # Botones por dispositivo (acciones rápidas)
-            btn_entrenar = QPushButton("▶ Entrenar")
-            btn_entrenar.setObjectName("ok")
-            btn_entrenar.clicked.connect(lambda _, s=serial: self._start_generic_worker(s, "entrenar", entrenar))
 
             btn_detener = QPushButton("⏹ Detener")
             btn_detener.setObjectName("danger")
@@ -548,7 +544,6 @@ class MainWindow(QWidget):
             btn_silenciar.clicked.connect(lambda _, s=serial: self._start_generic_worker(s, None, silenciar_dispositivo))
 
             grid.addWidget(cel_widget, idx, 0)
-            grid.addWidget(btn_entrenar, idx, 1)
             grid.addWidget(btn_detener, idx, 2)
             grid.addWidget(btn_silenciar, idx, 3)
 
