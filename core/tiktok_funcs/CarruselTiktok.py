@@ -100,7 +100,7 @@ def ejecutar_gestos(serial: str):
             if _sleep_coop(serial, 0.9): return
 
             tap("92.69%", "52.02%"); _sleep_coop(serial, 1)
-            write("Being a Girl jonica" if serial.startswith("R8YY602XW7Y") else "wash favsoundds")
+            write("Being a Girl jonica" if serial.startswith("R8YY602XW7Y") else "passport junkie")
             run("shell input keyevent 66")  # Enter
             if _sleep_coop(serial, 6): return
 
@@ -116,7 +116,7 @@ def ejecutar_gestos(serial: str):
             # Escribir post
             tap("50%", "33%"); tap("50%", "33%"); _sleep_coop(serial, 0.4)
             write("#women #health #healthy #bloating #bloated " if serial.startswith("R8YY602XW7Y")
-                  else "#hairgrowth #beaty #fy #hairgrowthtips ")
+                  else "Believe me when i say... #prettygirls #blackwoman #haircare #hairroutine")
             if _sleep_coop(serial, 0.9): return
 
             coords = buscarTextoEnRegion(("1%", "0%", "100%", "100%"), "Post")

@@ -4,6 +4,7 @@ import json
 import shutil
 import time
 import threading
+import random
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -23,11 +24,14 @@ ruta_documentos = os.path.expanduser("~/Documents")
 base_salida = os.path.join(ruta_documentos, "Carrusel", "ImagenesCrudas", "Carrusel")
 base_usadas = os.path.join(ruta_documentos, "Carrusel", "ImagenesCrudas", "ImagenCrudaUsada")
 
-
 SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
 carpetas_descargadas = set()
 EXTS = (".png", ".jpg", ".jpeg", ".webp")
+
+# Ruta a img/ (donde están las carpetas 1..27)
+RAIZ_PROYECTO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+RUTA_IMG = os.path.join(RAIZ_PROYECTO, "img")
 
 # ================ Utiles ==================
 def ordenar_natural(lista):
@@ -38,20 +42,12 @@ def ordenar_natural(lista):
     return sorted(lista, key=alfanum)
 
 def extraer_numero(nombre):
-    """
-    Devuelve el primer número encontrado en el nombre de archivo (sin extensión).
-    '10.png' -> 10, 'img_2a.jpg' -> 2, si no hay número -> None
-    """
     import re
     base = os.path.splitext(nombre)[0]
     m = re.search(r'(\d+)', base)
     return int(m.group(1)) if m else None
 
 def indexar_por_numero(archivos):
-    """
-    {numero:int -> nombre_archivo:str} solo para los que tienen número.
-    Si hay duplicados del mismo número, se queda el primero ordenado naturalmente.
-    """
     archivos = ordenar_natural(archivos)
     idx = {}
     for f in archivos:
@@ -60,9 +56,7 @@ def indexar_por_numero(archivos):
             idx.setdefault(n, f)
     return idx
 
-# ---------- Lectura robusta + Pool de Stickers (thread-safe) ----------
 def _size_stable(path, tries=4, sleep_s=0.06):
-    """Espera a que el tamaño del archivo sea estable en 2 lecturas consecutivas."""
     last = None
     for _ in range(tries):
         try:
@@ -76,7 +70,6 @@ def _size_stable(path, tries=4, sleep_s=0.06):
     return last is not None and last > 0
 
 def _read_bytes_strong(path, retries=4, sleep_s=0.08):
-    """Lee bytes de forma robusta con reintentos; útil ante lecturas parciales en Windows."""
     last_err = None
     for _ in range(retries + 1):
         try:
@@ -94,7 +87,6 @@ def _read_bytes_strong(path, retries=4, sleep_s=0.08):
                     (head[:4] == b"RIFF" and data[8:12] == b"WEBP")
                 )
                 if not sig_ok:
-                    # no siempre es fatal, pero forzamos reintento
                     raise UnidentifiedImageError("Header no reconocido (firma inválida)")
             return data
         except Exception as e:
@@ -108,15 +100,9 @@ def image_from_bytes_rgba(b: bytes):
     return im.convert("RGBA")
 
 class StickerPool:
-    """
-    Pool por carpeta de stickers (Diseño).
-    Clave: ruta abs normalizada de la carpeta.
-    Valor: {'sig': (mtime_ns_max, size_total), 'by_num': {n:int -> bytes}, 'by_name': {fname:str -> bytes}}
-    Invalida automáticamente si cambia la firma del directorio.
-    """
     def __init__(self):
         self._lock = threading.RLock()
-        self._pools = {}  # path_dir -> dict
+        self._pools = {}
 
     def _dir_signature(self, path_dir):
         latest_mtime = 0
@@ -162,7 +148,6 @@ class StickerPool:
                 if n is not None and n not in by_num:
                     by_num[n] = data
             except Exception:
-                # Omitir archivos problemáticos del pool
                 continue
         return by_num, by_name
 
@@ -172,8 +157,7 @@ class StickerPool:
             sig = self._dir_signature(path_dir)
             entry = self._pools.get(path_dir)
             if entry and entry.get("sig") == sig:
-                return entry  # cache aún válido
-            # (re)cargar
+                return entry
             by_num, by_name = self._load_folder(path_dir)
             entry = {"sig": sig, "by_num": by_num, "by_name": by_name}
             self._pools[path_dir] = entry
@@ -240,7 +224,6 @@ def asegurar_y_descargar(ruta_relativa, drive_id):
         print(f"Carpeta ya tiene contenido: {ruta_relativa}")
 
 # ============== Proceso core ===============
-# ============== Proceso core ===============
 def procesar_carpeta(carpeta):
     carpeta_num = carpeta["CarpetaNumero"]
     path_sticker = carpeta["pathSticker"]
@@ -257,7 +240,7 @@ def procesar_carpeta(carpeta):
 
     if not subcarpetas_c:
         print(f"[{carpeta_num}] ❌ No se encontró carpeta 'c*' en {path_imagenes_completo}")
-        return 0   # <- antes no devolvía nada
+        return 0
 
     carpeta_c = ordenar_natural(subcarpetas_c)[0]
     ruta_carpeta_imagenes = os.path.join(path_imagenes_completo, carpeta_c)
@@ -309,6 +292,39 @@ def procesar_carpeta(carpeta):
         print(f"[{carpeta_num}] ⏭️ Ya existen imágenes en salida, salto.")
         return 0
 
+    # 0️⃣ Guardar una imagen de la carpeta img/(CarpetaNumero-8) como 1.png y aplicarle el sticker fijo
+    try:
+        carpeta_idx = int(carpeta_num) - 8  # ejemplo: 9→1, 10→2, 11→3
+        carpeta_extra = os.path.join(RUTA_IMG, str(carpeta_idx))
+        sticker_fijo_path = os.path.join(RAIZ_PROYECTO, "sticker", "sticker.png")
+        salida_1 = os.path.join(ruta_salida, "1.png")
+
+        if os.path.exists(carpeta_extra):
+            imagenes_extra = [f for f in os.listdir(carpeta_extra) if f.lower().endswith(EXTS)]
+            if imagenes_extra:
+                archivo_aleatorio = random.choice(imagenes_extra)
+                ruta_archivo = os.path.join(carpeta_extra, archivo_aleatorio)
+
+                # Fondo (imagen aleatoria)
+                fondo = image_from_bytes_rgba(_read_bytes_strong(ruta_archivo))
+
+                # Si existe el sticker fijo → cargarlo y superponerlo
+                if os.path.exists(sticker_fijo_path):
+                    sticker = image_from_bytes_rgba(_read_bytes_strong(sticker_fijo_path))
+                    sticker = sticker.resize(fondo.size, Image.LANCZOS)
+                    combinado = Image.alpha_composite(fondo, sticker)
+                    combinado.save(salida_1)
+                    print(f"[{carpeta_num}] Guardado 1.png con sticker fijo desde img/{carpeta_idx}/{archivo_aleatorio}")
+                else:
+                    fondo.save(salida_1)
+                    print(f"[{carpeta_num}] Guardado 1.png desde img/{carpeta_idx}/{archivo_aleatorio} (sin sticker fijo)")
+            else:
+                print(f"[{carpeta_num}] ⚠️ Carpeta img/{carpeta_idx} sin imágenes válidas")
+        else:
+            print(f"[{carpeta_num}] ⚠️ Carpeta img/{carpeta_idx} no existe")
+    except Exception as e:
+        print(f"[{carpeta_num}] Error guardando imagen de img/{carpeta_idx}: {e}")
+
     print(
         f"Procesando carpeta {carpeta_num} | Stickers: {len(idx_stickers)} | "
         f"Imagenes: {len(idx_imagenes)} | Usando {carpeta_c}"
@@ -318,8 +334,8 @@ def procesar_carpeta(carpeta):
 
     STICKERS.get_folder_pool(path_sticker_completo)
 
-    generadas = 0
-    for i, (nombre_sticker, nombre_imagen, n) in enumerate(pares, start=1):
+    generadas = 1  # ya generamos 1.png aleatoria con sticker fijo
+    for i, (nombre_sticker, nombre_imagen, n) in enumerate(pares, start=2):
         path_i = os.path.join(ruta_carpeta_imagenes, nombre_imagen)
         try:
             fondo = image_from_bytes_rgba(_read_bytes_strong(path_i))
@@ -332,13 +348,18 @@ def procesar_carpeta(carpeta):
                 sticker_bytes, last_n = fallback
 
             sticker = image_from_bytes_rgba(sticker_bytes)
-
             sticker = sticker.resize((736, 1312), Image.LANCZOS)
             if sticker.size[0] > fondo.size[0] or sticker.size[1] > fondo.size[1]:
                 sticker = sticker.resize(fondo.size, Image.LANCZOS)
 
             combinada = Image.alpha_composite(fondo, sticker)
-            nombre_salida = f"{i}.png"
+
+            # ⚠️ Saltar 2.png → empezar desde 3.png
+            if i == 2:
+                nombre_salida = "3.png"
+            else:
+                nombre_salida = f"{i}.png"
+
             combinada.save(os.path.join(ruta_salida, nombre_salida))
             generadas += 1
             print(f"[{carpeta_num}] Guardado {nombre_salida}  (match {n}: {nombre_sticker} + {nombre_imagen})")
@@ -359,9 +380,8 @@ def procesar_carpeta(carpeta):
     else:
         print(f"[{carpeta_num}] ⚠️ No se generó ninguna imagen; no se mueve la carpeta usada.")
 
-    return generadas  # <- NUEVO
+    return generadas
 
-# ================ Main ====================
 # ================ Main ====================
 def main():
     os.makedirs(base_salida, exist_ok=True)
@@ -369,7 +389,6 @@ def main():
 
     generadas_total = 0
     if not carpetas:
-        # también cubre el caso de JSON vacío
         raise RuntimeError("⚠️ No hay archivos para realizar carruseles, Ideogram necesario.")
 
     max_workers = min(16, len(carpetas))
@@ -381,7 +400,6 @@ def main():
                 generadas_total += r
 
     if generadas_total == 0:
-        # ← Este texto es el que capturaremos en la UI
         raise RuntimeError("⚠️ No hay archivos para realizar carruseles, Ideogram necesario.")
 
     print(f"✅ Carruseles generados en total: {generadas_total}")
