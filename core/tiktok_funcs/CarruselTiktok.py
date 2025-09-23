@@ -118,8 +118,12 @@ def ejecutar_gestos(serial: str):
             write("#women #health #healthy #bloating #bloated " if serial.startswith("R8YY602XW7Y")
                   else "Believe me when i say... #prettygirls #blackwoman #haircare #hairroutine")
             if _sleep_coop(serial, 0.9): return
-
-            coords = buscarTextoEnRegion(("1%", "0%", "100%", "100%"), "Post")
+        
+            time.sleep(2)
+            tap("79.16%","96.93%") # hagia abajo
+            time.sleep(2)
+                
+            tap("73.75%", "90.68%")
             tap(*coords) if coords else long_tap("91.76%", "6.88%")
             print(f"🎉🍾 [{serial}] Publicando…")
 
@@ -128,17 +132,17 @@ def ejecutar_gestos(serial: str):
             ok = _esperar_texto(
                 serial,
                 buscarTextoEnRegion,
-                "posted",
+                "Post",
                 region=("0%", "0%", "100%", "8.5%"),
                 timeout=70,
                 umbral=0.6
             )
             if ok:
-                print(f"✅ [{serial}] 'posted' detectado. Flujo finalizado correctamente.")
+                print(f"✅ [{serial}] 'post' detectado. Flujo finalizado correctamente.")
                 return
 
             # Forzar reintento si no apareció
-            raise Exception("'posted' no detectado en 70s")
+            raise Exception("'post' no detectado en 70s")
 
         except Exception as e:
             print(f"❌ [{serial}] Error en ejecutar_gestos (intento #{intento}): {e}")
