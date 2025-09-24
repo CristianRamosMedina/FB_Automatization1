@@ -156,7 +156,7 @@ def switchAccount(serial: str):
 
     # Ir a Settings
     if should_stop(serial): return
-    coords = buscarTextoEnRegion(("2.13%", "57.64%", "99.35%", "93.75%"), "Settings")
+    coords = buscarTextoEnRegion(("114", "740", "693", "840"), "Settings")
     if coords:
         tap(*coords)
     else:
