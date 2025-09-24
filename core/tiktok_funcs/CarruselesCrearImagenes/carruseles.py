@@ -294,7 +294,7 @@ def procesar_carpeta(carpeta):
 
     # 0️⃣ Guardar una imagen de la carpeta img/(CarpetaNumero-8) como 1.png y aplicarle el sticker fijo
     try:
-        carpeta_idx = int(carpeta_num) - 8  # ejemplo: 9→1, 10→2, 11→3
+        carpeta_idx = int(carpeta_num) 
         carpeta_extra = os.path.join(RUTA_IMG, str(carpeta_idx))
         sticker_fijo_path = os.path.join(RAIZ_PROYECTO, "sticker", "sticker.png")
         salida_1 = os.path.join(ruta_salida, "1.png")
