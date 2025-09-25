@@ -116,7 +116,7 @@ def ejecutar_gestos(serial: str):
             # Escribir post
             tap("50%", "33%"); tap("50%", "33%"); _sleep_coop(serial, 0.4)
             write("Believe me when i say... #prettygirls #blackwoman" if serial.startswith("R8YY602XW7Y")
-                  else "Believe me when i say... #prettygirls #blackwoman #haircare #hairroutine")
+                  else "Believe me when i say... #prettygirls #blackwoman")
             if _sleep_coop(serial, 0.9): return
         
             time.sleep(2)
