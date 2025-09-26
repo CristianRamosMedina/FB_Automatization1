@@ -160,8 +160,9 @@ def switchAccount(serial: str):
 
     # Definir las regiones posibles donde puede aparecer "Settings"
     regiones = [
-        ("114", "740", "693", "840"),   # Región A
+        ("155", "753", "632", "827"),   # Región A
         ("28", "1380", "660", "1475"),  # Región B
+        ("215", "1124", "883", "1254"),   # Región C
     ]
 
     coords = None
@@ -177,6 +178,7 @@ def switchAccount(serial: str):
         tap("50.46%", "89.87%")  # fallback por si no encontró nada
 
     time.sleep(0.6)
+
 
 
     # Scroll para encontrar "Switch account"
