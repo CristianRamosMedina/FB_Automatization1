@@ -155,14 +155,29 @@ def switchAccount(serial: str):
     time.sleep(0.4)
 
     # Ir a Settings
-    if should_stop(serial): return
-    coords = buscarTextoEnRegion(("114", "740", "693", "840"), "Settings")
+    if should_stop(serial): 
+        return
+
+    # Definir las regiones posibles donde puede aparecer "Settings"
+    regiones = [
+        ("114", "740", "693", "840"),   # Región A
+        ("28", "1380", "660", "1475"),  # Región B
+    ]
+
+    coords = None
+    for region in regiones:
+        coords = buscarTextoEnRegion(region, "Settings")
+        if coords:
+            break  # Si encontró en una región, no sigue buscando
+
     if coords:
         tap(*coords)
     else:
         time.sleep(0.3)
-        tap("50.46%", "89.87%")  # fallback
+        tap("50.46%", "89.87%")  # fallback por si no encontró nada
+
     time.sleep(0.6)
+
 
     # Scroll para encontrar "Switch account"
     if should_stop(serial): return
