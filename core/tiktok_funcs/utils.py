@@ -163,6 +163,9 @@ def switchAccount(serial: str):
         ("155", "753", "632", "827"),   # Región A
         ("28", "1380", "660", "1475"),  # Región B
         ("215", "1124", "883", "1254"),   # Región C
+        ("146", "806", "560", "868"),   # Región D
+        ("228", "1222", "787", "1303")   # Región E
+        
     ]
 
     coords = None
@@ -173,7 +176,7 @@ def switchAccount(serial: str):
 
     if coords:
         tap(*coords)
-    else:
+    else:       
         time.sleep(0.3)
         tap("50.46%", "89.87%")  # fallback por si no encontró nada
 
