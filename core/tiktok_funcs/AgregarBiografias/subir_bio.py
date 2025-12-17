@@ -82,7 +82,7 @@ def subir_biografia(serial: str, bio_text: str) -> bool:
         else:
             tap("92%", "8%")
         time.sleep(1.0)
-
+    
         print(f"✅ [{serial}] Bio actualizada con emojis y saltos de línea")
         return True
 

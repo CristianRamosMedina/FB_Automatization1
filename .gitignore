@@ -1,1 +1,167 @@
+# ========================================
+# GITIGNORE - Sistema TikTok/Facebook
+# ========================================
+
+# ============ PYTHON ============
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# ============ IDE ============
+# PyCharm
+.idea/
+*.iml
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============ DATOS SENSIBLES ============
+# Credenciales de Google
+*.json
+!carrusel.json
+!videos.json
+!asignaciones.json
+# Permitir JSONs de estructura, pero no los de datos
+data/dispositivos.json
+data/dispositivos.json.bak
+data/dispositivos_facebook.json
+
+# Service account keys
+*service_account*.json
+*credentials*.json
+
+# ============ ARCHIVOS TEMPORALES ============
+# Imágenes temporales
+imagenes_temp/
+*.tmp
+*.temp
+
+# Logs
+*.log
+logs/
+data/logs_experimento/
+
+# Screenshots
+screenshots/
+data/screenshots_fb/
+
+# ============ SISTEMA OPERATIVO ============
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ============ CONTENIDO MULTIMEDIA ============
+# Imágenes de carruseles
+ImagenesCrudas/
+ImagenCrudaUsada/
+CarruselesUsados/
+
+# Permitir imágenes de documentación
+!docs/**/*.png
+!.claude/docs/**/*.png
+!img/**/*.png
+
+# ============ ANDROID ============
+# ADB logs
+adb.log
+logcat.txt
+
+# SCRCPY captures
+scrcpy-*.mp4
+scrcpy-*.mkv
+
+# ============ GOOGLE DRIVE ============
+# Archivos descargados de Drive
+drive_cache/
+*.drive
+
+# ============ BACKUPS ============
+*.bak
+*.backup
+*.old
+backup/
+backups/
+
+# ============ NOTAS Y BORRADORES ============
+# Archivos personales
+NOTAS*.md
+TODO*.md
+BORRADOR*.md
+PENDIENTE*.md
+*_OLD.*
+*_BACKUP.*
+
+# ============ COMPILADOS ============
+*.exe
+*.dll
+*.dylib
+
+# ============ PROYECTO ESPECÍFICO ============
+# Datos experimentales de Facebook
+data/logs_experimento/**
+data/screenshots_fb/**
+!data/logs_experimento/.gitkeep
+!data/screenshots_fb/.gitkeep
+
+# Archivos de configuración local
+config_local.py
+settings_local.py
+
+# ============ DOCUMENTACIÓN QUE SÍ SE SUBE ============
+# Mantener documentación del proyecto
+!README.md
+!INSTALACION.md
+!requirements.txt
+!.claude/docs/*.md

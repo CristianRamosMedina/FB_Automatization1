@@ -143,7 +143,7 @@ def switchAccount(serial: str):
 
     # Si aparece "keep", tocar el texto a la izquierda (tu lógica original)
     if should_stop(serial): return
-    if buscarTextoEnRegion(("20.57%","4.6%","98%","8%"), "keep"):
+    if buscarTextoEnRegion(("20.57%","4.6%","98%","8%"), "keep"): 
         tap("40%","10.5%")
         time.sleep(0.8)
     else:

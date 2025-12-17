@@ -1030,7 +1030,7 @@ class MainWindow(QWidget):
     def _start_generic_worker(self, serial, accion, func):
         """Lanza func(serial) en QThread con dot/anim."""
         if not self.is_selected(serial):
-            print(f"⚠ {serial} no está seleccionado.")
+            print(f"⚠ {serial} no está seleccionado.") 
             return
         self.estado_dispositivos[serial] = accion
         self._set_estado_visual(serial, accion)
