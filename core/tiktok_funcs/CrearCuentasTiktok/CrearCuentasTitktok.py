@@ -36,13 +36,21 @@ if not CORREOS_FILE.exists():
     raise FileNotFoundError(f"No se encontró correos.json en: {CORREOS_FILE}")
 
 # ---------------- Google Sheets ----------------
-_gc = gspread.service_account(filename=str(SERVICE_ACCOUNT_FILE))
-_sheet = _gc.open("Cuentas").sheet1
-if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
-    _sheet.insert_row(
-        ["Correo", "UserName", "Contraseña", "Fecha de nacimiento", "Plataforma", "Marca", "Serial"],
-        1
-    )
+# Deshabilitado temporalmente para evitar errores de credenciales
+try:
+    _gc = gspread.service_account(filename=str(SERVICE_ACCOUNT_FILE))
+    _sheet = _gc.open("Cuentas").sheet1
+    if (_sheet.cell(1, 1).value or "").strip().lower() != "correo":
+        _sheet.insert_row(
+            ["Correo", "UserName", "Contraseña", "Fecha de nacimiento", "Plataforma", "Marca", "Serial"],
+            1
+        )
+    print("Google Sheets conectado correctamente")
+except Exception as e:
+    print(f"Advertencia: No se pudo conectar a Google Sheets: {e}")
+    print("La aplicacion continuara sin esta funcionalidad")
+    _gc = None
+    _sheet = None
 
 # ---------------- Estado en memoria (opcional) ----------------
 # Se llenará cuando llames preasignar_para_seriales([...])

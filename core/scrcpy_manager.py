@@ -85,7 +85,15 @@ def abrir_scrcpy(seriales, porcentaje_ancho=0.70, margen_x=20, margen_y=40, orig
     total = len(seriales)
     print(f"Total de celulares {total}")
     if total == 0:
-        print("❌ No hay dispositivos conectados.")
+        print("No hay dispositivos conectados.")
+        return
+
+    # Verificar si SCRCPY está instalado
+    import os
+    if not os.path.exists(SCRCPY_PATH):
+        print("ERROR: SCRCPY no esta instalado o no se encuentra en la ruta configurada.")
+        print(f"Ruta esperada: {SCRCPY_PATH}")
+        print("Descarga SCRCPY desde: https://github.com/Genymobile/scrcpy/releases")
         return
 
     # Área usable (excluye barra de tareas)

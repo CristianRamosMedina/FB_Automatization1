@@ -1,75 +1,35 @@
-# ========================================
-# SISTEMA DE AUTOMATIZACIÓN TIKTOK/FACEBOOK
+# Sistema de Automatizacion TikTok/Facebook
 # Control Multi-Dispositivo Android
-# ========================================
 
-# ============ INTERFAZ GRÁFICA ============
+# INTERFAZ GRAFICA
 PyQt5==5.15.10
 PyQt5-Qt5==5.15.2
 PyQt5-sip==12.13.0
 
-# ============ PROCESAMIENTO DE IMÁGENES ============
+# PROCESAMIENTO DE IMAGENES
 Pillow==10.3.0
-# PIL (Python Imaging Library) incluido en Pillow
 
-# ============ OCR (Reconocimiento de Texto) ============
+# OCR (Reconocimiento de Texto)
 pytesseract==0.3.10
 # IMPORTANTE: Tesseract-OCR debe estar instalado en el sistema
 # Windows: https://github.com/UB-Mannheim/tesseract/wiki
-# Agregar a PATH: C:\Program Files\Tesseract-OCR
+# Instalar en: C:\Program Files\Tesseract-OCR
 
-# ============ GOOGLE DRIVE API ============
+# GOOGLE DRIVE API
 google-api-python-client==2.130.0
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
 google-auth-httplib2==0.2.0
 
-# ============ UTILIDADES ============
-# difflib - Built-in de Python
-# json - Built-in de Python
-# subprocess - Built-in de Python
-# datetime - Built-in de Python
-# threading - Built-in de Python
-# pathlib - Built-in de Python
-# os - Built-in de Python
-# re - Built-in de Python
-# time - Built-in de Python
-# io - Built-in de Python
+# GOOGLE SHEETS
+gspread==6.2.1
 
-# ============ DEPENDENCIAS ADICIONALES ============
-# Para el proyecto Facebook (experimental)
-# Todas las librerías anteriores son suficientes
+# UTILIDADES DEL SISTEMA
+psutil==7.1.3
 
-# ============ NOTAS DE INSTALACIÓN ============
-#
-# 1. Instalar Python 3.8 o superior
-# 2. Instalar dependencias:
-#    pip install -r requirements.txt
-#
-# 3. Instalar Tesseract-OCR (sistema):
-#    Windows: https://github.com/UB-Mannheim/tesseract/wiki
-#    Descargar instalador y agregar a PATH
-#
-# 4. Instalar ADB (Android Debug Bridge):
-#    - Descargar Android Platform Tools
-#    - URL: https://developer.android.com/tools/releases/platform-tools
-#    - Agregar a PATH o configurar en core/paths.py
-#
-# 5. SCRCPY (opcional, para visualización):
-#    Windows: https://github.com/Genymobile/scrcpy/releases
-#    Descargar y agregar al PATH
-#
-# ============ VERIFICACIÓN ============
-#
-# Verificar instalación:
-#   python -c "import PyQt5; print('PyQt5 OK')"
-#   python -c "from PIL import Image; print('Pillow OK')"
-#   python -c "import pytesseract; print('pytesseract OK')"
-#   tesseract --version
-#   adb version
-#
-# ============ VERSIONES COMPATIBLES ============
-#
-# Python: 3.8, 3.9, 3.10, 3.11 (recomendado: 3.10)
-# Sistema: Windows 10/11, Linux, macOS
-# Android: 7.0 o superior (con depuración USB habilitada)
+# VISION COMPUTACIONAL
+opencv-python==4.12.0.88
+numpy==2.2.6
+
+# WEB SCRAPING
+beautifulsoup4==4.14.3

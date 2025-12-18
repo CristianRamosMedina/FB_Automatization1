@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QPropertyAnimation, QEasingCurve, QObject, QThread, pyqtSignal, QTimer
 from PyQt5.QtGui import QPixmap
+from core.facebook_funcs.FacebookCrearPaginaYPostearVideo import fb_crear_pagina_y_postear_video
+
 
 # ✅ Importaciones locales
 from ui.seleccion_cuentas_dialog import SeleccionCuentasDialog
@@ -487,6 +489,39 @@ class MainWindow(QWidget):
         marcar_todos_layout.addStretch(1)
         root.addLayout(marcar_todos_layout)
         
+
+        # ====== Sección Facebook ======
+        fb_section = QFrame()
+        fb_section.setObjectName("Toolbar")
+
+        fb_layout = QVBoxLayout(fb_section)
+        fb_layout.setContentsMargins(10, 10, 10, 10)
+
+        row_fb = QHBoxLayout()
+
+        lbl_fb = QLabel("📘 Facebook")
+        lbl_fb.setStyleSheet("font-weight:600;")
+
+        self._btn_fb_crear_pagina = QPushButton("📄 Crear página + 🎬 Postear video")
+        self._btn_fb_crear_pagina.setObjectName("create")
+        self._btn_fb_crear_pagina.clicked.connect(
+            lambda: self.ejecutar_seleccionados(
+                "facebook",
+                fb_crear_pagina_y_postear_video
+            )
+        )
+
+        self._lbl_fb_status = QLabel("—")
+        self._lbl_fb_status.setStyleSheet("color:#a8b3cf;")
+
+        row_fb.addWidget(lbl_fb)
+        row_fb.addStretch(1)
+        row_fb.addWidget(self._btn_fb_crear_pagina)
+        row_fb.addWidget(self._lbl_fb_status)
+
+        fb_layout.addLayout(row_fb)
+        root.addWidget(fb_section)
+
          
 
         # ====== Lista de dispositivos ======
