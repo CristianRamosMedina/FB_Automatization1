@@ -45,7 +45,6 @@ venv.bak/
 *.iml
 
 # VSCode
-.vscode/
 *.code-workspace
 
 # Sublime Text
@@ -165,3 +164,7 @@ settings_local.py
 !INSTALACION.md
 !requirements.txt
 !.claude/docs/*.md
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
