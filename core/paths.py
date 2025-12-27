@@ -20,6 +20,6 @@ SERVICE_ACCOUNT_FILE    = resource_path("data/credenciales.json")
 DISPOSITIVOS_FILE    = resource_path("data/dispositivos.json")
 VIDEOS_FILE          = resource_path("data/videos.json")
 
-ADB_PATH = r"C:\Users\Cris\AppData\Local\Android\Sdk\platform-tools\adb.exe"
-SCRCPY_PATH = r"C:\scrcpy\scrcpy.exe"  # Instalar en C:\scrcpy\
+ADB_PATH = r"C:\Users\Acer\Documents\platform-tools-latest-windows\platform-tools\adb.exe"
+SCRCPY_PATH = r"C:\scrcpy\scrcpy-win\scrcpy.exe"  # Instalar en C:\scrcpy\
 TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
